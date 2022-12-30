@@ -95,6 +95,9 @@
   };
 
   environment.variables.NIXPKGS_ALLOW_UNFREE = "1";
+  environment.extraInit = ''
+    source ${pkgs.openfoam}/bin/set-openfoam-vars
+  '';
   environment.systemPackages = with pkgs; let
     precice-python-packages = python3.withPackages (ps: with ps; [
       ipython
@@ -120,9 +123,10 @@
     tree
 
     # Devel applications
-    stdenv
     git
     cmakeWithGui
+    gnumake
+    gcc
     nano
     neovim
     gnome.gedit
@@ -138,6 +142,8 @@
     precice-fenics-adapter
     precice-aste
     precice-su2
+    precice-openfoam-adapter
+    openfoam
 
     # From the .alias file in the VM repo
     preciceToPNG

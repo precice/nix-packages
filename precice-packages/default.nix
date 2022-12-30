@@ -24,6 +24,9 @@
 
       fenics = super.callPackage ./fenics { };
       precice-fenics-adapter = super.callPackage ./precice-fenics-adapter { } ;
+
+      openfoam = super.callPackage ./openfoam { };
+      precice-openfoam-adapter = super.callPackage ./openfoam-adapter { };
     }
   )
 ]
