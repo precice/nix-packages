@@ -74,6 +74,7 @@
     precice-config-visualizer
 
     precice-dealii-adapter
+    precice-calculix-adapter
 
     # Additional packages
     paraview
