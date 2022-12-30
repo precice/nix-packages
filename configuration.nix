@@ -127,6 +127,7 @@
 
     precice-dealii-adapter
     precice-calculix-adapter
+    precice-fenics-adapter
     precice-aste
     precice-su2
 

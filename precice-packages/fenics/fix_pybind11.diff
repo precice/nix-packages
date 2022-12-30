@@ -1,0 +1,13 @@
+diff --git a/setup.py b/setup.py
+index d4aa8d38e..32fd472d9 100644
+--- a/setup.py
++++ b/setup.py
+@@ -18,7 +18,7 @@ RESTRICT_REQUIREMENTS = ">=2019.1.0,<2019.2"
+
+ REQUIREMENTS = ["numpy",
+                 "pkgconfig",
+-                "pybind11==2.2.4",
++                "pybind11",
+                 "fenics-ffc{}".format(RESTRICT_REQUIREMENTS),
+                 "fenics-ufl{}".format(RESTRICT_REQUIREMENTS),
+                 "fenics-dijitso{}".format(RESTRICT_REQUIREMENTS)]
