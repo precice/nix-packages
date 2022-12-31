@@ -10,8 +10,19 @@
         source = "${pkgs.xfce.xfce4-settings.out}/share/applications/xfce-keyboard-settings.desktop";
         target = "Desktop/xfce-keyboard-settings.desktop";
       };
-    };
+      "precice-desktop-item" = {
+        source = "${pkgs.makeDesktopItem {
+          name = "get-started";
+          desktopName = "Get started";
+          type = "Link";
+          url = "https://precice.org/installation-vm.html";
+          icon = "text-html";
+        }}/share/applications/get-started.desktop";
+        target = "Desktop/get-started.desktop";
+        executable = true;
+      };
     # TODO: examples verlinken auf dem desktop
+    };
     programs.bash.enable = true;
   };
 
