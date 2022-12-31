@@ -89,6 +89,7 @@
 
     precice-dealii-adapter
     precice-calculix-adapter
+    precice-aste
 
     # From the .alias file in the VM repo
     preciceToPNG
