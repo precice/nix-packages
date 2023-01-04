@@ -128,6 +128,7 @@
     precice-dealii-adapter
     precice-calculix-adapter
     precice-aste
+    precice-su2
 
     # From the .alias file in the VM repo
     preciceToPNG
