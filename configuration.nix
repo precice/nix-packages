@@ -39,6 +39,22 @@
       #   source = "/vagrant/";
       #   target = "Desktop/shared";
       # };
+      # XXX: Untested as the default VM ist too small
+      "run-vs-code" = {
+        source = "${pkgs.makeDesktopItem {
+          name = "run-vs-code";
+          desktopName = "VS Code";
+          type = "Application";
+          exec = pkgs.writeScript "run-vs-code" ''
+            echo "Downloading and starting vscode, please leave this terminal open..."
+            nix-shell ${./vscode.nix} --run code 2> /dev/null
+          '';
+          terminal = true;
+          icon = "text-html";
+        }}/share/applications/run-vs-code.desktop";
+        target = "Desktop/run-vs-code.desktop";
+        executable = true;
+      };
     };
     programs.bash.enable = true;
   };
@@ -78,6 +94,7 @@
     openssh.authorizedKeys.keys = [ (lib.readFile ./vagrant.pub) ];
   };
 
+  environment.variables.NIXPKGS_ALLOW_UNFREE = "1";
   environment.systemPackages = with pkgs; let
     precice-python-packages = python3.withPackages (ps: with ps; [
       ipython
