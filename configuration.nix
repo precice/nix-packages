@@ -21,7 +21,24 @@
         target = "Desktop/get-started.desktop";
         executable = true;
       };
-    # TODO: examples verlinken auf dem desktop
+      # TODO: precice examples verlinken auf dem desktop
+      "terminator" = {
+        source = "${pkgs.terminator}/share/applications/terminator.desktop";
+        target = "Desktop/terminator.desktop";
+      };
+      "terminator-config" = {
+        text = ''
+          [profiles]
+          [[default]]
+          use_system_font = False
+        '';
+        target = ".config/terminator/config";
+      };
+      # TODO: fix this
+      # "vagrant-shared" = {
+      #   source = "/vagrant/";
+      #   target = "Desktop/shared";
+      # };
     };
     programs.bash.enable = true;
   };
@@ -42,7 +59,10 @@
   services.xserver = {
     enable = true;
     layout = "us";
-    desktopManager.xfce.enable = true;
+    desktopManager.xfce = {
+      enable = true;
+      enableScreensaver = false;
+    };
     displayManager.autoLogin = {
       enable = true;
       user = "precice";
@@ -103,7 +123,7 @@
 
   ];
 
-  # programs.home-manager.enable = true;
+  # TODO: Somehow make sure `pip3 uninstall -y fenics-ufl` is solved https://github.com/precice/vm/issues/4
 
   services.openssh.enable = true;
 
