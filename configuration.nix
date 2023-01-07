@@ -55,6 +55,7 @@
     isNormalUser = true;
     extraGroups = [ "wheel" ];
     initialPassword = "precice";
+    openssh.authorizedKeys.keys = [ (lib.readFile ./vagrant.pub) ];
   };
 
   environment.systemPackages = with pkgs; let
