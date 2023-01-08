@@ -1,0 +1,11 @@
+diff --git a/dune-common/cmake/modules/DunePythonInstallPackage.cmake b/dune-common/cmake/modules/DunePythonInstallPackage.cmake
+index 94bf31d..37d5d9e 100644
+--- a/dune-common/cmake/modules/DunePythonInstallPackage.cmake
++++ b/dune-common/cmake/modules/DunePythonInstallPackage.cmake
+@@ -86,7 +86,7 @@ function(dune_python_install_package)
+   endif()
+
+   set(INSTALL_CMDLINE -m pip install
+-                      "${INSTALL_OPTION}" --upgrade "${WHEEL_OPTION}" "${EDIT_OPTION}" ${PYINST_ADDITIONAL_PIP_PARAMS} ${DUNE_PYTHON_ADDITIONAL_PIP_PARAMS}
++                      "${INSTALL_OPTION}" --no-build-isolation --no-cache-dir --no-index --no-deps "${WHEEL_OPTION}" "${EDIT_OPTION}" ${PYINST_ADDITIONAL_PIP_PARAMS} ${DUNE_PYTHON_ADDITIONAL_PIP_PARAMS}
+                       "${PYINST_FULLPATH}")

@@ -31,6 +31,8 @@
       blacs = super.callPackage ./blacs { };
       mumps = super.callPackage ./mumps { };
       tfel = super.callPackage ./tfel { };
+
+      precice-dune = super.callPackage ./dune { } ;
     }
   )
 ]

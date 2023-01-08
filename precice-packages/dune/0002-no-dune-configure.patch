@@ -1,0 +1,15 @@
+diff --git a/dune-common/cmake/modules/DunePythonMacros.cmake b/dune-common/cmake/modules/DunePythonMacros.cmake
+index 2a1091b..1225438 100644
+--- a/dune-common/cmake/modules/DunePythonMacros.cmake
++++ b/dune-common/cmake/modules/DunePythonMacros.cmake
+@@ -23,10 +23,4 @@ if( DUNE_ENABLE_PYTHONBINDINGS )
+   endfunction()
+
+   include(DuneAddPybind11Module)
+-
+-  # Add a custom command that triggers the configuration of dune-py
+-  add_custom_command(TARGET install_python POST_BUILD
+-                     COMMAND ${Python3_EXECUTABLE} -m dune configure
+-                     )
+-
+ endif()
