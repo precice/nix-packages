@@ -98,6 +98,10 @@
   environment.systemPackages = with pkgs; let
     precice-python-packages = python3.withPackages (ps: with ps; [
       ipython
+
+      # nutils
+      matplotlib
+      nutils
     ]);
     preciceToPNG = writeShellScriptBin "preciceToPNG" "cat \"\${1:-precice-config.xml}\" | ${precice-config-visualizer}/bin/precice-config-visualizer | ${graphviz}/bin/dot -Tpng > precice-config.png";
     preciceToPDF = writeShellScriptBin "preciceToPDF" "cat \"\${1:-precice-config.xml}\" | ${precice-config-visualizer}/bin/precice-config-visualizer | ${graphviz}/bin/dot -Tpdf > precice-config.pdf";
