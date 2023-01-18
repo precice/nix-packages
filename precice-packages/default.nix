@@ -26,6 +26,11 @@
 
       openfoam = super.callPackage ./openfoam { };
       precice-openfoam-adapter = super.callPackage ./openfoam-adapter { };
+
+      precice-aster = super.callPackage ./aster { };
+      blacs = super.callPackage ./blacs { };
+      mumps = super.callPackage ./mumps { };
+      tfel = super.callPackage ./tfel { };
     }
   )
 ]

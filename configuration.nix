@@ -144,6 +144,7 @@
     precice-su2
     precice-openfoam-adapter
     openfoam
+    precice-aster
 
     # From the .alias file in the VM repo
     preciceToPNG
