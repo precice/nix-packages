@@ -1,6 +1,18 @@
 [
+  (self: super: {
+    lib = super.lib // {
+      maintainers = super.lib.maintainers // {
+        conni2461 = {
+          email = "Simon-Hauser@outlook.de";
+          name = "Simon Hauser";
+          github = "conni2461";
+          githubId = 15233006;
+        };
+      };
+    };
+  })
   (self: super:
-    rec {
+    {
       pyprecice = super.callPackage ./pyprecice { };
       petsc4py = super.callPackage ./petsc4py { };
 

@@ -1,0 +1,13 @@
+{
+    "enabled": 1,
+    "hidden": true,
+    "description": "Generate Jobsets",
+    "nixexprinput": "declInput",
+    "nixexprpath": ".hydra/default.nix",
+    "checkinterval": 300,
+    "schedulingshares": 100,
+    "enableemail": false,
+    "emailoverride": "",
+    "keepnr": 3,
+    "inputs": {}
+}
