@@ -1,13 +1,13 @@
 { lib, fetchFromGitHub, python3, precice, fenics, pkg-config, openmpi, openssh }:
 python3.pkgs.buildPythonPackage rec {
   pname = "pyprecice";
-  version = "2.5.0.1";
+  version = "2.5.0.2";
 
   src = fetchFromGitHub {
     owner = "precice";
     repo = "python-bindings";
     rev = "v${version}";
-    hash = "sha256-0dxWtlN3x3orBgtCTxTsql39+MBVsgeHO7gXjOO8qcA=";
+    hash = "sha256-ppDilMwRxVsikTFQMNRYL0G1/HvVomz2S/2yx43u000=";
   };
 
   nativeBuildInputs = with python3.pkgs; [ cython openmpi openssh pkg-config ];
