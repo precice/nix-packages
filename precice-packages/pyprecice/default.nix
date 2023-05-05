@@ -20,4 +20,12 @@ python3.pkgs.buildPythonPackage rec {
   ];
 
   doCheck = false;
+
+  meta = {
+    description = "Python language bindings for preCICE";
+    homepage = "https://github.com/precice/python-bindings";
+    license = with lib.licenses; [ lgpl3Only ];
+    maintainers = with lib.maintainers; [ conni2461 ];
+    platforms = lib.platforms.unix;
+  };
 }

@@ -24,4 +24,12 @@ python3.pkgs.buildPythonPackage rec {
   doCheck = false;
 
   DIJITSO_CACHE_DIR = "/tmp";
+
+  meta = {
+    description = "preCICE-adapter for the open source computing platform FEniCS";
+    homepage = "https://github.com/precice/fenics-adapter";
+    license = with lib.licenses; [ lgpl3Only ];
+    maintainers = with lib.maintainers; [ conni2461 ];
+    platforms = lib.platforms.unix;
+  };
 }

@@ -98,4 +98,12 @@ stdenv.mkDerivation rec {
   propagatedBuildInputs = [ python3 python3.pkgs.numpy ];
 
   doCheck = true;
+
+  meta = {
+    description = "preCICE-adapter for the CFD code SU2";
+    homepage = "https://github.com/precice/su2-adapter";
+    license = with lib.licenses; [ lgpl21Only lgpl3Only ];
+    maintainers = with lib.maintainers; [ conni2461 ];
+    platforms = lib.platforms.unix;
+  };
 }

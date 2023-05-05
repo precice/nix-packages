@@ -25,7 +25,8 @@ python3.pkgs.buildPythonPackage rec {
   meta = {
     description = "Python bindings for PETSc, the Portable, Extensible Toolkit for Scientific Computation";
     homepage = "https://bitbucket.org/petsc/petsc4py";
-    license = lib.licenses.bsd3;
+    license = with lib.licenses; [ bsd3 ];
     maintainers = with lib.maintainers; [ conni2461 ];
+    platforms = lib.platforms.unix;
   };
 }
