@@ -1,4 +1,4 @@
-{ config, pkgs, lib, ... }:
+{ pkgs, lib, ... }:
 {
   nixpkgs.overlays = lib.mkBefore (import ./precice-packages);
   nixpkgs.config = {

@@ -59,5 +59,14 @@
       type = "app";
       program = "${packages.x86_64-linux.vm}/bin/run-precice-vm-vm";
     };
+
+    devShells.x86_64-linux.default = pkgs.mkShell {
+      buildInputs = (import ./configuration.nix { inherit pkgs; lib = nixpkgs.lib; }).environment.systemPackages;
+
+      shellHook = ''
+        source ${pkgs.openfoam}/bin/set-openfoam-vars
+        export LD_LIBRARY_PATH=${pkgs.precice-openfoam-adapter}/lib:$LD_LIBRARY_PATH
+      '';
+    };
   };
 }
