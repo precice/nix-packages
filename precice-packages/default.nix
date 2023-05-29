@@ -22,7 +22,6 @@
       precice-calculix-adapter = super.callPackage ./calculix-adapter { };
       precice-su2 = super.callPackage ./su2 { };
 
-      fenics = super.callPackage ./fenics { };
       precice-fenics-adapter = super.callPackage ./precice-fenics-adapter { } ;
 
       openfoam = super.callPackage ./openfoam { };

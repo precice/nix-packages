@@ -1,4 +1,4 @@
-{ lib, fetchFromGitHub, python3, precice, fenics, pkg-config, openmpi, openssh }:
+{ lib, fetchFromGitHub, python3, precice, pkg-config, openmpi, openssh }:
 python3.pkgs.buildPythonPackage rec {
   pname = "pyprecice";
   version = "2.5.0.2";
