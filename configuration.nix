@@ -1,8 +1,12 @@
 { config, pkgs, lib, ... }:
 {
   nixpkgs.overlays = lib.mkBefore (import ./precice-packages);
-  nixpkgs.config.allowUnfree = true;
-
+  nixpkgs.config = {
+    allowUnfree = true;
+    permittedInsecurePackages = [
+      "hdf5-1.10.9" # We need this for code aster
+    ];
+  };
   home-manager.users.precice = { pkgs, ... }: {
     home.stateVersion = "22.11";
     home.file = {
