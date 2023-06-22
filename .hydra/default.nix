@@ -1,33 +1,17 @@
 { declInput, projectName, ... }: let
-  defaultJobset = {
-    type = 0;
-    enabled = 1;
-    hidden = false;
-    description = "Uniprojekt von Simon und Max";
-    nixexprinput = "src";
-    nixexprpath = ".hydra/release.nix";
-    checkinterval = 120;
-    schedulingshares = 250;
-    enableemail = false;
-    emailoverride = "";
-    keepnr = 3;
-    inputs = {};
-  };
-
   jobsets = {
-    preciceJobset = {
-      inputs = {
-        src = {
-          type = "git";
-          value = "https://github.com/precice/nix-packages.git";
-          emailresponsible = false;
-        };
-        nixpkgs = {
-          type = "git";
-          value = "https://github.com/nixos/nixpkgs release-22.11";
-          emailresponsible = false;
-        };
-      };
+    flakeJobset = {
+      enabled = 1;
+      hidden = false;
+      description = "Research project for building and packaging preCICE adapters and their solvers using nix";
+      type = 1;
+      flake = "github:precice/nix-packages";
+      checkinterval = 120;
+      schedulingshares = 250;
+      enableemail = false;
+      emailoverride = "";
+      keepnr = 3;
+      inputs = {};
     };
   };
 in {
@@ -38,7 +22,7 @@ in {
     builder = "/bin/sh";
     args = [
       (builtins.toFile "spec-builder.sh" ''
-        echo '${builtins.toJSON (builtins.mapAttrs (_: inputs: defaultJobset // inputs) jobsets)}' > "$out"
+        echo '${builtins.toJSON jobsets}' > "$out"
       '')
     ];
   };

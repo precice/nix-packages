@@ -32,7 +32,7 @@
         };
       }];
     };
-  in {
+  in rec {
     nixosConfigurations.precice-vm = nixpkgs.lib.nixosSystem precice-system;
 
     packages.x86_64-linux = {
@@ -40,5 +40,7 @@
       vagrant-vbox-image = nixos-generators.nixosGenerate (precice-system-virtualbox // { format = "vagrant-virtualbox"; });
       vm = nixos-generators.nixosGenerate (precice-system // { format = "vm"; });
     };
+
+    hydraJobs = packages;
   };
 }
