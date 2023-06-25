@@ -32,7 +32,11 @@
         };
       }];
     };
-    pkgs = import nixpkgs { system = "x86_64-linux"; overlays = import ./precice-packages; };
+    pkgs = import nixpkgs {
+      system = "x86_64-linux";
+      overlays = import ./precice-packages;
+      config.allowUnfree = true;
+    };
 
     # This simply reads all defined names of the packages specified in the overlay, so it results in
     # a list of package names: [ "blacs" "dealii" ... ]
