@@ -32,10 +32,18 @@
         };
       }];
     };
+    pkgs = import nixpkgs { system = "x86_64-linux"; overlays = import ./precice-packages; };
+
+    # This simply reads all defined names of the packages specified in the overlay, so it results in
+    # a list of package names: [ "blacs" "dealii" ... ]
+    precice-package-names = builtins.attrNames ((builtins.elemAt (import ./precice-packages) 1) null { callPackage = arg1: arg2: {}; });
+
+    # This expands "dealii" to `{ dealii = pkgs.dealii; }`
+    precice-packages = pkgs.lib.genAttrs precice-package-names (name: pkgs.${name});
   in rec {
     nixosConfigurations.precice-vm = nixpkgs.lib.nixosSystem precice-system;
 
-    packages.x86_64-linux = {
+    packages.x86_64-linux = precice-packages // {
       iso = nixos-generators.nixosGenerate (precice-system // { format = "iso"; });
       vagrant-vbox-image = nixos-generators.nixosGenerate (precice-system-virtualbox // { format = "vagrant-virtualbox"; });
       vm = nixos-generators.nixosGenerate (precice-system // { format = "vm"; });
