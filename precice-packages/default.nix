@@ -32,7 +32,9 @@
       mumps = super.callPackage ./mumps { };
       tfel = super.callPackage ./tfel { };
 
-      precice-dune = super.callPackage ./dune { } ;
+      precice-dune = super.callPackage ./dune { };
+
+      mpibench = super.callPackage ./mpibench { };
     }
   )
 ]
