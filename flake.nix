@@ -54,5 +54,10 @@
     };
 
     hydraJobs = packages;
+
+    apps.x86_64-linux.default = {
+      type = "app";
+      program = "${packages.x86_64-linux.vm}/bin/run-precice-vm-vm";
+    };
   };
 }
