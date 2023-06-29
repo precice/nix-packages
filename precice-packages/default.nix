@@ -35,6 +35,9 @@
       precice-dune = super.callPackage ./dune { };
 
       mpibench = super.callPackage ./mpibench { };
+
+      nutils = super.callPackage ./nutils { };
+      bottombar = super.callPackage ./bottombar { };
     }
   )
 ]

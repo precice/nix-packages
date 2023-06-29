@@ -16,7 +16,7 @@
 }:
 let
   python_vtk_9 = python3.pkgs.toPythonModule (vtk_9.override {
-    pythonInterpreter = python3;
+    python = python3;
     enablePython = true;
   });
 in
