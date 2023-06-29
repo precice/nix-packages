@@ -47,7 +47,11 @@
   in rec {
     nixosConfigurations.precice-vm = nixpkgs.lib.nixosSystem precice-system;
 
-    packages.x86_64-linux = precice-packages // {
+    packages.x86_64-linux = {
+      # These are packages that are already available upstream.
+      # We simply re-expose them to allow for easy access by the nix tools.
+      inherit (pkgs) precice;
+    } // precice-packages // { # Custom build packages for preCICE
       iso = nixos-generators.nixosGenerate (precice-system // { format = "iso"; });
       vagrant-vbox-image = nixos-generators.nixosGenerate (precice-system-virtualbox // { format = "vagrant-virtualbox"; });
       vm = nixos-generators.nixosGenerate (precice-system // { format = "vm"; });
