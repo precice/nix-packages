@@ -109,16 +109,16 @@
     source ${pkgs.openfoam}/bin/set-openfoam-vars
   '';
   environment.systemPackages = with pkgs; let
-    precice-python-packages = python3.withPackages (ps: with ps; [
-      ipython
+    precice-python-packages = python3.withPackages (ps: [
+      ps.ipython
 
       # nutils
-      matplotlib
+      ps.matplotlib
       nutils
 
-      virtualenv
-      pyprecice
-      pandas
+      ps.virtualenv
+      ps.pyprecice
+      ps.pandas
     ]);
     preciceToPNG = writeShellScriptBin "preciceToPNG" "cat \"\${1:-precice-config.xml}\" | ${precice-config-visualizer}/bin/precice-config-visualizer | ${graphviz}/bin/dot -Tpng > precice-config.png";
     preciceToPDF = writeShellScriptBin "preciceToPDF" "cat \"\${1:-precice-config.xml}\" | ${precice-config-visualizer}/bin/precice-config-visualizer | ${graphviz}/bin/dot -Tpdf > precice-config.pdf";
