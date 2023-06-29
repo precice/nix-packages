@@ -24,9 +24,8 @@ stdenv.mkDerivation rec {
   meta = {
     description = "An open source finite element library";
     homepage = "https://www.dealii.org/";
-    license = with lib.licenses; [ unfree ];
+    license = with lib.licenses; [ lgpl21Only ];
     maintainers = with lib.maintainers; [ cheriimoya ];
-    mainProgram = "binprecice";
     platforms = lib.platforms.unix;
   };
 }
