@@ -13,6 +13,16 @@
   })
   (self: super:
     {
+      stdenv = super.impureUseNativeOptimizations super.stdenv;
+
+      libxcrypt = super.libxcrypt.overrideAttrs (old: {
+        configureFlags = old.configureFlags ++ [ "--disable-werror" ];
+      });
+
+      precice = super.precice.overrideAttrs (old: {
+        cmakeFlags = old.cmakeFlags ++ [ "-DPRECICE_ENABLE_C=ON" "-DPRECICE_ENABLE_FORTRAN=ON" ]; # TODO: Fix this upstream
+      });
+
       pyprecice = super.callPackage ./pyprecice { };
       petsc4py = super.callPackage ./petsc4py { };
 
