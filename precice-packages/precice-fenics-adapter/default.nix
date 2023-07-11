@@ -7,7 +7,7 @@ python3.pkgs.buildPythonPackage rec {
     owner = "precice";
     repo = "fenics-adapter";
     rev = "v${version}";
-    hash = "sha256-MVFuQn/9282ufjZEF7NhIDPycoDbvTWof1KVPTB/Crs=";
+    hash = "sha256-pP+u5hTRUfMkZvtpo6vd/Wg61s8B8Zl79hbLNk58NX4=";
   };
 
   nativeBuildInputs = [ openmpi openssh pkg-config ];
