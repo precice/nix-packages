@@ -13,6 +13,14 @@
   })
   (self: super:
     {
+      # We fetch parmetis from archive.org because the server is not very reliable
+      parmetis = super.parmetis.overrideAttrs (oA: rec {
+        src = super.fetchurl {
+          url = "https://web.archive.org/web/20221116225811/http://glaros.dtc.umn.edu/gkhome/fetch/sw/parmetis/parmetis-${oA.version}.tar.gz";
+          sha256 = "0pvfpvb36djvqlcc3lq7si0c5xpb2cqndjg8wvzg35ygnwqs5ngj";
+        };
+      });
+
       pyprecice = super.callPackage ./pyprecice { };
       petsc4py = super.callPackage ./petsc4py { };
 
