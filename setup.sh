@@ -34,3 +34,5 @@ fi
 
 echo "-- Obtaining Nix from upstream"
 $HOME/.bin/nix-static build nixpkgs#nix nixpkgs#bashInteractive --no-link
+
+echo "-- Please open a new shell, after that nix-static should be available in your path"
