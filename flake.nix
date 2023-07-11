@@ -45,8 +45,10 @@
     # This expands "dealii" to `{ dealii = pkgs.dealii; }`
     precice-packages = pkgs.lib.genAttrs precice-package-names (name: pkgs.${name});
   in rec {
+    # Access by running `nixos-rebuild --flake .#precice-vm build`
     nixosConfigurations.precice-vm = nixpkgs.lib.nixosSystem precice-system;
 
+    # Access by running `nix build .#<attribute>`
     packages.x86_64-linux = {
       # These are packages that are already available upstream.
       # We simply re-expose them to allow for easy access by the nix tools.
@@ -59,11 +61,13 @@
 
     hydraJobs = packages;
 
+    # Access by running `nix run`
     apps.x86_64-linux.default = {
       type = "app";
       program = "${packages.x86_64-linux.vm}/bin/run-precice-vm-vm";
     };
 
+    # Access by running `nix develop`
     devShells.x86_64-linux.default = pkgs.mkShell {
       buildInputs = (import ./configuration.nix { inherit pkgs; lib = nixpkgs.lib; }).environment.systemPackages;
 
