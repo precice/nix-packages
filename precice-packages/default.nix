@@ -44,8 +44,8 @@
 
       mpibench = super.callPackage ./mpibench { };
 
-      nutils = super.callPackage ./nutils { };
-      bottombar = super.callPackage ./bottombar { };
+      nutils = super.python3Packages.callPackage ./nutils { };
+      bottombar = super.python3Packages.callPackage ./bottombar { };
     }
   )
 ]

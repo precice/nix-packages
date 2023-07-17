@@ -1,9 +1,10 @@
 { lib
 , fetchFromGitHub
-, python3
+, buildPythonPackage
+, python3Packages
 }:
 
-python3.pkgs.buildPythonPackage rec {
+buildPythonPackage rec {
   pname = "bottombar";
   version = "1.0";
   format = "pyproject";
@@ -15,7 +16,7 @@ python3.pkgs.buildPythonPackage rec {
     hash = "sha256-/3m34HcYmmEf92H3938dYV1Q6k44KaCb9TDx9nDNPnM=";
   };
 
-  propagatedBuildInputs = with python3.pkgs; [
+  propagatedBuildInputs = with python3Packages; [
     flit-core
   ];
 

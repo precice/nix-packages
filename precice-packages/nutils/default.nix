@@ -1,16 +1,19 @@
 { lib
 , stdenv
-, python3
+, pythonOlder
+, python3Packages
+, buildPythonPackage
+, pytestCheckHook
 , fetchFromGitHub
 , bottombar
 }:
 
-python3.pkgs.buildPythonPackage rec {
+buildPythonPackage rec {
   pname = "nutils";
   version = "7.3";
   format = "pyproject";
 
-  disabled = python3.pythonOlder "3.7";
+  disabled = pythonOlder "3.7";
 
   src = fetchFromGitHub {
     owner = "evalf";
@@ -20,15 +23,15 @@ python3.pkgs.buildPythonPackage rec {
   };
 
   propagatedBuildInputs = [
-    python3.pkgs.numpy
-    python3.pkgs.treelog
-    python3.pkgs.stringly
-    python3.pkgs.flit-core
+    python3Packages.numpy
+    python3Packages.treelog
+    python3Packages.stringly
+    python3Packages.flit-core
     bottombar
   ];
 
   nativeCheckInputs = [
-    python3.pkgs.pytestCheckHook
+    pytestCheckHook
   ];
 
   pythonImportsCheck = [
