@@ -14,6 +14,17 @@
     };
   };
 
+  # This allows us to use the garnix binary cache which the GitHub CI job
+  # copies the binaries to, so we don't have to build anything locally
+  nixConfig = {
+    extra-substituters = [
+      "https://cache.garnix.io"
+    ];
+    extra-trusted-public-keys = [
+      "cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g="
+    ];
+  };
+
   outputs = { self, nixpkgs, home-manager, nixos-generators }: let
     precice-system-light = {
       system = "x86_64-linux";
