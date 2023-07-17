@@ -98,7 +98,13 @@
     openssh.authorizedKeys.keys = [ (lib.readFile ./vagrant.pub) ];
   };
 
-  environment.variables.NIXPKGS_ALLOW_UNFREE = "1";
+  environment.variables = {
+    NIXPKGS_ALLOW_UNFREE = "1";
+    EDITOR = "nvim";
+  };
+  environment.shellAliases = {
+    vim = "nvim";
+  };
   environment.extraInit = ''
     source ${pkgs.openfoam}/bin/set-openfoam-vars
   '';
@@ -159,7 +165,6 @@
     # Additional packages
     paraview
     wget
-
   ];
 
   # TODO: Somehow make sure `pip3 uninstall -y fenics-ufl` is solved https://github.com/precice/vm/issues/4
