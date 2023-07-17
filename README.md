@@ -1,10 +1,24 @@
 # NixOS Precice VM
 
-To build the VM, use `nixos-rebuild build-vm -I nixos-config=./nixos-vm.nix` or the flake based approach `nixos-rebuild build-vm --flake '.#precice-vm'`.
-This will generate a symlink called `result` in the current directory.
-To start the VM, run `./result/bin/run-precice-vm-vm`.
+<!-- INTRO, was das repo macht -->
 
-For accessing the single packages via `nix-shell`, you have to alter your `NIX_PATH` like this: `NIX_PATH=nixpkgs-overlays=./precice-packages/default.nix:$NIX_PATH nix-shell -p openfoam openfoam-wmake pkg-config precice`
+## Getting Started
+
+To build the precice-vm, the Nix binary is required.
+We provide a setup script to get the Nix package manager if it is not already available.
+After that you can use it to build either a qemu or vagrant virtual box VM image of the precice-vm or you can even build a bootable iso.
+
+```
+# 0. If nix is not already available, we first need to download it
+# The easiest way is to use the ./setup.sh script provided by the repo, otherwise please see https://nixos.org/download
+bash ./setup.sh
+# After the script succeeded nix-static should be available
+# 1. inside this repository you can now run to build a qemu vm image
+nix build '.#vm'
+# You can replace `vm` with
+# - vagrant-vbox-image -- to build a vagrant virtual box image
+# - iso                -- to build a bootable iso
+```
 
 ## HPC Environment
 
