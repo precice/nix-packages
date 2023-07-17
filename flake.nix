@@ -51,6 +51,9 @@
       system = "x86_64-linux";
       overlays = import ./precice-packages;
       config.allowUnfree = true;
+      config.permittedInsecurePackages = [
+        "hdf5-1.10.9"
+      ];
     };
 
     # This simply reads all defined names of the packages specified in the overlay, so it results in
