@@ -15,6 +15,10 @@
   };
 
   outputs = { self, nixpkgs, home-manager, nixos-generators }: let
+    precice-system-light = {
+      system = "x86_64-linux";
+      modules = [ home-manager.nixosModules.home-manager ./configuration-light.nix ];
+    };
     precice-system = {
       system = "x86_64-linux";
       modules = [ home-manager.nixosModules.home-manager ./configuration.nix ];
@@ -55,6 +59,7 @@
       iso = nixos-generators.nixosGenerate (precice-system // { format = "iso"; });
       vagrant-vbox-image = nixos-generators.nixosGenerate (precice-system-virtualbox // { format = "vagrant-virtualbox"; });
       vm = nixos-generators.nixosGenerate (precice-system // { format = "vm"; });
+      vm-light = nixos-generators.nixosGenerate (precice-system-light // { format = "vm"; });
     };
 
     hydraJobs = packages;
