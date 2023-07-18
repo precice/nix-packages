@@ -1,4 +1,4 @@
-{ pkgs, lib, ... }:
+{ pkgs, lib, config, ... }:
 {
   nixpkgs.overlays = lib.mkBefore (import ./precice-packages);
   nixpkgs.config = {
@@ -89,7 +89,30 @@
     };
   };
 
+  fileSystems."/" = {
+    device = "/dev/sda1";
+    fsType = "ext4";
+  };
+  boot.loader.grub.device = "/dev/sda";
+  # This is all needed to make resizing work inside the VirtualBox VM
   virtualisation.virtualbox.guest.enable = true;
+  services.xserver.videoDrivers = lib.mkForce [ "vmware" "virtualbox" "modesetting" ];
+  systemd.user.services = let
+    vbox-client = desc: flags: {
+      description = "VirtualBox Guest: ${desc}";
+
+      wantedBy = [ "graphical-session.target" ];
+      requires = [ "dev-vboxguest.device" ];
+      after = [ "dev-vboxguest.device" ];
+
+      unitConfig.ConditionVirtualization = "oracle";
+
+      serviceConfig.ExecStart = "${config.boot.kernelPackages.virtualboxGuestAdditions}/bin/VBoxClient -fv ${flags}";
+    };
+  in {
+    virtualbox-resize = vbox-client "Resize" "--vmsvga";
+    virtualbox-clipboard = vbox-client "Clipboard" "--clipboard";
+  };
 
   users.users.precice = {
     isNormalUser = true;

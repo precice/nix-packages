@@ -54,6 +54,14 @@ nix build '.#vm'
 # - vagrant-vbox-image -- to build a vagrant virtual box image
 # - iso                -- to build a bootable iso
 ```
+## VirtualBox Vagrant image
+
+To build and use the Vagrant image:
+1. `nix build .#vagrant-vbox-image`, this will build the .box file and create a symlink `result` in the current directory
+2. `vagrant box add ./result --name preCICE` to add the box
+3. As usual, run `vagrant up`
+
+To apply changes in the configuration.nix to the VM, you can run `sudo nixos-rebuild --flake /vagrant# switch` from within the VM.
 
 ## HPC Environment
 
