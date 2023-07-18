@@ -1,4 +1,4 @@
-# NixOS Precice VM
+# preCICE VM, solvers and adapters, built with Nix/NixOS
 
 This repository is the result of a research project about reproducibility in scientific software with a case study on preCICE using the [Nix package manager](https://nixos.org/).
 The value of this repo are the Nix package definitions of precice-adapters, several solvers and the preCICE distribution VM.
@@ -36,6 +36,11 @@ Those outputs can be built reproducibly using Nix.
 To build the precice-vm, the Nix binary is required.
 We provide a [setup script](./setup.sh) to get the Nix package manager if it is not already available.
 After that, you can use Nix to build the preCICE VM image, either as a bootable iso file, a qemu start script or a Vagrant VirtualBox VM image.
+
+The first time you issue a Nix command inside the projects directory you are asked if you want to use the garnix cache.
+To avoid building everything from scratch for yourself, you should definitely answer the prompt with yes here.
+When enabled, Nix uses the garnix cache which contains all packages and images the flake contains as outputs.
+Those outputs are built inside a CI job, so on every commit.
 
 ```
 # 0. If nix is not already available, we first need to download it
