@@ -1,11 +1,11 @@
 { lib, python3, openmpi, openssh, petsc }:
 python3.pkgs.buildPythonPackage rec {
   pname = "petsc4py";
-  version = "3.17.4";
+  version = "3.19.1";
 
   src = python3.pkgs.fetchPypi {
     inherit pname version;
-    hash = "sha256-IWw9oHRVeUZhXTfQgmvInx8uWZMj4trL3EUybXi9UMY=";
+    hash = "sha256-0E3vmZXtY5XhJcYF2haUONd9QQ1QGdxXvkLkKK3jAZA=";
   };
 
   PETSC_DIR = "${petsc}";
