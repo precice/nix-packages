@@ -1,0 +1,5 @@
+builds:
+  exclude:
+    # This cannot be built as a system directly as we only use it to build the
+    # VM images
+    - nixosConfigurations.precice-vm
