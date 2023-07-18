@@ -105,7 +105,7 @@
   environment.extraInit = ''
     # source ''${pkgs.openfoam}/bin/set-openfoam-vars
     if [[ ! -e ~/tutorials ]]; then
-      ${pkgs.git}/bin/git clone https://github.com/precice/tutorials
+      ${pkgs.git}/bin/git clone https://github.com/precice/tutorials ~/tutorials
     fi
   '';
   environment.systemPackages = with pkgs; let
