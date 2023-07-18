@@ -90,7 +90,7 @@
   };
 
   fileSystems."/" = {
-    device = "/dev/sda1";
+    device = "/dev/disk/by-label/nixos";
     fsType = "ext4";
   };
   boot.loader.grub.device = "/dev/sda";

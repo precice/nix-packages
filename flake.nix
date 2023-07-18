@@ -88,7 +88,7 @@
 
     # Access by running `nix develop`
     devShells.x86_64-linux.default = pkgs.mkShell {
-      buildInputs = (import ./configuration.nix { inherit pkgs; lib = nixpkgs.lib; }).environment.systemPackages;
+      buildInputs = (import ./configuration.nix { inherit pkgs; lib = nixpkgs.lib; config = null; }).environment.systemPackages;
 
       shellHook = ''
         source ${pkgs.openfoam}/bin/set-openfoam-vars
