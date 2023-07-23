@@ -62,7 +62,7 @@ in stdenv.mkDerivation rec {
   src = fetchgit {
     url = "https://develop.openfoam.com/Development/openfoam.git";
     rev = "OpenFOAM-v${version}";
-    sha256 = "sha256-snrFOsENf/siqFd1mzxAsYbw1ba67TXMgaNDpb26uX0=";
+    hash = "sha256-snrFOsENf/siqFd1mzxAsYbw1ba67TXMgaNDpb26uX0=";
   };
 
   nativeBuildInputs = [ gnumake m4 makeWrapper ];
