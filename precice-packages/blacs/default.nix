@@ -12,7 +12,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "http://www.netlib.org/blacs/mpiblacs.tgz";
-    sha256 = "sha256-iN1yZdQSAilI3rt6JzcibNU6O/c7C2L8Vc6zzMilmPc=";
+    hash = "sha256-iN1yZdQSAilI3rt6JzcibNU6O/c7C2L8Vc6zzMilmPc=";
   };
 
   preBuild = ''

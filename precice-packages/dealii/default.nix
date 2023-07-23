@@ -14,7 +14,7 @@ stdenv.mkDerivation rec {
     owner = "dealii";
     repo = pname;
     rev = "v${version}";
-    sha256 = "sha256-Kz78U5ud36cTMq4E8FclOsmNsjMZfz+23tRXW/sl498=";
+    hash = "sha256-Kz78U5ud36cTMq4E8FclOsmNsjMZfz+23tRXW/sl498=";
   };
 
   nativeBuildInputs = [ cmake gcc ];

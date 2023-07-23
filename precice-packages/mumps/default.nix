@@ -25,7 +25,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "https://graal.ens-lyon.fr/MUMPS/MUMPS_${version}.tar.gz";
-    sha256 = "sha256-Gr/ylPpH7kz9UN/VxZWUK3Lr/O3OCBQqdamas1AU+hU=";
+    hash = "sha256-Gr/ylPpH7kz9UN/VxZWUK3Lr/O3OCBQqdamas1AU+hU=";
   };
 
   preBuild = ''

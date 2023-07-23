@@ -17,7 +17,7 @@
       parmetis = super.parmetis.overrideAttrs (oA: rec {
         src = super.fetchurl {
           url = "https://web.archive.org/web/20221116225811/http://glaros.dtc.umn.edu/gkhome/fetch/sw/parmetis/parmetis-${oA.version}.tar.gz";
-          sha256 = "0pvfpvb36djvqlcc3lq7si0c5xpb2cqndjg8wvzg35ygnwqs5ngj";
+          hash = "sha256-8tmiMbfPl/H+5ujJZjET6/bCQNQH08EYxVs2M9a+bl8=";
         };
       });
 

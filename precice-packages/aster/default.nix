@@ -49,7 +49,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "https://www.code-aster.org/FICHIERS/aster-full-src-${version}-1.noarch.tar.gz";
-    sha256 = "sha256-3LOQDeHlwGJAYCU2YKY1EqtBXL4UPN2HhnoCdu9r8jM=";
+    hash = "sha256-3LOQDeHlwGJAYCU2YKY1EqtBXL4UPN2HhnoCdu9r8jM=";
   };
 
   patches = [

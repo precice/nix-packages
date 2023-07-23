@@ -8,7 +8,7 @@ stdenv.mkDerivation rec {
     owner = "precice";
     repo = "dealii-adapter";
     rev = "dbb25bea51531b7e4e0c9b5e4def3a7fadf8367c";
-    sha256 = "sha256-pPQ2YEWiHPI4ph9mK3250TVzsAf9z5uYNae2jlflgUE=";
+    hash = "sha256-pPQ2YEWiHPI4ph9mK3250TVzsAf9z5uYNae2jlflgUE=";
   };
 
   nativeBuildInputs = [ cmake ];

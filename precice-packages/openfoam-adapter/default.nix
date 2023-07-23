@@ -19,7 +19,7 @@ stdenv.mkDerivation rec {
     owner = "precice";
     repo = "openfoam-adapter";
     rev = "v${version}";
-    sha256 = "sha256-+8VfiKIXzWXu2L/hd3IJV56BBWM/Nb73DWv4BTHvBbQ=";
+    hash = "sha256-+8VfiKIXzWXu2L/hd3IJV56BBWM/Nb73DWv4BTHvBbQ=";
   };
 
   nativeBuildInputs = [ openfoam pkg-config precice ];
