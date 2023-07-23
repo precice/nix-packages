@@ -44,7 +44,6 @@ stdenv.mkDerivation rec {
     homepage = "https://precice.org/adapter-openfoam-overview.html";
     license = with lib.licenses; [ gpl3 ];
     maintainers = with lib.maintainers; [ cheriimoya ];
-    mainProgram = "elasticity";
     platforms = lib.platforms.unix;
   };
 }
