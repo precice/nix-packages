@@ -27,16 +27,14 @@ Adding the following line gives adds perl as an input at this phase `nativeCheck
 We can do that at the top of the file with the following diff
 ```diff
 diff --git a/precice-packages/dealii/default.nix b/precice-packages/dealii/default.nix
-index cdfe028..2dd41b0 100644
+index 1e8c6e3..a6c0a49 100644
 --- a/precice-packages/dealii/default.nix
 +++ b/precice-packages/dealii/default.nix
-@@ -3,7 +3,8 @@
-   stdenv,
-   fetchFromGitHub,
-   cmake,
--  gcc
-+  gcc,
-+  perl,
+@@ -20,6 +20,7 @@
+ , petsc
+ , zlib
+ , openssh
++, perl
  }:
 
  stdenv.mkDerivation rec {
