@@ -22,8 +22,9 @@ Note, that there might be more to the version bump, like a change in dependencie
 6. Run `nix build '.#dealii'` again
 7. In this case the build works, but it seems like the tests fail, you can inspect the logs with `nix log ...`, `nix build` will tell you the complete command.
 8. The log output indicates that `perl` is missing for the tests, so you can add a new test dependency.
-There are a lot of different input types that nix has which are present at different parts of the stage, see [reference](https://nixos.org/manual/nixpkgs/stable/#ssec-stdenv-dependencies-reference), but we are looking for `nativeCheckInputs`, which are present at the check/test phase.
-Adding the following line gives adds perl as an input at this phase `nativeCheckInputs = [ perl ];`, but we also need to define it as an input into the package.
+There are a lot of different input types that nix has which are present at different parts of the stage, see [reference](https://nixos.org/manual/nixpkgs/stable/#ssec-stdenv-dependencies-reference).
+Here, we are looking for `nativeCheckInputs`, which are inputs that are present at the check/test phase.
+We already have an input in the `nativeCheckInputs` so we need to extend the current inputs with `perl` resulting in `nativeCheckInputs = [ openssh perl ];`, but we also need to define it as an input into the package.
 We can do that at the top of the file with the following diff
 ```diff
 diff --git a/precice-packages/dealii/default.nix b/precice-packages/dealii/default.nix
