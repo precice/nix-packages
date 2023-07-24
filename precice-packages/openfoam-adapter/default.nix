@@ -32,11 +32,16 @@ stdenv.mkDerivation rec {
     export ADAPTER_PREP_FLAGS="${lib.optionalString debugMode "-DADAPTER_DEBUG_MODE"} ${lib.optionalString enableTimings "-DADAPTER_ENABLE_TIMINGS"}"
 
     ./Allwmake -j -q
+
+    cp ${openfoam}/bin/set-openfoam-vars .
+    chmod 644 set-openfoam-vars
+    echo "LD_LIBRARY_PATH=$out/lib:$LD_LIBRARY_PATH" >> set-openfoam-vars
   '';
 
   installPhase = ''
-    mkdir -p $out/lib
+    mkdir -p $out/lib $out/bin
     cp libpreciceAdapterFunctionObject.so $out/lib/
+    cp ./set-openfoam-vars $out/bin/set-openfoam-adapter-vars
   '';
 
   meta = {
