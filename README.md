@@ -54,6 +54,17 @@ nix build '.#vm'
 # - vagrant-vbox-image -- to build a vagrant virtual box image
 # - iso                -- to build a bootable iso
 ```
+
+## Running the perpendicular-flap
+
+Having Nix installed, you don't need to build the whole VM locally.
+To run the perpendicular-flap tutorial, clone [the tutorials repository](https://github.com/precice/tutorials/), open two terminals and `cd` into the respective directories `perpendicular-flap/fluid-openfoam` and `perpendicular-flap/solid-calculix`.
+In each of the shells run `nix shell github:precice/nix-packages#precice-calculix-adapter github:precice/nix-packages#precice-openfoam-adapter`.
+The first time you run this, Nix will ask you, if you want to use the garnix cache, to which you should reply with `y` (otherwise OpenFOAM and CalculiX will be built locally).
+Inside the solid-calculix directory, you can run `./run.sh` directly while in the fluid-openfoam directory, you have to issue the command `source set-openfoam-adapter-vars` before running the `./run.sh` script.
+
+The simulation should run with both participants now.
+
 ## VirtualBox Vagrant image
 
 To build and use the Vagrant image:
