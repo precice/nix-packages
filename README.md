@@ -55,6 +55,12 @@ nix build '.#vm'
 # - iso                -- to build a bootable iso
 ```
 
+Note that if you use vanilla Nix/NixOS, you need to enable experimental features, i.e.:
+
+```plaintext
+mkdir -p ~/.config/nix && echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
+```
+
 ## Running the perpendicular-flap
 
 Having Nix installed, you don't need to build the whole VM locally.
