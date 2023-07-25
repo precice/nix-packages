@@ -33,7 +33,7 @@ Those outputs can be built reproducibly using Nix.
 
 ## Getting Started
 
-To build the precice-vm, the Nix binary is required.
+To build the preCICE VM, the Nix binary is required.
 We provide a [setup script](./setup.sh) to get the Nix package manager if it is not already available.
 After that, you can use Nix to build the preCICE VM image, either as a bootable iso file, a qemu start script or a Vagrant VirtualBox VM image.
 
@@ -41,6 +41,9 @@ The first time you issue a Nix command inside the projects directory you are ask
 To avoid building everything from scratch for yourself, you should definitely answer the prompt with yes here.
 When enabled, Nix uses the garnix cache which contains all packages and images the flake contains as outputs.
 Those outputs are built inside a CI job, so on every commit.
+
+Using garnix only works if you use the `./setup.sh` script or the preCICE VM we provide, you shouldn't have to configure anything.
+If you use a vanilla solution, please refer to [the section below](#notes-regarding-vanilla-nixnixos), but if there are any "out of the box" problems with the setup script or the VM, please open an issue.
 
 ```
 # 0. If nix is not already available, we first need to download it
@@ -55,11 +58,35 @@ nix build '.#vm'
 # - iso                -- to build a bootable iso
 ```
 
-Note that if you use vanilla Nix/NixOS, you need to enable experimental features, i.e.:
+### Notes regarding vanilla Nix/NixOS
+
+#### experimental-features
+
+If you use vanilla Nix/NixOS, you need to enable experimental features, which can be enabled like so:
 
 ```plaintext
 mkdir -p ~/.config/nix && echo 'experimental-features = nix-command flakes' >> ~/.config/nix/nix.conf
 ```
+
+For NixOS, you can also [set this option declaratively](https://github.com/precice/nix-packages/commit/4bc81bb0cd6f889ef4a08328bc79bddde98777fe#diff-7fb0d30826718de8f216d0f0a15452c87445e0bbb745754bf77e1320079f46f9R11).
+
+#### Trusting the garnix cache
+
+When you install NixOS or if you install Nix in multi-user mode, you additionally need to configure support for the garnix cache.
+A single user installation (i.e. you run the `nix` binary directly without talking to the Nix daemon) should not be affected by this.
+
+For security reasons, only https://cache.nixos.org is allowed as a binary cache by default and only the root user can use other binary caches.
+There are several ways to solve this problem, you should choose only one (they are ordered by highest preference first).
+
+For Nix in multi-user mode:
+1. Add `substituters = https://cache.garnix.io` and `trusted-public-keys = cache.garnix.io:CTFPyKSLcx5RMJKfLo5EEPUObbA78b0YQ2DTCJXqr9g=` to your `nix.conf` file and restart the daemon
+2. Add `trusted-users = @wheel` to your `nix.conf` file and restart the daemon
+3. Run the command, `nix shell` for instance, as the root user using `sudo nix shell`
+
+For NixOS:
+1. Add [these two lines](https://github.com/precice/nix-packages/commit/4bc81bb0cd6f889ef4a08328bc79bddde98777fe#diff-7fb0d30826718de8f216d0f0a15452c87445e0bbb745754bf77e1320079f46f9R12-R13) to your `/etc/nixos/configuration.nix` and run `sudo nixos-rebuild switch`
+2. Add your user or the wheel group to the [`trusted-users` setting](https://search.nixos.org/options?channel=23.05&show=nix.settings.trusted-users&from=0&size=50&sort=relevance&type=packages&query=nix.settings.trusted-users) by adding `nix.settings.trusted-users = [ "@wheel" ];` to your `/etc/nixos/configuration.nix` and running `sudo nixos-rebuild switch`
+3. Run the command, `nix shell` for instance, as the root user using `sudo nix shell`
 
 ## Running the perpendicular-flap
 
