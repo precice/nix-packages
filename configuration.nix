@@ -7,6 +7,7 @@
       "hdf5-1.10.9" # We need this for code aster
     ];
   };
+  nix.settings.experimental-features = [ "nix-command" "flakes" ];
   home-manager.users.precice = { pkgs, ... }: {
     home.stateVersion = "22.11";
     home.file = {
