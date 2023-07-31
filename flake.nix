@@ -30,6 +30,19 @@
       system = "x86_64-linux";
       modules = [ home-manager.nixosModules.home-manager ./configuration-light.nix ];
     };
+    precice-system-virtualbox-light = precice-system-light // {
+      modules = precice-system-light.modules ++ [{
+        virtualbox = {
+          memorySize = 2048;
+          vmName = "preCICE-VM";
+          params = {
+            cpus = 2;
+            vram = 64;
+            graphicscontroller = "vmsvga"; # This is default
+          };
+        };
+      }];
+    };
     precice-system = {
       system = "x86_64-linux";
       modules = [ home-manager.nixosModules.home-manager ./configuration.nix ];
@@ -73,7 +86,9 @@
       inherit (pkgs) precice;
     } // precice-packages // { # Custom build packages for preCICE
       iso = nixos-generators.nixosGenerate (precice-system // { format = "iso"; });
+      iso-light = nixos-generators.nixosGenerate (precice-system-light // { format = "iso"; });
       vagrant-vbox-image = nixos-generators.nixosGenerate (precice-system-virtualbox // { format = "vagrant-virtualbox"; });
+      vagrant-vbox-image-light = nixos-generators.nixosGenerate (precice-system-virtualbox-light // { format = "vagrant-virtualbox"; });
       vm = nixos-generators.nixosGenerate (precice-system // { format = "vm"; });
       vm-light = nixos-generators.nixosGenerate (precice-system-light // { format = "vm"; });
     };
