@@ -32,4 +32,4 @@ experimental-features = nix-command flakes
 EOF
 fi
 
-echo "-- Please open a new shell, after that nix-static should be available in your path"
+echo "-- Please restart your session (logout & login again). After that, nix-static should be available in your path."
