@@ -51,8 +51,11 @@ bash ./setup.sh
 # 1. inside this repository you can now run the following command to build a qemu VM image
 nix build '.#vm'
 # You can replace `vm` with
-# - vagrant-vbox-image -- to build a vagrant virtual box image
-# - iso                -- to build a bootable iso
+# - vm-light                 -- to build a lightweight qemu VM imsage
+# - vagrant-vbox-image       -- to build a vagrant virtual box image
+# - vagrant-vbox-image-light -- to build a vagrant virtual box image of the lightweight configuration
+# - iso                      -- to build a bootable iso
+# - iso-light                -- to build a bootable iso of the lightweight configuration
 ```
 
 Note that if you use vanilla Nix/NixOS, you need to enable experimental features, i.e.:
@@ -74,7 +77,7 @@ The simulation should run with both participants now.
 ## VirtualBox Vagrant image
 
 To build and use the Vagrant image:
-1. `nix build .#vagrant-vbox-image`, this will build the .box file and create a symlink `result` in the current directory
+1. `nix build '.#vagrant-vbox-image'`, this will build the .box file and create a symlink `result` in the current directory
 2. `vagrant box add ./result --name preCICE` to add the box
 3. As usual, run `vagrant up`
 
