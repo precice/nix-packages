@@ -107,6 +107,7 @@
 
       shellHook = ''
         source ${pkgs.openfoam}/bin/set-openfoam-vars
+        source ${pkgs.precice-dune}/bin/set-dune-vars
         export LD_LIBRARY_PATH=${pkgs.precice-openfoam-adapter}/lib:$LD_LIBRARY_PATH
       '';
     };

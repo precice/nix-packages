@@ -135,6 +135,7 @@
   };
   environment.extraInit = ''
     source ${pkgs.openfoam}/bin/set-openfoam-vars
+    source ${pkgs.precice-dune}/bin/set-dune-vars
     if [[ ! -e ~/tutorials ]]; then
       ${pkgs.git}/bin/git clone https://github.com/precice/tutorials ~/tutorials
     fi
