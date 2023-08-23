@@ -14,8 +14,8 @@ mkdir -p "$HOME/.bin" # For holding the binaries
 mkdir -p "$XDG_CONFIG_HOME/nix" # For the Nix config file
 
 echo "-- Add .bin to the PATH variable in the .profile if not already set"
-if [ "$(grep 'export PATH=$PATH:$HOME/.bin' "$HOME/.profile" -c)" -eq 0 ]; then
-  echo 'export PATH=$PATH:$HOME/.bin' >> "$HOME/.profile"
+if [ "$(grep 'export PATH=$HOME/.bin:$PATH' "$HOME/.profile" -c)" -eq 0 ]; then
+  echo 'export PATH=$HOME/.bin:$PATH' >> "$HOME/.profile"
 fi
 
 echo "-- Download Nix"
