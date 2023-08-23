@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - "**/paper.tex"
+  workflow_dispatch:
 jobs:
   render:
     runs-on: ubuntu-latest
