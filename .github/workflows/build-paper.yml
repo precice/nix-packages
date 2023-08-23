@@ -4,7 +4,7 @@ run-name: Render paper
 on:
   push:
     paths:
-      - 'paper/'
+      - "**/paper.tex"
 jobs:
   render:
     runs-on: ubuntu-latest
@@ -16,9 +16,11 @@ jobs:
         with:
           nix_path: nixpkgs=channel:nixos-unstable
       - name: build
-        run: "nix-build --arg sha ${{ github.sha }} paper"
+        run: "nix-build --arg sha \\\"${{ github.sha }}\\\" paper --out-link paper-out"
+      - name: copy artefact
+        run: "cp paper-out/*.pdf ." # GitHub fails to handle symlinks
       - name: upload
         uses: actions/upload-artifact@v3
         with:
-          name: Paper
-          path: paper/result/*.pdf
+          name: hauser-hausch-research-paper-${{ github.sha }}.pdf
+          path: hauser-hausch-research-paper-${{ github.sha }}.pdf
