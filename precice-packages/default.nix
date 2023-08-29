@@ -21,6 +21,16 @@
         };
       });
 
+      # We need to pin hwloc otherwise petsc no longer builds
+      hwloc = super.hwloc.overrideAttrs (oA: rec {
+        version = "2.9.1";
+
+        src = super.fetchurl {
+          url = "https://www.open-mpi.org/software/hwloc/v${super.lib.versions.majorMinor version}/downloads/hwloc-${version}.tar.bz2";
+          sha256 = "sha256-fMSTGiD+9Ffgkzrz83W+bq+ncD/eIeE3v7loWxQJWZ4=";
+        };
+      });
+
       pyprecice = super.callPackage ./pyprecice { };
       petsc4py = super.callPackage ./petsc4py { };
 
