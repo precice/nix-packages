@@ -64,6 +64,7 @@ Conducting a large scale research on building scientific codes reproducibly is q
 Therefore, we conduct a case study, focusing on preCICE\cite{preCICEv2}, its adapters and solvers.
 One of the goals of the case study is to get a first hand experience and estimate on the complexity and possible challenges when packaging scientific software.
 Also, consistent portability of building the software on three different systems is verified.
+preCICE is a well fit for such a case study, as its official adapters and solvers vary in their programming languages, project sizes and other factors, providing a quite manifold set of scientific simulation software while still being able to verify if the software is still correct by running preCICE simulations across several different solver binaries.
 
 In high-performance computing (HPC), where performance and efficiency are critical, managing software dependencies and configurations becomes even more challenging.
 By using Nix, researchers and practitioners in HPC could easily reproduce computational experiments, ensuring that the same software stack, libraries, and configurations are utilized consistently.
