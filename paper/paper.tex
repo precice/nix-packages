@@ -58,7 +58,12 @@ It is not scalable and inefficient to make every researcher to tediously recreat
 This calls for a more efficient and automated solution.
 
 In the past years, the Nix package manager\cite{Dolstra_2004} and NixOS\cite{Dolstra_2010}, a Linux distribution built around it, have emerged as promising solutions to address these challenges.
-This paper explores the use of Nix/NixOS to improve the reproducibility of scientific software, focusing on a case study of preCICE\cite{preCICEv2} and its adapters and solvers.
+This paper explores the use of Nix/NixOS to improve the reproducibility of scientific software.
+
+Conducting a large scale research on building scientific codes reproducibly is quite infeasible due to how many different software there is.
+Therefore, we conduct a case study, focusing on preCICE\cite{preCICEv2}, its adapters and solvers.
+One of the goals of the case study is to get a first hand experience and estimate on the complexity and possible challenges when packaging scientific software.
+Also, consistent portability of building the software on three different systems is verified.
 
 In high-performance computing (HPC), where performance and efficiency are critical, managing software dependencies and configurations becomes even more challenging.
 By using Nix, researchers and practitioners in HPC could easily reproduce computational experiments, ensuring that the same software stack, libraries, and configurations are utilized consistently.
@@ -439,6 +444,9 @@ The current solution of the user cloning the code at the specific location works
 Additionally, hard-coding libraries to \texttt{/usr/lib} and \texttt{/usr/include} might work on one distribution, but might make it hard or even impossible to install a package on a different distribution or even a later version of the same distribution.
 Solutions like \texttt{pkg-config} that can be configured, so it finds libraries outside the common paths, should always be preferred and work out of the box with the common paths like \texttt{/usr/lib}.
 
+With Nix' dependency management, we can easily copy the package definitions we just wrote onto different systems, e.g., entirely different Linux distributions, and execute the build of the closures there.
+Building the same closures yields the same outputs, this will also be described in section \ref{sec:nix-on-hpc}.
+
 \section{Comparision}
 
 This chapter defines metrics and uses these metrics to compare the Nix package manager~\cite{Dolstra_2004} with widely used HPC package managers Spack~\cite{Gamblin_2015} and EasyBuild~\cite{Geimer_2014}.
@@ -628,7 +636,7 @@ Additionally, Nix offers a way for testing multiple packages in combination and 
 These tests are then running inside isolated qemu virtual machines and users are able to start as many VMs as they need and define the set of commands that need to run on each of the so-called nodes.
 The tests are pythons scripts, and it is possible to wait until systemd targets are running, until ports are available or wait until commands are completed and compare the output and status codes.
 
-\section{Nix on HPC}
+\section{Nix on HPC}\label{sec:nix-on-hpc}
 
 High-performance computing refers to the utilization of powerful computational resources to tackle computationally intensive scientific problems.
 It involves the parallel execution of tasks across multiple computing units, also called nodes in this context, enabling researchers to perform complex simulations, data analysis, and modeling at large scales.
@@ -648,6 +656,8 @@ Using namespaces, it is possible for the Nix package manager to mount an arbitra
 Another challenge is to get Nix to work without the needed libraries that can usually be found inside the Nix store, leading to a bootstrapping problem.
 We can simply use a statically compiled version the Nix package manager, however, to circumvent this problem.
 In our repository, we provide a setup bash script that simplifies download, configuration and installation of the static Nix binary which can then be used to easily build and access the solvers adapters and the preCICE VM.
+
+After installing Nix on HPC, we were able to produce the same binary output for the adapters and solvers as we built on our local machines as well as within the preCICE VM\footnote{The sha256 hashes of the resulting outputs were compared and matched.}
 
 \section{Conclusion and Outlook}
 
