@@ -53,9 +53,17 @@ Reproducibility ensures that experiments can be repeated and findings can be val
 Being able to replicate experiments and computations is important for verifying scientific claims.
 However, achieving reproducibility in scientific software has been a challenge due to complex dependencies, conflicting software environments, and changing software systems.
 Problems arise from dependencies, library versions, and system configurations, leading to inconsistencies across different computing environments.
-Traditional approaches to reproducibility, such as manual setup instructions or virtualization techniques, are time-consuming, and prone to errors.
-It is not scalable and inefficient to make every researcher to tediously recreate the exact same environment with traditional approaches.
+Traditional approaches to reproducibility, such as manual setup instructions or virtualization techniques, are prone to errors and time-consuming at best.
+It is not scalable and highly inefficient to make every researcher to tediously recreate the exact same environment with traditional approaches.
 This calls for a more efficient and automated solution.
+
+Attempts were made to solve this situation by using Docker\footnote{\url{https://www.docker.com/}}, a software which describes software environments with the help of text files.
+Those text files are made up of imperative commands which are run inside of containers, one layer at a time.
+The result are several different layers which are all combines into a single output image that can be instantiated to a running container.
+Docker images can be copied to different hosts and should then provide the same environment on different machines.
+An issue that arises here, is that usually those images are based on one of the official Docker images\footnote{\url{https://docs.docker.com/trusted-content/official-images/}} all of which bring traditional package managers like \texttt{apt}.
+When a user specifies to install the \texttt{python3} package with a traditional package manager today, the package manager could yield python3.8, whereas running the same command two months from now could yield python in the version 3.9.
+This could potentially lead to different results when a user wants to only add a single dependency but has to rebuild the whole image, thus rendering it useless in terms of reproducibility.
 
 In the past years, the Nix package manager\cite{Dolstra_2004} and NixOS\cite{Dolstra_2010}, a Linux distribution built around it, have emerged as promising solutions to address these challenges.
 This paper explores the use of Nix/NixOS to improve the reproducibility of scientific software.
