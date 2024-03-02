@@ -1,5 +1,5 @@
 { sha, pkgs ? import <nixpkgs> {}, ... }:
-pkgs.stdenv.mkDerivation rec {
+pkgs.stdenv.mkDerivation {
   name = "Reproducibility Research Paper";
 
   src = ./.;

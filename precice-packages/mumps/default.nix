@@ -13,11 +13,11 @@
 , blacs
 }:
 let
-  scotch_full = (scotch.overrideAttrs (oA: rec {
+  scotch_full = scotch.overrideAttrs (_: {
     buildFlags = [ "scotch ptscotch esmumps ptesmumps" ];
 
     enableParallelBuilding = true;
-  }));
+  });
 in
 stdenv.mkDerivation rec {
   pname = "mumps";

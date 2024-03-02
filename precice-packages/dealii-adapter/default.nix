@@ -1,6 +1,6 @@
 { lib, stdenv, fetchFromGitHub, cmake, precice, dealii, enable3d ? false }:
 
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "precice-dealii-adapter";
   version = "unstable-2022-09-23";
 

@@ -1,4 +1,4 @@
-{ lib, stdenv, fetchgit, cmake, gnumake, openmpi, m4, zlib, flex, makeWrapper, writeScript }:
+{ lib, stdenv, fetchgit, gnumake, openmpi, m4, zlib, flex, makeWrapper, writeScript }:
 
 let
   version = "2206";

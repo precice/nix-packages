@@ -7,8 +7,6 @@
 , pkg-config
 , precice
 , makeWrapper
-, metis
-, parmetis
 , enableMPI ? false
 , openmpi
 , enableCgns ? false
@@ -33,7 +31,7 @@ let
     hash = "sha256-5mKUHewXyGOWDre6gvTSD7asB/5fr3xhlqS2WdEsSbk=";
   };
 in
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "precice-su2";
   inherit version;
 
@@ -68,7 +66,7 @@ stdenv.mkDerivation rec {
     "--with-include=${precice}/include"
     "--with-lib=${precice}/lib"
   ]
-  ++ lib.optional (enableMPI) [ "--enable-mpi" "--with-cc=${openmpi}/bin/mpicc" "--with-cxx=${openmpi}/bin/mpicxx" ]
+  ++ lib.optional enableMPI [ "--enable-mpi" "--with-cc=${openmpi}/bin/mpicc" "--with-cxx=${openmpi}/bin/mpicxx" ]
   ++ lib.optional (!enableCgns) "--disable-cgns"
   ++ lib.optional (!enableDOT) "--disable-DOT"
   ++ lib.optional (!enableMSH) "--disable-MSH"

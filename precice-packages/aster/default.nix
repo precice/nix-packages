@@ -22,9 +22,9 @@
 , getopt
 , rsync
 }: let
-  hdf5_home = stdenvNoCC.mkDerivation rec {
+  hdf5_home = stdenvNoCC.mkDerivation {
     name = "hdf5_1_10";
-    version = hdf5_1_10.version;
+    inherit (hdf5_1_10) version;
 
     dontUnpack = true;
 

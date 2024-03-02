@@ -9,7 +9,7 @@ let
   };
 
   # Extract attrSets
-  names = builtins.attrNames ((builtins.elemAt precicePkgs 1) {} {});
+  names = builtins.attrNames ((builtins.elemAt precicePkgs 1) { } { });
 
   # Generate attrs in form `packagename = pkgs.packagename;`
   packages = builtins.listToAttrs (builtins.map (name: { inherit name; value = pkgs."${name}"; }) names);
@@ -17,14 +17,14 @@ let
   # $ NIXOS_CONFIG=$PWD/configuration.nix nix repl '<nixpkgs/nixos>'
   # nix-repl> config.system.build.vm
   # vm = (pkgs.nixos { configuration}).config.system.build.vm
-  vm = (import <nixpkgs/nixos/lib/eval-config.nix> {
+  inherit ((import <nixpkgs/nixos/lib/eval-config.nix> {
     modules = [
       ../configuration.nix
       {
         nixpkgs.pkgs = pkgs;
       }
     ];
-  }).config.system.build.vm;
+  }).config.system.build) vm;
 
 in
   # These are the separate jobs that are generated
