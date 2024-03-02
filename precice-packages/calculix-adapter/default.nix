@@ -1,6 +1,7 @@
 { lib
 , stdenv
 , fetchFromGitHub
+, fetchzip
 , gcc
 , pkg-config
 , arpack
@@ -13,11 +14,12 @@
 }:
 let
   ccx_version = "2.20";
-  ccx = fetchFromGitHub {
-    owner = "calculix";
-    repo = "ccx";
-    rev = ccx_version;
-    hash = "sha256-qRcrWraPQYM43w1ERwwmbLt3VDPEJ1sj7raTzY/bhOg=";
+  ccx = fetchzip {
+    urls = [
+      "https://www.dhondt.de/ccx_2.20.src.tar.bz2"
+      "https://web.archive.org/web/20240302101853if_/https://www.dhondt.de/ccx_2.20.src.tar.bz2"
+    ];
+    hash = "sha256-bCmG+rcQDJrcwDci/WOAgjfbhy1vxdD+wnwRlt/ovKo=";
   };
 in
 stdenv.mkDerivation rec {
@@ -36,7 +38,7 @@ stdenv.mkDerivation rec {
   buildPhase = ''
     mpifort --version
     make -j \
-      CCX=${ccx}/src \
+      CCX=${ccx}/ccx_2.20/src \
       SPOOLES_INCLUDE="-I${spooles}/include/spooles/" \
       ARPACK_INCLUDE="$(${pkg-config}/bin/pkg-config --cflags-only-I arpack lapack blas)" \
       ARPACK_LIBS="$(${pkg-config}/bin/pkg-config --libs arpack lapack blas)" \
