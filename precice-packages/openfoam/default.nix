@@ -1,7 +1,7 @@
 { lib, stdenv, fetchgit, cmake, gnumake, openmpi, m4, zlib, flex, makeWrapper, writeScript }:
 
 let
-  version = "2206";
+  version = "2306";
 
   # TODO: Can we make the last export to /run/current-system better somehow?
   set-vars-script = writeScript "set-openfoam-vars" ''
@@ -62,7 +62,7 @@ in stdenv.mkDerivation rec {
   src = fetchgit {
     url = "https://develop.openfoam.com/Development/openfoam.git";
     rev = "OpenFOAM-v${version}";
-    hash = "sha256-snrFOsENf/siqFd1mzxAsYbw1ba67TXMgaNDpb26uX0=";
+    hash = "sha256-9+u52bqVXfirhTfFFX+CoqhRxJeOUQVcQHCRoxTfO5w=";
   };
 
   nativeBuildInputs = [ gnumake m4 makeWrapper ];
