@@ -35,7 +35,7 @@ Those outputs can be built reproducibly using Nix.
 
 To build the preCICE VM, the Nix binary is required.
 We provide a [setup script](./setup.sh) to get the Nix package manager if it is not already available.
-After that, you can use Nix to build the preCICE VM image, either as a bootable iso file, a qemu start script or a Vagrant VirtualBox VM image.
+After that, you can use Nix to build preCICE packages, the preCICE VM image, either as a bootable iso file, a qemu start script or a Vagrant VirtualBox VM image.
 
 The first time you issue a Nix command inside the projects directory you are asked if you want to use the garnix cache.
 To avoid building everything from scratch for yourself, you should definitely answer the prompt with yes here.
@@ -51,7 +51,9 @@ If you use a vanilla solution, please refer to [the section below](#notes-regard
 bash ./setup.sh
 # After the script succeeded the `nix-static` command should be available
 # If installed via the official installer, the command `nix` should be available
-# 1. inside this repository you can now run the following command to build a qemu VM image
+# 1. in any directory you can now run the following command to install calculix adapter and openfoam with the respected adapter
+nix shell --accept-flake-config github:precice/nix-packages#precice-calculix-adapter github:precice/nix-packages#precice-openfoam-adapter
+# 2. inside this repository you can now run the following command to build a qemu VM image
 nix build '.#vm'
 # You can replace `vm` with
 # - vm-light                 -- to build a lightweight qemu VM imsage
