@@ -106,13 +106,6 @@ let
     rev = "5f2364d57b517698914cb1d5f9979efe692d9254";
     hash = "sha256-fsYyc2DzK4AJJbXo5doX+QopKVfoNLpBKb1rfbUDgyc=";
   };
-  dune_fem_src = fetchFromGitLab {
-    domain = "gitlab.dune-project.org";
-    owner = "dune-fem";
-    repo = "dune-fem";
-    rev = "v${version}.0";
-    hash = "sha256-70u9jBWO+JFzyn8m7HDZ5KDUrmwES/BF8m/ByaOxZpc=";
-  };
   dune = stdenv.mkDerivation rec {
     pname = "dune";
     inherit version;
@@ -304,7 +297,7 @@ let
     };
   };
 in
-stdenvNoCC.mkDerivation rec {
+stdenvNoCC.mkDerivation {
   name = "precice-dune";
   inherit version;
 

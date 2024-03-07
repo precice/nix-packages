@@ -92,16 +92,11 @@
       enable = true;
       user = "precice";
     };
+    videoDrivers = lib.mkForce [ "vmware" "virtualbox" "modesetting" ];
   };
 
-  fileSystems."/" = {
-    device = "/dev/disk/by-label/nixos";
-    fsType = "ext4";
-  };
-  boot.loader.grub.device = "/dev/sda";
   # This is all needed to make resizing work inside the VirtualBox VM
   virtualisation.virtualbox.guest.enable = true;
-  services.xserver.videoDrivers = lib.mkForce [ "vmware" "virtualbox" "modesetting" ];
   systemd.user.services = let
     vbox-client = desc: flags: {
       description = "VirtualBox Guest: ${desc}";
@@ -119,6 +114,12 @@
     virtualbox-clipboard = vbox-client "Clipboard" "--clipboard";
   };
 
+  fileSystems."/" = {
+    device = "/dev/disk/by-label/nixos";
+    fsType = "ext4";
+  };
+  boot.loader.grub.device = "/dev/sda";
+
   users.users.precice = {
     isNormalUser = true;
     extraGroups = [ "wheel" ];
@@ -126,78 +127,80 @@
     openssh.authorizedKeys.keys = [ (lib.readFile ./vagrant.pub) ];
   };
 
-  environment.variables = {
-    NIXPKGS_ALLOW_UNFREE = "1";
-    EDITOR = "nvim";
+  environment = {
+    variables = {
+      NIXPKGS_ALLOW_UNFREE = "1";
+      EDITOR = "nvim";
+    };
+    shellAliases = {
+      vim = "nvim";
+    };
+    extraInit = ''
+      source ${pkgs.openfoam}/bin/set-openfoam-vars
+      source ${pkgs.precice-dune}/bin/set-dune-vars
+      if [[ ! -e ~/tutorials ]]; then
+        ${pkgs.git}/bin/git clone https://github.com/precice/tutorials ~/tutorials
+      fi
+    '';
+    systemPackages = with pkgs; let
+      precice-python-packages = python3.withPackages (ps: [
+        ps.ipython
+
+        # nutils
+        ps.matplotlib
+        nutils
+
+        ps.virtualenv
+        ps.pyprecice
+        ps.pandas
+      ]);
+      preciceToPNG = writeShellScriptBin "preciceToPNG" "cat \"\${1:-precice-config.xml}\" | ${precice-config-visualizer}/bin/precice-config-visualizer | ${graphviz}/bin/dot -Tpng > precice-config.png";
+      preciceToPDF = writeShellScriptBin "preciceToPDF" "cat \"\${1:-precice-config.xml}\" | ${precice-config-visualizer}/bin/precice-config-visualizer | ${graphviz}/bin/dot -Tpdf > precice-config.pdf";
+      preciceToSVG = writeShellScriptBin "preciceToSVG" "cat \"\${1:-precice-config.xml}\" | ${precice-config-visualizer}/bin/precice-config-visualizer | ${graphviz}/bin/dot -Tsvg > precice-config.svg";
+    in [
+      # Basic applications
+      baobab
+      catfish
+      firefox
+      mate.atril
+      terminator
+      tree
+
+      # Devel applications
+      git
+      cmakeWithGui
+      gnumake
+      gcc
+      nano
+      neovim
+      gnome.gedit
+      precice-python-packages
+      gnuplot
+
+      # Precice
+      precice
+      precice-config-visualizer
+
+      precice-dealii-adapter
+      precice-calculix-adapter
+      precice-fenics-adapter
+      precice-aste
+      precice-su2
+      precice-openfoam-adapter
+      openfoam
+      precice-aster
+      precice-dune
+
+      # From the .alias file in the VM repo
+      preciceToPNG
+      preciceToPDF
+      preciceToSVG
+
+      # Additional packages
+      paraview
+      wget
+    ];
   };
-  environment.shellAliases = {
-    vim = "nvim";
-  };
-  environment.extraInit = ''
-    source ${pkgs.openfoam}/bin/set-openfoam-vars
-    source ${pkgs.precice-dune}/bin/set-dune-vars
-    if [[ ! -e ~/tutorials ]]; then
-      ${pkgs.git}/bin/git clone https://github.com/precice/tutorials ~/tutorials
-    fi
-  '';
-  environment.systemPackages = with pkgs; let
-    precice-python-packages = python3.withPackages (ps: [
-      ps.ipython
-
-      # nutils
-      ps.matplotlib
-      nutils
-
-      ps.virtualenv
-      ps.pyprecice
-      ps.pandas
-    ]);
-    preciceToPNG = writeShellScriptBin "preciceToPNG" "cat \"\${1:-precice-config.xml}\" | ${precice-config-visualizer}/bin/precice-config-visualizer | ${graphviz}/bin/dot -Tpng > precice-config.png";
-    preciceToPDF = writeShellScriptBin "preciceToPDF" "cat \"\${1:-precice-config.xml}\" | ${precice-config-visualizer}/bin/precice-config-visualizer | ${graphviz}/bin/dot -Tpdf > precice-config.pdf";
-    preciceToSVG = writeShellScriptBin "preciceToSVG" "cat \"\${1:-precice-config.xml}\" | ${precice-config-visualizer}/bin/precice-config-visualizer | ${graphviz}/bin/dot -Tsvg > precice-config.svg";
-  in [
-    # Basic applications
-    baobab
-    catfish
-    firefox
-    mate.atril
-    terminator
-    tree
-
-    # Devel applications
-    git
-    cmakeWithGui
-    gnumake
-    gcc
-    nano
-    neovim
-    gnome.gedit
-    precice-python-packages
-    gnuplot
-
-    # Precice
-    precice
-    precice-config-visualizer
-
-    precice-dealii-adapter
-    precice-calculix-adapter
-    precice-fenics-adapter
-    precice-aste
-    precice-su2
-    precice-openfoam-adapter
-    openfoam
-    precice-aster
-    precice-dune
-
-    # From the .alias file in the VM repo
-    preciceToPNG
-    preciceToPDF
-    preciceToSVG
-
-    # Additional packages
-    paraview
-    wget
-  ];
 
   # TODO: Somehow make sure `pip3 uninstall -y fenics-ufl` is solved https://github.com/precice/vm/issues/4
 

@@ -25,6 +25,7 @@
     ];
   };
 
+  # deadnix: skip
   outputs = { self, nixpkgs, home-manager, nixos-generators }: let
     precice-system-light = {
       system = "x86_64-linux";
@@ -71,7 +72,7 @@
 
     # This simply reads all defined names of the packages specified in the overlay, so it results in
     # a list of package names: [ "blacs" "dealii" ... ]
-    precice-package-names = builtins.attrNames ((builtins.elemAt (import ./precice-packages) 1) null { callPackage = arg1: arg2: {}; });
+    precice-package-names = builtins.attrNames ((builtins.elemAt (import ./precice-packages) 1) null { callPackage = {}; });
 
     # This expands "dealii" to `{ dealii = pkgs.dealii; }`
     precice-packages = pkgs.lib.genAttrs precice-package-names (name: pkgs.${name});
@@ -103,7 +104,7 @@
 
     # Access by running `nix develop`
     devShells.x86_64-linux.default = pkgs.mkShell {
-      buildInputs = (import ./configuration.nix { inherit pkgs; lib = nixpkgs.lib; config = null; }).environment.systemPackages;
+      buildInputs = (import ./configuration.nix { inherit pkgs; inherit (nixpkgs) lib; config = null; }).environment.systemPackages;
 
       shellHook = ''
         source ${pkgs.openfoam}/bin/set-openfoam-vars

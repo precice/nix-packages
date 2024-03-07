@@ -5,7 +5,6 @@
   pkg-config,
   openfoam,
   precice,
-  writeScript,
 
   debugMode ? false,
   enableTimings ? false

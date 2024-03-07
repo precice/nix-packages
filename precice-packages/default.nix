@@ -1,5 +1,5 @@
 [
-  (self: super: {
+  (_: super: {
     lib = super.lib // {
       maintainers = super.lib.maintainers // {
         conni2461 = {
@@ -11,10 +11,10 @@
       };
     };
   })
-  (self: super:
+  (_: super:
     {
       # We fetch parmetis from archive.org because the server is not very reliable
-      parmetis = super.parmetis.overrideAttrs (oA: rec {
+      parmetis = super.parmetis.overrideAttrs (oA: {
         src = super.fetchurl {
           url = "https://web.archive.org/web/20221116225811/http://glaros.dtc.umn.edu/gkhome/fetch/sw/parmetis/parmetis-${oA.version}.tar.gz";
           hash = "sha256-8tmiMbfPl/H+5ujJZjET6/bCQNQH08EYxVs2M9a+bl8=";
@@ -22,7 +22,7 @@
       });
 
       # We need to pin hwloc otherwise petsc no longer builds
-      hwloc = super.hwloc.overrideAttrs (oA: rec {
+      hwloc = super.hwloc.overrideAttrs (_: rec {
         version = "2.9.1";
 
         src = super.fetchurl {

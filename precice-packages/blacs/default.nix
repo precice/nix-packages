@@ -6,7 +6,7 @@
 , gfortran
 , openmpi
 }:
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "blacs";
   version = "1.1";
 
