@@ -1,50 +1,43 @@
-\documentclass[conference,final,a4paper]{IEEEtran}
-\IEEEoverridecommandlockouts
-% The preceding line is only needed to identify funding in the first footnote. If that is unneeded, please comment it out.
-\usepackage{cite}
-\usepackage{amsmath,amssymb,amsfonts}
-\usepackage{algorithmic}
-\usepackage{graphicx}
-\usepackage{textcomp}
-\usepackage{xcolor}
+\documentclass{eceasst}
+
+% \usepackage{cite}
+% \usepackage{algorithmic}
+% \usepackage{textcomp}
 \usepackage{minted}
-\usepackage{multicol}
-\usepackage{microtype}
-\usepackage[hyphens]{url}
+% \usepackage{multicol}
+% \usepackage{microtype}
+% \usepackage[hyphens]{url}
+\usepackage{subfig}
+\input{frontmatter}
 
 \usepackage{pdfcomment}
 \newcommand{\todo}[1]{\pdfcomment[color={0.045 0.278 0.643},icon=Note]{#1}}
 
-\begin{document}
-
 \title{Improving reproducibility of scientific software using Nix/NixOS: A case study on preCICE adapters and solvers}
+\short{TODO}
+\author{
+Max Hausch\autref{1},
+Simon Hauser\autref{2}}
 
-\author{\IEEEauthorblockN{Max Hausch}
-\IEEEauthorblockA{Stuttgart, Germany \\
-st175425@stud.uni-stuttgart.de}
-\and
-\IEEEauthorblockN{Simon Hauser}
-\IEEEauthorblockA{Stuttgart, Germany \\
-st148883@stud.uni-stuttgart.de}
-}
+\institute{
+\autlabel{1} \email{st175425@stud.uni-stuttgart.de}\\
+\autlabel{2} \email{st148883@stud.uni-stuttgart.de}}
 
+\abstract{
+Ensuring the reproducibility of scientific software is crucial for the advancement of research and the validation of scientific findings.
+However, achieving reproducibility in software-intensive scientific projects is often challenging due to dependencies, system configurations and software environments.
+In this paper, we present a possible solution for these challenges by utilizing Nix and NixOS.
+Nix is a package manager and functional language that allows to mitigate these problems by guaranteeing that a package and all its dependencies can be built reproducibly as long as there is a build plan at the desired time.
+NixOS is a purely functional Linux distribution, built on top of Nix that enables the build of reproducible systems including configuration files, packages and their dependencies.
+We present a case study on improving the reproducibility of preCICE, an open-source coupling library, and some of its main adapters using Nix and NixOS.
+Using this approach, we demonstrate how to create a reproducible and self-contained environment for preCICE and highlight the benefits of using Nix and NixOS for managing software and system configurations, resulting in improved reproducibility.
+In addition, we compare the usability and reproducibility provided by Nix, in the context of preCICE, with two already established high-performance computing (HPC) solutions, Spack and EasyBuild.
+This evaluation enables us to assess the advantages and disadvantages of employing Nix to improve reproducibility in scientific software development within an HPC context.}
+
+\keywords{Reproducibility, Nix, NixOS, Spack, EasyBuild, preCICE, HPC}
+
+\begin{document}
 \maketitle
-
-\begin{abstract}
-  Ensuring the reproducibility of scientific software is crucial for the advancement of research and the validation of scientific findings.
-  However, achieving reproducibility in software-intensive scientific projects is often challenging due to dependencies, system configurations and software environments.
-  In this paper, we present a possible solution for these challenges by utilizing Nix and NixOS.
-  Nix is a package manager and functional language that allows to mitigate these problems by guaranteeing that a package and all its dependencies can be built reproducibly as long as there is a build plan at the desired time.
-  NixOS is a purely functional Linux distribution, built on top of Nix that enables the build of reproducible systems including configuration files, packages and their dependencies.
-  We present a case study on improving the reproducibility of preCICE, an open-source coupling library, and some of its main adapters using Nix and NixOS.
-  Using this approach, we demonstrate how to create a reproducible and self-contained environment for preCICE and highlight the benefits of using Nix and NixOS for managing software and system configurations, resulting in improved reproducibility.
-  In addition, we compare the usability and reproducibility provided by Nix, in the context of preCICE, with two already established high-performance computing (HPC) solutions, Spack and EasyBuild.
-  This evaluation enables us to assess the advantages and disadvantages of employing Nix to improve reproducibility in scientific software development within an HPC context.
-\end{abstract}
-
-\begin{IEEEkeywords}
-  Reproducibility, Nix, NixOS, Spack, EasyBuild, preCICE, HPC.
-\end{IEEEkeywords}
 
 \section{Introduction}
 
@@ -136,7 +129,7 @@ This fact allows multiple users to safely install software without the need of e
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.4\textwidth]{coreutils.png}
+    \includegraphics[width=0.4\textwidth]{figures/coreutils.png}
     \caption{The dependency graph of the coreutils package, generated by \texttt{nix-store --query --graph \$(nix build nixpkgs\#coreutils --print-out-paths) | dot -Tpng -ocoreutils.png}}
     \label{fig:nix-graph}
 \end{figure}
@@ -181,7 +174,7 @@ The core principle of preCICE's functionality is shown visually in Fig. \ref{fig
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.5\textwidth]{precice-figure.png}
+    \includegraphics[width=0.5\textwidth]{figures/precice.png}
     \caption{A visual representation on how preCICE works in principle, see: \url{https://precice.org}}
     \label{fig:precice}
 \end{figure}
@@ -359,7 +352,6 @@ When supplied with the inputs, the adapter builds without any problems.
 As an example for the Nix language, you can see the abbreviated Nix code for the dealii.II adapter in Fig. \ref{lst:dealii-adapter-nix}.\\
 
 \begin{figure*}
-    \begin{multicols}{2}
     \normalsize
     \begin{minted}{nix}
 { lib, stdenv, fetchFromGitHub, cmake,
@@ -389,7 +381,6 @@ stdenv.mkDerivation rec {
   '';
 }
     \end{minted}
-    \end{multicols}
     \caption{A sample of Nix code used to package the dealii-adapter, see: \url{https://github.com/precice/dealii-adapter/}}
     \label{lst:dealii-adapter-nix}
     \hrulefill
@@ -515,7 +506,7 @@ The logos of the different package managers can be seen in Fig. \ref{fig:pm-logo
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.45\textwidth]{pm-logos.png}
+    \includegraphics[width=0.45\textwidth]{figures/pm-logos.png}
     \caption{Logos of (left to right) Nix\cite{nix-logo}, Spack\cite{spack-logo} and EasyBuild\cite{easybuild-logo}.}
     \label{fig:pm-logos}
 \end{figure}
@@ -632,7 +623,7 @@ On the other hand this results in a less elegant user flow, because if a user wa
 
 \begin{figure}
     \centering
-    \includegraphics[width=0.4\textwidth]{nix-tree.png}
+    \includegraphics[width=0.4\textwidth]{figures/nix-tree.png}
     \caption{The dependency graph of the coreutils package, generated by \texttt{nix-store --query --tree \$(nix build nixpkgs\#coreutils --print-out-paths)}}
     \label{fig:nix-tree}
 \end{figure}
@@ -749,7 +740,8 @@ Finally, it would be interesting to investigate a nix store that is shared betwe
 
 This summary shows, how diverse and complex Nix is, and how much more opportunities there are to be researched in the future.
 
-\bibliographystyle{IEEEtran}
+\nocite{*}
+\bibliographystyle{eceasst}
 \bibliography{paper}
 
 \end{document}

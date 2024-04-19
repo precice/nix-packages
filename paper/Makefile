@@ -6,4 +6,4 @@ ALL: $(sources)
 	pdflatex -shell-escape paper.tex
 
 clean:
-	@rm paper.aux paper.bbl paper.blg paper.log paper.upa paper.upb paper.out
+	@rm paper.aux paper.bbl paper.blg paper.log paper.upa paper.out
