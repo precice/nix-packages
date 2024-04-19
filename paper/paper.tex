@@ -482,11 +482,6 @@ Their goal is to ``identify, adapt, and adopt best practices in software enginee
 To achieve this they provide a list of package policies~\cite{xSDK2023}, which for example specifies as mandatory policy that packages ``must support portable installation through Spack''\cite{xSDK2023} and that all packages ``should have a build system that is appropriate for the language''\cite{xSDK2023}, which includes CMake and autoconf as examples.
 If a package supports all these policies, they can be added to the growing list of packages in the xSDK, which currently among other things include PETSc, deal.ii and preCICE.
 These packages are already part of nixpkgs, or it is easy to provide a package for them because they support portable installation, meaning installation into custom prefixes like nix store paths, and common build systems like CMake and autoconf.
-\begin{figure}[htbp]
-  \centerline{\includegraphics{figures/xsdk.png}}
-  \caption{xSDK Logo}
-  \label{fig}
-\end{figure}
 
 Another finding is, that is also addressed in xSDK through portable installations, is the requirement to install software to be installed into \texttt{\$HOME} or requires files to be located at a specific location on your file system.
 Most of the time, it is possible to work around this, but there are already available solutions for dependency management.
@@ -502,14 +497,6 @@ Building the same closures yields the same outputs, this will also be described 
 \section{Comparision}
 
 This chapter defines metrics and uses these metrics to compare the Nix package manager~\cite{Dolstra_2004} with widely used HPC package managers Spack~\cite{Gamblin_2015} and EasyBuild~\cite{Geimer_2014}.
-The logos of the different package managers can be seen in Fig. \ref{fig:pm-logos}.
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.45\textwidth]{figures/pm-logos.png}
-    \caption{Logos of (left to right) Nix\cite{nix-logo}, Spack\cite{spack-logo} and EasyBuild\cite{easybuild-logo}.}
-    \label{fig:pm-logos}
-\end{figure}
 
 \subsection{Metrics definition}
 
