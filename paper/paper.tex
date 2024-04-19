@@ -1,12 +1,6 @@
 \documentclass{eceasst}
 
-% \usepackage{cite}
-% \usepackage{algorithmic}
-% \usepackage{textcomp}
 \usepackage{minted}
-% \usepackage{multicol}
-% \usepackage{microtype}
-% \usepackage[hyphens]{url}
 \usepackage{subfig}
 \input{frontmatter}
 
@@ -58,25 +52,25 @@ An issue that arises here, is that usually those images are based on one of the 
 When a user specifies to install the \texttt{python3} package with a traditional package manager today, the package manager could yield python3.8, whereas running the same command two months from now could yield python in the version 3.9.
 This could potentially lead to different results when a user wants to only add a single dependency but has to rebuild the whole image, thus rendering it useless in terms of reproducibility.
 
-In the past years, the Nix package manager\cite{Dolstra_2004} and NixOS\cite{Dolstra_2010}, a Linux distribution built around it, have emerged as promising solutions to address these challenges.
+In the past years, the Nix package manager~\cite{Dolstra_2004} and NixOS~\cite{Dolstra_2010}, a Linux distribution built around it, have emerged as promising solutions to address these challenges.
 This paper explores the use of Nix/NixOS to improve the reproducibility of scientific software.
 
 Conducting a large scale research on building scientific codes reproducibly is quite infeasible due to how many different software there is.
-Therefore, we conduct a case study, focusing on preCICE\cite{preCICEv2}, its adapters and solvers.
+Therefore, we conduct a case study, focusing on preCICE~\cite{preCICEv2}, its adapters and solvers.
 One of the goals of the case study is to get a first hand experience and estimate on the complexity and possible challenges when packaging scientific software.
 Also, consistent portability of building the software on three different systems is verified.
 preCICE is a well fit for such a case study, as its official adapters and solvers vary in their programming languages, project sizes and other factors, providing a quite manifold set of scientific simulation software while still being able to verify if the software is still correct by running preCICE simulations across several different solver binaries.
 
 In high-performance computing (HPC), where performance and efficiency are critical, managing software dependencies and configurations becomes even more challenging.
 By using Nix, researchers and practitioners in HPC could easily reproduce computational experiments, ensuring that the same software stack, libraries, and configurations are utilized consistently.
-Reproducibility of scientific results can be achieved using the Nix package manager as described by Devresse et al.\cite{Devresse_2015}
+Reproducibility of scientific results can be achieved using the Nix package manager as described by Devresse et al~\cite{Devresse_2015}.
 This not only streamlines the deployment process but also facilitates collaboration and sharing of software environments, making it easier for researchers to validate and build upon each other's work.
 Additionally, because packages in Nix are highly customizable, optimized builds for specific HPC clusters can be realized.
 
 We also compare Nix, EasyBuild, and Spack as package managers in the realm of scientific software and if Nix is feasible for being used in a scientific context at all.
 
 There are several other papers which discuss and highlight the importance of reproducibly of scientific experiments.
-In their paper, Dalle lists technical factors that lead to issues regarding reproducibly of in silico simulation experiments.\cite{Dalle_2012}
+In their paper, Dalle lists technical factors that lead to issues regarding reproducibly of in silico simulation experiments~\cite{Dalle_2012}.
 \begin{enumerate}
     \item software bugs: if bugs get fixed in future versions of the same software, they may distort results
     \item software availability: loosing track of old software versions may lead to unreproducible experiments
@@ -91,7 +85,7 @@ Nix could probably solve three out of these four factors:
     \item using NixOS, entire operating systems can be reproducibly built, including complete dependencies and kernels
 \end{enumerate}
 
-One suggestion to enhance reproducibility by using a virtual machine (VM) running on a hypervisor software, e.g. VirtualBox\footnote{\url{https://www.virtualbox.org/}} is made by Kim.\cite{Kim_2019}
+One suggestion to enhance reproducibility by using a virtual machine (VM) running on a hypervisor software, e.g. VirtualBox\footnote{\url{https://www.virtualbox.org/}} is made by Kim~\cite{Kim_2019}.
 A major advantage compared to experiments with a non-reproducible ad-hoc environment is, that other researchers can simply copy the VirtualBox image containing the whole operating system, including the software stack and all dependencies.
 However, when using the original VM image to build on top of simulations and expanding research, practitioners often have to install several other pieces of software which could cause altering dependencies of existing packages which in turn could lead to falsification of the initial results.
 In this scenario, using Nix and NixOS could address this challenge, because here, dependencies of software stacks are always complete and self-contained.
@@ -478,8 +472,8 @@ These build tools, generally also provide interfaces for dependency management w
 They also generally already provide proven interfaces for configuring packages with additional features, and these also might be self documenting.
 
 The authors of the xSDK\footnote{\url{https://xsdk.info/}} came to a very similar conclusion.
-Their goal is to ``identify, adapt, and adopt best practices in software engineering''\cite{xsdk-website} and ``to provide the foundation of this extensible scientific software ecosystem''\cite{xsdk-website}.
-To achieve this they provide a list of package policies~\cite{xSDK2023}, which for example specifies as mandatory policy that packages ``must support portable installation through Spack''\cite{xSDK2023} and that all packages ``should have a build system that is appropriate for the language''\cite{xSDK2023}, which includes CMake and autoconf as examples.
+Their goal is to ``identify, adapt, and adopt best practices in software engineering''~\cite{xsdk-website} and ``to provide the foundation of this extensible scientific software ecosystem''~\cite{xsdk-website}.
+To achieve this they provide a list of package policies~\cite{xSDK2023}, which for example specifies as mandatory policy that packages ``must support portable installation through Spack''~\cite{xSDK2023} and that all packages ``should have a build system that is appropriate for the language''~\cite{xSDK2023}, which includes CMake and autoconf as examples.
 If a package supports all these policies, they can be added to the growing list of packages in the xSDK, which currently among other things include PETSc, deal.ii and preCICE.
 These packages are already part of nixpkgs, or it is easy to provide a package for them because they support portable installation, meaning installation into custom prefixes like nix store paths, and common build systems like CMake and autoconf.
 
