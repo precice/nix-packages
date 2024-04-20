@@ -694,7 +694,11 @@ After installing Nix on HPC, we were able to produce the same binary output for 
 
 \section{Conclusion and Outlook}
 
-In conclusion, the case study has shown that packaging of scientific software isn't as trivial as expected.
+In conclusion, the case study was a success, as it has shown that packaging of scientific software with Nix is possible, but it isn't as trivial as expected.
+Once the software is packaged, it is quite easy to be used and combined in environments with other packaged softwares without conflicts.
+The packaged adapters and solvers work well together with the preCICE library and simulations can be run successfully, so this specific case study has shown the potential of Nix in the domain of scientific software.
+More research has to be done on the topic, yet we are positive about possible future results in Nix abilities and its flexibility in similar domains.
+
 The majority of the packages required some solution for a fundamental issue within the scientific software or its build system that isn't solvable for none experienced Nix users, which makes it hard for people to use it even for their own software.
 Nix itself also is partly at fault, because of its unique nature, that every piece of software lies within \texttt{/nix/store} and that each store path is its own-isolated tree based on the Filesystem Hierarchy Standard (FHS).
 But it is worth mentioning that not only Nix would benefit from more streamlined build systems and packaging, because both Spack and EasyBuild do something similar for their packages, where each package also lies in its own FHS.
