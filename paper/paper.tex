@@ -67,7 +67,7 @@ Reproducibility of scientific results can be achieved using the Nix package mana
 This not only streamlines the deployment process but also facilitates collaboration and sharing of software environments, making it easier for researchers to validate and build upon each other's work.
 Additionally, because packages in Nix are highly customizable, optimized builds for specific HPC clusters can be realized.
 
-We also compare Nix, EasyBuild, and Spack as package managers in the realm of scientific software and if Nix is feasible for being used in a scientific context at all.
+We also compare Nix, EasyBuild~\cite{easybuil6495863}, and Spack~\cite{spack7832814} as package managers in the realm of scientific software and if Nix is feasible for being used in a scientific context at all.
 
 There are several other papers which discuss and highlight the importance of reproducibly of scientific experiments.
 In their paper, Dalle lists technical factors that lead to issues regarding reproducibly of in silico simulation experiments~\cite{Dalle_2012}.
@@ -185,7 +185,7 @@ It promotes interoperability, code reusability, and collaboration, making it a v
 
 \section{Case study}
 
-To see how well Nix can be used to build and package scientific software reliably and reproducibly, we conduct a case study in the context of the latest preCICE distribution, which is currently preCICE \texttt{v2211.0}.
+To see how well Nix can be used to build and package scientific software reliably and reproducibly, we conduct a case study in the context of the latest preCICE distribution~\cite{preciceDistribution}, which is currently preCICE \texttt{v2211.0}.
 The preCICE distribution consists out of the preCICE core library, as well as some tools, bindings, adapters, tutorials, the website and documentation, and the preCICE VM\footnote{\url{https://precice.org/installation-distribution.html}}.
 Table \ref{table:label-distribution} shows an overview over all packages provided by the preCICE distribution and their respected versions.
 
@@ -258,7 +258,7 @@ They are mainly meant for debugging and visualizing several aspects of preCICE a
 This package is a collection of tools which help in development of new adapters.
 It stands for Artificial Solver Testing Environment, so it allows for debugging adapter mapping setups and other similar tasks.
 
-ASTE needs VTK9\footnote{\url{https://vtk.org/}}, a visualization toolkit, which is built without python support in the nixpkgs repository to reduce compilation time.
+ASTE\footnote{\url{https://github.com/precice/aste}} needs VTK9\footnote{\url{https://vtk.org/}}, a visualization toolkit, which is built without python support in the nixpkgs repository to reduce compilation time.
 However, this feature is needed for ASTE.
 As already mentioned, Nix allows easy overriding of inputs, so in this case, we can look at the package definition of VTK.
 The parameter \texttt{enablePython} can simply be set to \texttt{true}, then we also need to supply the version of python we want to compile against, so in our case \texttt{python = python3;}.
@@ -269,7 +269,7 @@ Only for testing, we additionally need to replace the absolute paths to \texttt{
 
 \subsubsection{config-visualizer}
 
-The precice-config-visualizer package can be used to generate images that represent a specified preCICE config file to check graphically what is configured in the file.
+The precice-config-visualizer\footnote{\url{https://github.com/precice/config-visualizer}} package can be used to generate images that represent a specified preCICE config file to check graphically what is configured in the file.
 
 This tool is already packaged upstream, so we can just use it.
 As it is a python package, it is quite easy to build with Nix, so the package definition is straight forward.
@@ -285,16 +285,16 @@ After adding this single dependency as an input to the package definition, the p
 
 \subsubsection{Julia-bindings}
 
-Julia support in NixOS is currently still in its early stages and cannot be declaratively be defined by Nix\footnote{\url{https://github.com/NixOS/nixpkgs/issues/20649}}.
+Julia~\cite{bezanson2017julia} support in NixOS is currently still in its early stages and cannot be declaratively be defined by Nix\footnote{\url{https://github.com/NixOS/nixpkgs/issues/20649}}.
 
 \subsection{Adapters}
 
 A preCICE distribution comes bundled with several adapters, which are currently not in the upstream nixpkgs repository.
-Many of the adapters use solvers that aren't packaged in the upstream repo as well, so in order to get the adapters to work, these also have to be packaged and sometimes patched.\\
+Many of the adapters use solvers that aren't packaged in the upstream repo as well, so in order to get the adapters to work, these also have to be packaged and sometimes patched.
 
 \subsubsection{CalculiX}
 
-The preCICE adapter for CSM code CalculiX, requires the original CalculiX source code and provides a new Makefile in the adapter repository.
+The preCICE adapter for CSM code CalculiX~\cite{Uekermann2017_Adapters}, requires the original CalculiX source code and provides a new Makefile in the adapter repository.
 By default, this Makefile expects the source code to reside in \texttt{\$HOME}, but it's possible to override this location with a make variable.
 It then builds the original code and the adapter code together, which results in a combined binary.
 
@@ -303,7 +303,7 @@ Additionally, there is no \texttt{install} target provided by the Makefile so th
 
 \subsubsection{code\_aster}
 
-The code\_aster preCICE adapter is a python file that needs to be placed in the code-aster lib directory.
+The code\_aster preCICE adapter~\cite{Uekermann2017_Adapters} is a python file that needs to be placed in the code-aster lib directory.
 For this, the code\_aster solver needs to be packaged at the latest stable version 14.6.
 It uses a custom build system based on a \texttt{setup.py} file, that invokes build and install phases for dependencies and in the end for the solver itself.
 
@@ -340,7 +340,7 @@ Last but not least, we can copy the code\_aster adapter at the required location
 
 \subsubsection{deal.II}
 
-In order to package this adapter, we first need to package deal.II, which uses CMake as build system and works without any adjustments.
+In order to package this adapter, we first need to package deal.II~\cite{dealII95}, which uses CMake as build system and works without any adjustments.
 The same applies for the adapter, which also uses CMake and needs preCICE as a dependency.
 When supplied with the inputs, the adapter builds without any problems.
 As an example for the Nix language, you can see the abbreviated Nix code for the dealii.II adapter in Fig. \ref{lst:dealii-adapter-nix}.\\
@@ -383,7 +383,7 @@ stdenv.mkDerivation rec {
 
 \subsubsection{DUNE}
 
-This package uses a combination of CMake files and custom build scripts which makes the build process quite tedious.
+The DUNE~\cite{bastian2020dune} package uses a combination of CMake files and custom build scripts which makes the build process quite tedious.
 This might be an issue because of the ongoing migration to CMake from autotools and might be resolved in the future.
 
 It's also a minor issue that the dune-project is a collection of repositories rather than a monorepository, because users have to correctly clone all repositories so the build system finds all relevant information.
@@ -395,8 +395,8 @@ Therefore, we need to patch this \texttt{pip} command with the options \texttt{-
 
 \subsubsection{FEniCS}
 
-We are explicitly referring to the legacy version of FEniCS here, not the newer and still experimental FEniCSx.
-This adapter uses the open source computing platform FEniCS, which is already packaged within nixpkgs, to provide preCICE support.
+We are explicitly referring to the legacy version of FEniCS~\cite{fenics} here, not the newer and still experimental FEniCSx.
+This adapter~\cite{Rodenberg2021} uses the open source computing platform FEniCS, which is already packaged within nixpkgs, to provide preCICE support.
 
 Although it is available, not all features the adapter needs are enabled, including PETSc support.
 To fix this, we need to package PETSc4py, which provides python bindings for PETSc and is not present in the upstream nixpkgs repository.
@@ -428,7 +428,7 @@ After sourcing the script, the single command \texttt{./Allwmake -j -q} is suffi
 
 The installPhase then simply copies the necessary files and directories to \texttt{\$out}, replaces the mock \texttt{OPENFOAM\_SRC\_PATH} by the value of \texttt{\$out} and creates a wrapper for the \texttt{openfoam} shell script.
 
-As the preCICE OpenFOAM-adapter is an OpenFOAM module, the derivation of the adapter needs OpenFOAM and wmake as build inputs.
+As the preCICE OpenFOAM-adapter~\cite{OpenFOAMpreCICE} is an OpenFOAM module, the derivation of the adapter needs OpenFOAM and wmake as build inputs.
 The correct environment variables have to be set again, but this is rather easy now, as we have the \texttt{set-openfoam-vars} script that we can simply source during the buildPhase.
 The last thing we need to change before launching the build with Allwmake is to set the target directory for the adapter.
 A single shared library that can be copied to \texttt{\$out/lib/} is the only output for this build.
@@ -439,7 +439,7 @@ OpenFOAM is available on Spack and EasyBuild which both patch the OpenFOAM sourc
 
 \subsubsection{su2-adapter}
 
-This package is a preCICE adapter for the CFD code SU2 and extends the original SU2 source code by patching the files.
+This package is a preCICE adapter~\cite{Uekermann2017_Adapters} for the CFD code SU2 and extends the original SU2 source code by patching the files.
 For this, the adapter provides a custom script that needs to be executed before the build phase.
 Nix offers the patchPhase which allows us to run the script in this phase and patch the original source, after that the \texttt{stdenv} automatically recognizes that the repository uses autotools for building the software and runs the configurePhase.
 
