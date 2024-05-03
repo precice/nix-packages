@@ -1,4 +1,15 @@
-{ lib, fetchPypi, python3, precice, pyprecice, openmpi, openssh, pkg-config }:
+{
+  lib,
+  fetchPypi,
+  python3,
+  precice,
+  fenics,
+  fenics-mshr,
+  pyprecice,
+  openmpi,
+  openssh,
+  pkg-config,
+}:
 python3.pkgs.buildPythonPackage rec {
   pname = "precice-fenics-adapter";
   version = "1.4.0";
@@ -9,13 +20,18 @@ python3.pkgs.buildPythonPackage rec {
     hash = "sha256-ux5qi4SGGHETbldfEiT8H/7Pvmn2uvQwDFB1wi/pAKI=";
   };
 
-  nativeBuildInputs = [ openmpi openssh pkg-config ];
-  propagatedBuildInputs = with python3.pkgs; [
+  nativeBuildInputs = [
+    openmpi
+    openssh
+    pkg-config
+  ];
+  propagatedBuildInputs = [
     precice
     pyprecice
-    fenics
 
-    scipy
+    fenics
+    fenics-mshr
+    python3.pkgs.scipy
   ];
   checkInputs = with python3.pkgs; [ pytest ];
 

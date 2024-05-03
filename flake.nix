@@ -97,7 +97,7 @@
         name = "preCICE execution environment";
         version = "v202211.0";
         src = ./.;
-        buildInputs = pkgs.lib.mapAttrsToList (_: value: value) precice-packages ++ [ pkgs.python3.pkgs.fenics pkgs.bash pkgs.gcc pkgs.openmpi ];
+        buildInputs = pkgs.lib.mapAttrsToList (_: value: value) precice-packages ++ [ pkgs.bash pkgs.gcc pkgs.openmpi ];
       };
     };
 
