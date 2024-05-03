@@ -474,96 +474,64 @@ Solutions like \texttt{pkg-config} that can be configured, so it finds libraries
 With Nix' dependency management, we can easily copy the package definitions we just wrote onto different systems, e.g., entirely different Linux distributions, and execute the build of the closures there.
 Building the same closures yields the same outputs, this will also be described in section \ref{sec:nix-on-hpc}.
 
-\section{Comparision}
+\section{Comparison}
 
-This chapter defines metrics and uses these metrics to compare the Nix package manager~\cite{Dolstra_2004} with widely used HPC package managers Spack~\cite{Gamblin_2015} and EasyBuild~\cite{Geimer_2014}.
+This chapter compares Nix with two widely used solution in HPC environments, Spack and EasyBuild.
+There was a similar comparison done at FOSDEM 2018~\cite{comparision-fosdem} which also included conda and Guix, but this was by the release manager of EasyBuild and we want to provide an update with this comparison.
+The comparison first takes a high level look on some statistics and how they compare and after that we will discuss, usability, reproducibly and performance in more detail.
 
-\subsection{Metrics definition}
+\subsection{Overview}
 
-In this section, we define all metrics used in the comparison of the selected package managers.
-The metrics are grouped with related metrics.\\
+The first table~\ref{table:comparison-overview} shows some basic stats about the amount of packages the solutions provide out of the box and how they are implemented.
+This is important because the higher the number the more likely it is that your package is already packaged and doesn't require additional work.
+It's also important to look how packages are implemented because, if a package needs to be packaged by for example researches, domain specific languages have the downside that, researches now have to get familiar with this DSL, while general purpose languages like python don't have this downside because they are already used in their field.
+Although this is a downside, DSL usually are design with a purpose in mind and can get you faster to the desired outcome.
 
-\subsubsection{Overview}
-The first few metrics are grouped as Overview, where we present some basic stats about each package manager.
-First, we look at the number of available packages, then at the number of unique packages, meaning all packages minus packages that are available at different versions and last we compare how packages can be implemented.\\
+\begin{figure*}
+  \normalsize
+  \caption{Overview of package count and how packages are implemented}
+  \label{table:comparison-overview}
+  \centering
+  \begin{tabular}{|p{2cm}|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
+    \hline
+    \textbf{Metrics} & \textbf{Nix} & \textbf{Spack} & \textbf{EasyBuild} \\ \hline
+    Packages~\footnote{\label{foot:repology}\url{https://repology.org/repositories/statistics/total}} & 91800 & 7910 & 19500 \\ \hline
+    Unique packages & 73200 & 6610 & 3470 \\ \hline
+    Package implementation & Nix Domain Specific Language & Python & Python \\ \hline
+  \end{tabular}
+\end{figure*}
 
-\subsubsection{Installation}
-In this section, we look at the installation of all 3 package managers, how they can be updated and if root permissions are needed to either install it or later install packages.\\
+The installing and updating process is documented in the second table~\ref{table:comparison-installation} and differs widely, from custom install scripts over to using pip or just using git clone.
 
-\subsubsection{Usage}
-In Usage, we present basic usages of the package managers.
-We show how you can search for packages, install software, install software with a specific version, install software at a specific point in time, specify the compiler that is used to install a piece of software and last we show how to build optimized software for your architecture.\\
+Spack's way of installing has some problems, with using \texttt{git clone} on the latest default branch, in their case \texttt{develop}, this has the implication, that you aren't using the latest stable release of the software but rather a random commit, that might have broken something recently.
+It also has the problem that you can't easily update the package repository independent from the package manager, this requires additional work from the users if they require this.
 
-\subsubsection{Reproducibility}
-Here we look into reproducibility of build software.
-We first look into how the reproducibility is achieved, then if the architecture and cpu features are considered and latestly we look at the dependencies can affect reproducibility.\\
+It's also worth mentioning that all 3 solutions don't require root for installation but Nix has the option for a system wide installation of the Nix daemon, which then can be used to install packages locally into the users PATH, which no longer requires root.
 
-\subsubsection{Performance}
-We will take a short look at the performance of the package manager and the resulting packages\\
+\begin{figure*}
+  \normalsize
+  \caption{How the package manager are being installed and how are they updated}
+  \label{table:comparison-installation}
+  \centering
+  \begin{tabular}{|p{2cm}|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
+    \hline
+    \textbf{Metrics} & \textbf{Nix} & \textbf{Spack} & \textbf{EasyBuild} \\ \hline
+    Installation way & install script~\footnote{\url{https://nixos.org/download.html\#download-nix}} & \texttt{git clone}~\footnote{\url{https://spack.readthedocs.io/en/latest/getting_started.html\#installation}} & \texttt{pip install} or afterwards self install using \texttt{eb} executable~\footnote{\url{https://docs.easybuild.io/installation/}} \\ \hline
+    Installation mode & single user/multi user & single user & single user \\ \hline
+    Updating self & \texttt{nix-channel} / nix flake for pinning & \texttt{git pull} & using the \texttt{eb} executable \\ \hline
+  \end{tabular}
+\end{figure*}
 
-\subsubsection{Testing}
-Finally, we look into tests and see what features the package managers provide for validating that a package works as expected.
+The basic usage of all three tools is pretty similar and they support searching and installing package in a simple manner, all this is show in table~\ref{table:comparison-usage}.
+The difference in installing software comes down to the unique way that Nix installs software, it downloads/builds the paths into its local store, which can either be located in the user's home directory or in the path \texttt{/nix/store} depending on the installation.
+\texttt{nix-shell} later only puts these downloaded paths into the \texttt{\$PATH} environment variable.
+Spack and EasyBuild on the other hand use the widely used \texttt{module} system that usually is already found on HPC clusters, it allows loading software into the current environment.
 
-\subsection{Results}
-
-This section presents the results we collected.
-First we will provide a description and afterwards we will discuss the gathered results.\\
-
-\subsubsection{Overview}
-
-For the first set of metrics, we observed that in our comparison Nix provides the most packages with 83000 packages, 67000 of them unique, followed by Spack with around 7000 packages, 6000 of them unique.\footnote{\url{https://repology.org/repositories/statistics/total}}
-Regarding EasyBuild, there are around 17000 and 3000 unique packages.\footnote{\url{https://docs.easybuild.io/release-notes/}}
-
-While Nix has the most amount of packages, it is a general purpose package manager not specifically made for scientific software.
-This means, that most of the packages are not focused on scientific software, but it still comes with important packages like HDF5 and mostly offers mpi support for those packages.
-
-Spack and EasyBuild lay their focus more on the HPC/Simulation environment, so the main purpose of these package managers is to provide scientific software, but that also means that sometimes common packages, like openssl3.0 simply aren't available.
-
-Both, Spack and EasyBuild, use python scripts to implement their packages, Nix on the other hand, uses with its own DSL.
-Using a common language to define packages makes it easier for new people to get started packaging their own software because they might already be familiar with the language and generally, there is more documentation available for general purpose language, especially python.
-The Nix DSL is only useful inside Nix and people looking to package their software for Nix, need to learn a new language that is only applicable within Nix.\\
-
-\subsubsection{Installation}
-
-Nix, the package manager, can be installed with a custom installation script.\footnote{\url{https://nixos.org/download.html\#download-nix}}
-There are multiple ways to install it, with the Nix daemon, making it a multi-user installation, this installation requires root privileges for installation and installs it in \texttt{/nix}, after that normal users can use the Nix binary to communicate with a running daemon to download and install packages, this does not require root permissions.
-The single user installation allows to setup the Nix package manager inside your home directory, this method does not require root for installation and usage.
-The third way is to install Nix as part of NixOS and requires a new installation of the operating system, requires root for installation but not for usage.
-
-Spack is being installed with git and can be cloned into any directory, which means it does not require root for installation and usage.\footnote{\url{https://spack.readthedocs.io/en/latest/getting_started.html\#installation}}
-
-EasyBuild also has multiple ways to install it.\footnote{\url{https://docs.easybuild.io/installation/}}
-It can be installed with \texttt{pip install} (or virtualenv/pipenv) and after that can be loaded with \texttt{module load EasyBuild}.
-It can also be installed into a temporary directory using \texttt{pip} and afterwards properly installed with using the temporary installation to bootstrap an install into the latest release.
-EasyBuild installation requires modifying \texttt{PATH}, \texttt{PYTHONPATH} and potentially \texttt{MODULEPATH} depending on the location, it is being installed in.
-It also requires Tcl/C environment-modules or Tcl-only variant of environment modules or Lmod being installed and configured.
-None the less EasyBuild can be installed without root privileges and generally can also be used without root, but EasyBuild has a package option called \texttt{osdependencies} with requires dependencies being installed on the operating system.
-For example CMake (till 3.18) requires \texttt{openssl-devel}, \texttt{libssl-dev} and \texttt{libopenssl-devel} making it impossible to install for a normal user, if one of the above packages is not installed.
-This also means that users can't install any package that requires the CMake build system without updating the package definitions.
-
-Last but not least, updating the tools and their packages, is also widely different.
-Nix has something that is called channels that need to be advanced upstream and after that users can update their local channels with \texttt{nix-channel --update}, or use the newer Nix flake technology which pins the inputs so users can choose freely when to update to which commit of the upstream nixpkgs repository.
-
-Spack is being updated by fetching a new version of the local repository, which then can lead to merge conflicts if users change the provided package definitions.
-
-EasyBuild can be updated using the \texttt{--install-latest-eb-release} the tool provides.\\
-
-\subsubsection{Usage}
-
-The basic usage of each tool is pretty similar.
-All 3 package managers allow a user to query for a package than then can be installed.
-
-Nix allows for downloading and installing software within the current shell session\footnote{\url{https://nix.dev/tutorials/first-steps/}}, that means that an only accessible within the shell and not actually installed on the system in the classical sense of making it available to multiple users of the system.
-A user or an administrator can at any point \texttt{collect-garbage} and all packages not specified as installed system packages are being removed that includes packages installed in the current shell, as long as the shell session isn't still open.
-If a user wants to install a specific software at a given version there are two main options made available by Nix.
-Either there is an old package version definition provided by the packages, like \texttt{boost159} or a user can opt into overriding the package by overriding the \texttt{version} and the \texttt{src} \texttt{nix-shell -p 'precice.overrideAttrs(\_: \{ version = "2.4.0"; src = \ldots \} )'}, that will build the package given the specific source, which can be a remote tarball, revision in a repository or even a local directory.
-With these options, users can override any aspect of the package definition, including the dependencies and even providing custom patches.
-Each change to the package will trigger a new build because the input for the build was changed.
-
-Spack and EasyBuild on the other hand, keep the old software versions in the specifications or keep the whole specification, so you can reinstall an old version by specifying the available version, for example, \texttt{spack install gcc@6.4.0}.\footnote{\url{https://spack.readthedocs.io/en/latest/basic_usage.html}}
+Installing old software also differs for all three solutions, Nix on the one hand keeps some old, widely used software packages around and maintains those, examples are \texttt{boost} which is available in different versions or e.g. \texttt{hdf5} which is available in the latest version and version \texttt{1.10}.
+The other way of installing older software on nix is using something that is called \texttt{overrideAttrs}, it can be used to change anything of a package, like the used sources, meaning it can be used to replace it with an older/newer version or it can be used to add an patch, add a new dependency or install additional files into the \texttt{\$out} directory.
+An example would be the following \texttt{nix-shell -p 'precice.overrideAttrs(\_: \{ version = "2.4.0"; src = \ldots \} )'}, it replaces the precice version with 2.4.0 and adds the old source, which will then trigger a new build.
+Spack and EasyBuild on the other hand, keep the old software versions in the specifications or keep the whole specification, so you can reinstall an old version by specifying the available version, for example, \texttt{spack install gcc@6.4.0}
 If the required version is not available, you have to edit the current package definition and add the required version.
-There is no elegant way of overriding the package in a command call and Spack even provides a command \texttt{spack edit} which does it in tree.
-This can be an issue if you later want to update the git revision, as this might lead to merge conflicts as soon as you checkout a new revision, as described earlier.
 
 To achieve reproducibility, it is necessary that we can install software from a previous revision of the packages.
 Nix allows us to simply specify the channel revision we want to use to build our software, it then evaluates the requested packages and builds it.
@@ -571,22 +539,37 @@ This can easily be done without affecting the current system by specifying it in
 Spack, can achieve something similar by checking out your Spack version at a previous revision and then installing the package requested package, but this approach has a downside that it affects the whole Spack installation, and now also work with an older Spack tool.
 On the other hand, EasyBuild, could be installed using pip at an earlier version, but it also offers something different called toolchains, which we will look at shortly.
 
-Next, we look at how you can build a package with a specific compiler version.
+Next, we look at how you can build a package with a specific compiler version using specific compiler flags.
 The flexibility of Nix overrides allows different levels of rebuilds of packages with a specific compiler, you can either just rebuild the requested package with specific compiler, this for example rebuilds curl with clang8 \texttt{nix-shell -p '(curl.override \{ stdenv = clang8Stdenv;\})'} or you can rebuild the package and all required dependencies with a specific compiler by overriding the \texttt{stdenv} on nixpkgs level, \texttt{nix-build -E 'with (import <nixpkgs> \{ config.replaceStdenv = \{ pkgs \}: pkgs.clang8Stdenv; \}); curl'}.
 This is possible because every c/c++/\ldots package, is build using the \texttt{stdenv} which defines the compiler and default compile flags.
 While Nix provides a default stdenv, which is used to compile all packages, it is possible to override and replace the package with your another stdenv provided by nixpkgs, like the clang8Stdenv, you can write your own stdenv, or you can extend the current stdenv with flags.
 By default, there are some useful helpers provided, like \texttt{makeStaticLibraries} which allows compiling any library as a static library, or \texttt{enableDebugging} which sets the compiler flags \texttt{-ggdb -Og} and can then be enabled on the package plus all dependencies.
-
-Spack provides an easy way to specify the compiler using \texttt{spack install precice \%clang} and only requires a registered compiler, it can be a system compiler, or the compiler can be installed using Spack.\footnote{\url{https://spack.readthedocs.io/en/latest/basic_usage.html}}
+Spack provides an easy way to specify the compiler using \texttt{spack install precice \%clang} and only requires a registered compiler, it can be a system compiler, or the compiler can be installed using Spack.
 On this note, Spack tooling and interface to override compilers, flags and more is way more user friendly and readable than using and invoking the Nix DSL within a one line command call.
-
 EasyBuild has a whole different system, where packages have defined toolchains.\footnote{\url{https://docs.easybuild.io/common-toolchains/}}
 A toolchain is a set of packages defined at a specific version and users can create their own toolchains.
 For example, EasyBuild provides a foss toolchain which contains packages like, binutils, gcc, OpenMPI, openblas and more and packages are provided against a specific toolchain version like foss-2022b.
 Packages are then provided with toolchains in mind and are never deleted, so installing a package with a different compiler can be achieved by selecting a different eb script with a different toolchain version.
 On the other hand this results in a less elegant user flow, because if a user wants to install a package with a toolchain that isn't provided they have to fork a package definition and update the toolchain.\\
 
-\subsubsection{Reproducibility}
+\begin{figure*}
+  \normalsize
+  \caption{Usage of the package manager}
+  \label{table:comparison-usage}
+  \centering
+  \begin{tabular}{|p{2cm}|p{3.5cm}|p{3.5cm}|p{3.5cm}|}
+    \hline
+    \textbf{Metrics} & \textbf{Nix} & \textbf{Spack} & \textbf{EasyBuild} \\ \hline
+    Search & \texttt{nix-env -qa 'mpi'}~\footnote{\url{https://nix.dev/tutorials/first-steps/}} & \texttt{spack list 'query'}~\footnote{\url{https://spack.readthedocs.io/en/latest/basic_usage.html}} & \texttt{eb -search mpi}~\footnote{\url{https://spack.readthedocs.io/en/latest/basic_usage.html}} \\ \hline
+    Installing software & \texttt{nix-shell -p precice} & \texttt{spack install precice \&\& module load ...} & \texttt{eb package.eb -robot \&\& module load ...} \\ \hline
+    Installing specific version of a software & \texttt{nix-shell -p boost159} or \texttt{overrideAttrs} & \texttt{spack install gcc@6.4.0} & find old easybuild config and install that one \\ \hline
+    Installing software at a point in time & \texttt{nix-shell -p pan -I nixpkgs=\$URL} & \texttt{git checkout sha \&\& spack install precice} & \texttt{pip install} older version  \\ \hline
+    Installing software using a specific compiler & \texttt{stdenv} overlay & \texttt{spack install precice \%clang} & \texttt{eb -toolchain=...} \\ \hline
+    Setting compiler options & \texttt{stdenv} overlay & \texttt{spack install ... cflags='-O3 -march=native'} & \texttt{\$CFLAGS}, \texttt{\$CXXFLAGS} and respective fortran env vars \\ \hline
+  \end{tabular}
+\end{figure*}
+
+\subsection{Reproducibility}
 
 \begin{figure}
     \centering
@@ -604,18 +587,9 @@ This is required, to guarantee the best possible reproducibly.
 
 Spack does something similar to Nix where it adds hashes to each installation path, but also stores additional files inside the package installation which include the complete spec of the package than can later be used to reproducibly build the same package.~\cite{Gamblin_2015}.
 It also does something that Nix, currently doesn't support, which is it storing the architecture and cpu features that are used in this build, that way it can provide binary packages that are optimized for specific CPUs.
-None the less it has one problem that Nix doesn't have: it allows packages to link back into system dependencies, for example, while building hpl-2.3 using a gcc 12.2.0 compiled with Spack we see the usage of the following system dependencies.
-\begin{itemize}
-  \item libm.so
-  \item libc.so
-  \item libdl.so
-  \item libnl-3.so
-  \item libnl-route-3.so
-  \item librt.so
-  \item libutil.so
-  \item libpthread.so
-\end{itemize}
+None the less it has one problem that Nix doesn't have: it allows packages to link back into system dependencies, for example, while building hpl-2.3 using a gcc 12.2.0 compiled with Spack we see the usage of the following system dependencies \texttt{libm.so}, \texttt{libc.so}, \texttt{libdl.so}, \texttt{libnl-3.so}, \texttt{libnl-route-3.so}, \texttt{librt.so}, \texttt{libutil.so}, \texttt{libpthread.so} as well as the dynamic loader.
 Most of these dependencies are stable, and usually don't change on a system update, but it also means that it simply can't guarantee the best possible reproducibility and it gets worse if the system compiler was used rather than a compiler build from scratch using Spack.
+It is also worth mentioning that the Spack developers are aware of this problem and are currently working on building these system libraries themselves~\footnote{\url{https://github.com/spack/spack/issues/39560}}~\footnote{\url{https://github.com/spack/spack/pull/42082}}.
 
 EasyBuild does achieve reproducibility with its toolchains and the approach to keep old package definitions, meaning that they also keep old dependency definitions and each dependency is pinned at a specific version~\cite{Geimer_2014}.
 Regarding, CPU architecture and features, EasyBuild does not do generic builds by default but rather prioritizes the idea of optimizing for a specific system, meaning defaulting to \texttt{-march=native} for all packages and it has to manually be disabled~\footnote{\url{https://docs.easybuild.io/controlling-compiler-optimization-flags/\#controlling\_compiler\_optimization\_flags\_optarch\_default}}.
@@ -624,7 +598,7 @@ On the other hand, the already mentioned option for \texttt{osdependencies} goes
 This leads to the problem of binaries linking back to the operating system \texttt{/usr/lib}, that Spack also has.
 For example a build of curl, uses libssl, libcrypto, libz, libm and libc, all of which are provided by the operating system, and for EasyBuild it includes libraries that change more frequently like libssl, libcrypto and libz.\\
 
-\subsubsection{Performance}
+\subsection{Performance}
 
 With Nix' possibility to override stdenv it is also possible to set custom compiler flags and Nix provides an option \texttt{impureUseNativeOptimizations} to build packages optimized for your hardware, using the \texttt{-march=native} compiler flag, it can then be applied to the package, that is being installed, or every dependency in the dependency graph.~\footnote{\url{https://nixos.wiki/wiki/Build_flags}}
 Nix can guarantee these compiler flags for every dependency because Nix wraps its compiler binaries in scripts, which then means it has more control over them and packages can not remove any flags by clearing environment variables.
@@ -639,7 +613,7 @@ Also, a package might also have unavoidable system dependencies and are not opti
 Like previously mentioned, EasyBuild applies \texttt{-march=native} by default, but you can further customize your compiler flags using \texttt{\$CFLAGS}, \texttt{\$CXXFLAGS}, \texttt{\$FFLAGS}, \texttt{\$F90FLAGS}.
 It also has the same problem as Spack that it might have unavoidable unoptimized system package which might impact performance negatively.\\
 
-\subsubsection{Testing}
+\subsection{Testing}
 
 We also shortly look at the capabilities of the package managers to run test and evaluate the built packages.
 Nix has something that is called a checkPhase which can be run for each package after being built.
@@ -654,6 +628,12 @@ EasyBuild on the other hand does not offer this feature but has another feature 
 Additionally, Nix offers a way for testing multiple packages in combination and or with a specific network setup by providing a way to write your own tests.
 These tests are then running inside isolated qemu virtual machines and users are able to start as many VMs as they need and define the set of commands that need to run on each of the so-called nodes.
 The tests are pythons scripts, and it is possible to wait until systemd targets are running, until ports are available or wait until commands are completed and compare the output and status codes.
+
+\subsection{Conclusion}
+
+To summarize the comparison, while Nix has the biggest software library, it lacks some scientific software compared to Spack and EasyBuild.
+On the other hand, the build sandbox that Nix offers, guarantees a level of reproducibility that Spack and EasyBuild currently can't provide, because it disallows random linking.
+Spack and EasyBuild on the other side both provide a way better usability to end user with their command line interfaces, Nix still is able to do the same things, like changing the compiler but generally requires knowledge of the Nix language to make this achievable, but if end user have this knowledge it's possible to change the compile flags for all packages in the dependency graph which allows some additional performance gains, if any package is compiled against the specific hardware.
 
 \section{Nix on HPC}\label{sec:nix-on-hpc}
 
