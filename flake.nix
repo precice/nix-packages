@@ -94,8 +94,6 @@
       vm-light = nixos-generators.nixosGenerate (precice-system-light // { format = "vm"; });
     };
 
-    hydraJobs = packages;
-
     # Access by running `nix run`
     apps.x86_64-linux.default = {
       type = "app";
