@@ -120,6 +120,7 @@ stdenv.mkDerivation rec {
     ln -s $out/14.6 $out/stable
 
     cp ${adapter}/cht/adapter.py $out/lib/aster/Execution
+    cp ${adapter}/cht/adapter.comm $out/share/
 
     # DELETE tests to save space
     rm -rfv $out/share/aster/tests
