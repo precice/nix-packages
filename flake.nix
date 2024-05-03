@@ -92,6 +92,13 @@
       vagrant-vbox-image-light = nixos-generators.nixosGenerate (precice-system-virtualbox-light // { format = "vagrant-virtualbox"; });
       vm = nixos-generators.nixosGenerate (precice-system // { format = "vm"; });
       vm-light = nixos-generators.nixosGenerate (precice-system-light // { format = "vm"; });
+
+      precice-simulation-environment = pkgs.stdenvNoCC.mkDerivation {
+        name = "preCICE execution environment";
+        version = "v202211.0";
+        src = ./.;
+        buildInputs = pkgs.lib.mapAttrsToList (_: value: value) precice-packages ++ [ pkgs.python3.pkgs.fenics pkgs.bash pkgs.gcc pkgs.openmpi ];
+      };
     };
 
     # Access by running `nix run`
