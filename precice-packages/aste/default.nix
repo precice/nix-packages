@@ -15,8 +15,14 @@
 , openssh
 }:
 let
+  python = python3.withPackages (ps: with ps; [
+    numpy
+    sympy
+    scipy
+  ]);
+
   python_vtk_9 = python3.pkgs.toPythonModule (vtk_9.override {
-    python = python3;
+    inherit python;
     enablePython = true;
   });
 in
@@ -34,24 +40,18 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     cmake
     gcc
-
-    precice
-    boost
-    vtk_9
     libGL
     libX11
-    metis
-    python3
-    python3.pkgs.numpy
-    python3.pkgs.sympy
-    python_vtk_9
+    precice
   ];
-  propagatedBuildInputs = with python3.pkgs; [
-    numpy
-    sympy
-    scipy
-    python_vtk_9
+  buildInputs = [
+    boost
+    metis
     openmpi
+  ];
+  propagatedBuildInputs = [
+    python
+    python_vtk_9
   ];
 
   doCheck = true;
