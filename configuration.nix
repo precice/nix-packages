@@ -1,5 +1,10 @@
 { pkgs, lib, config, ... }:
 {
+  # The following two lines are only there for the tests which need the attributes set.
+  # Since we always build vms, we don't really care about the bootloader and fs.
+  fileSystems."/" = {};
+  boot.loader.grub.devices = [ "/none" ];
+
   nixpkgs.overlays = lib.mkBefore (import ./precice-packages);
   nixpkgs.config = {
     allowUnfree = true;

@@ -70,6 +70,8 @@
       ];
     };
 
+    nixos-lib = import (pkgs.path + "/nixos/lib") { };
+
     # This simply reads all defined names of the packages specified in the overlay, so it results in
     # a list of package names: [ "blacs" "dealii" ... ]
     precice-package-names = builtins.attrNames ((builtins.elemAt (import ./precice-packages) 1) null { callPackage = {}; });
@@ -79,6 +81,16 @@
   in rec {
     # Access by running `nixos-rebuild --flake .#precice-vm build`
     nixosConfigurations.precice-vm = nixpkgs.lib.nixosSystem precice-system;
+
+
+    checks.x86_64-linux = import ./tests { inherit pkgs precice-system; inherit self; };
+    checks.x86_64-linux = {
+      perpendicular-flap = import ./tests/t00-perpendicular-flap.nix { inherit pkgs self precice-system; };
+    };
+    checks.x86_64-linux.perpendicular-flap = (nixos-lib.runTest {
+      hostPkgs = pkgs;
+      defaults.documentation.enable = nixpkgs.lib.mkDefault false;
+    }).config.result;
 
     # Access by running `nix build .#<attribute>`
     packages.x86_64-linux = {
