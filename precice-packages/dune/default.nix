@@ -1,6 +1,6 @@
 { lib
 , stdenv
-, stdenvNoCC
+, symlinkJoin
 , fetchFromGitLab
 , fetchFromGitHub
 , gcc
@@ -20,7 +20,6 @@
 , llvmPackages
 , petsc
 , suitesparse
-, rsync
 }:
 let
   version = "2.8.0";
@@ -106,7 +105,7 @@ let
     rev = "5f2364d57b517698914cb1d5f9979efe692d9254";
     hash = "sha256-fsYyc2DzK4AJJbXo5doX+QopKVfoNLpBKb1rfbUDgyc=";
   };
-  dune = stdenv.mkDerivation rec {
+  dune = python3.pkgs.toPythonModule(stdenv.mkDerivation rec {
     pname = "dune";
     inherit version;
 
@@ -248,7 +247,7 @@ let
       maintainers = with lib.maintainers; [ conni2461 ];
       platforms = lib.platforms.unix;
     };
-  };
+  });
   dune-fem = python3.pkgs.buildPythonPackage rec {
     pname = "dune-fem";
     version = "2.8.0";
@@ -297,38 +296,10 @@ let
     };
   };
 in
-stdenvNoCC.mkDerivation {
+python3.pkgs.toPythonModule (symlinkJoin {
   name = "precice-dune";
-  inherit version;
-
-  dontUnpack = true;
-
-  propagatedBuildInputs = [
-    python3.pkgs.pip
-    python3.pkgs.setuptools
-    python3.pkgs.virtualenv
-    python3.pkgs.wheel
-    python3.pkgs.scikit-build
-    python3.pkgs.requests
-    python3.pkgs.portalocker
-    python3.pkgs.numpy
-    python3.pkgs.mpi4py
-    python3.pkgs.fenics
-
-    # Not great but we need these at runtime
-    pkg-config
-    cmake
-    metis
-    parmetis
+  paths = [
+    dune
+    dune-fem
   ];
-
-  installPhase = ''
-    mkdir -p $out
-
-    ${rsync}/bin/rsync -av ${dune}/* $out
-    ${rsync}/bin/rsync -av ${dune-fem}/* $out
-  '';
-
-  dontUseCmakeConfigure = true;
-  dontMoveLib64 = true;
-}
+})

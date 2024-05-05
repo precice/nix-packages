@@ -173,6 +173,7 @@
       # Devel applications
       git
       cmakeWithGui
+      pkg-config
       gnumake
       gcc
       nano
