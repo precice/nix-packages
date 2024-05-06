@@ -58,6 +58,10 @@ This could potentially lead to different results when a user wants to add a sing
 Another ongoing effort, to at least make it easier to build scientific software, is made by the xSDK community~\cite{xSDK2023}.
 The xSDK declares policies that a scientific software framework or library has to satisfy to be officially part of the xSDK ecosystem.
 
+There are commercial, domain specifig solutions, e.g. CodeOcean\footnote{\url{https://codeocean.com/}} for bioinformatics or Weights and Biases\footnote{\url{https://wandb.ai/site}} for machine learning.
+With these archiving platforms, experiments can be run using technologies like docker so they can be verified by other scientists.
+Those commercial platforms are closed source, so the source code cannot be reviewed nor adjusted as also discussed by~\cite{koch2023sustainable}.
+
 In the past years, the Nix package manager~\cite{Dolstra_2004} and NixOS~\cite{Dolstra_2010}, a Linux distribution built around it, have emerged as promising solutions to address these challenges.
 This paper explores the use of Nix/NixOS to improve the reproducibility of scientific software.
 
