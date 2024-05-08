@@ -7,7 +7,7 @@
 \usepackage{pdfcomment}
 \newcommand{\todo}[1]{\pdfcomment[color={0.045 0.278 0.643},icon=Note]{#1}}
 
-\title{Improving reproducibility of scientific software using Nix/NixOS: A case study on preCICE adapters and solvers}
+\title{Improving reproducibility of scientific software using Nix/NixOS: A case study on the preCICE ecosystem}
 \short{preCICE on Nix: A case study}
 \author{
 Max Hausch\autref{1}\autref{*},
@@ -21,15 +21,17 @@ Benjamin Uekermann\autref{1}}
 \autlabel{*} These authors contributed equally to this work.}
 
 \abstract{
-Ensuring the reproducibility of scientific software is crucial for the advancement of research and the validation of scientific findings.
-However, achieving reproducibility in software-intensive scientific projects is often challenging due to dependencies, system configurations and software environments.
+Ensuring reproducibility of scientific software is crucial for the advancement of research and the validation of scientific findings.
+However, achieving reproducibility in software-intensive scientific projects is often challenging due to dependencies, system configurations, and software environments.
 In this paper, we present a possible solution for these challenges by utilizing Nix and NixOS.
-Nix is a package manager and functional language that allows to mitigate these problems by guaranteeing that a package and all its dependencies can be built reproducibly as long as there is a build plan at the desired time.
-NixOS is a purely functional Linux distribution, built on top of Nix that enables the build of reproducible systems including configuration files, packages and their dependencies.
-We present a case study on improving the reproducibility of preCICE, an open-source coupling library, and some of its main adapters using Nix and NixOS.
-Using this approach, we demonstrate how to create a reproducible and self-contained environment for preCICE and highlight the benefits of using Nix and NixOS for managing software and system configurations, resulting in improved reproducibility.
-In addition, we compare the usability and reproducibility provided by Nix, in the context of preCICE, with two already established high-performance computing (HPC) solutions, Spack and EasyBuild.
-This evaluation enables us to assess the advantages and disadvantages of employing Nix to improve reproducibility in scientific software development within an HPC context.}
+Nix is a package manager and functional language, which guarantees that a package and all its dependencies can be built reproducibly as long as there is a build plan at the desired time.
+NixOS is a purely functional Linux distribution, built on top of Nix, which enables the build of reproducible systems including configuration files, packages, and their dependencies.
+We study the potential of Nix and NixOS by a case study on the reproducibility of the preCICE ecosystem.
+preCICE is a coupling library for partitioned multiphysics simulations. The ecosystem includes diverse legacy solvers, adapters, and language bindings besides the coupling library itself making it a challenging and representative testcase.
+We demonstrate, how to create a reproducible and self-contained environment for this ecosystem and highlight the benefits of using Nix and NixOS.
+%In addition, we compare the usability and reproducibility provided by Nix, in the context of preCICE, with two already established high-performance computing (HPC) solutions, Spack and EasyBuild.
+%This evaluation enables us to assess the advantages and disadvantages of employing Nix to improve reproducibility in scientific software development within an HPC context.
+}
 
 \keywords{Reproducibility, Nix, NixOS, Spack, EasyBuild, preCICE, HPC}
 
