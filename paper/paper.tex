@@ -7,29 +7,31 @@
 \usepackage{pdfcomment}
 \newcommand{\todo}[1]{\pdfcomment[color={0.045 0.278 0.643},icon=Note]{#1}}
 
-\title{Improving reproducibility of scientific software using Nix/NixOS: A case study on preCICE adapters and solvers}
+\title{Improving reproducibility of scientific software using Nix/NixOS: A case study on the preCICE ecosystem}
 \short{preCICE on Nix: A case study}
 \author{
-Max Hausch\autref{1+},
-Simon Hauser\autref{2+},
-Benjamin Uekermann\autref{3}}
+Max Hausch\autref{1}\autref{*},
+Simon Hauser\autref{1}\autref{*},
+Benjamin Uekermann\autref{1}}
 
 \institute{
-\autlabel{1} \email{st175425@stud.uni-stuttgart.de}\\
-\autlabel{2} \email{st148883@stud.uni-stuttgart.de}\\
-\autlabel{3} \email{Benjamin.Uekermann@ipvs.uni-stuttgart.de}\\
-\autlabel{+} These authors contributed equally to this work.}
+\autlabel{1} Institute for Parallel and Distributed Systems\\ University of Stuttgart\\ \email{benjamin.uekermann@ipvs.uni-stuttgart.de}\\
+%\autlabel{1} \email{st175425@stud.uni-stuttgart.de}\\
+%\autlabel{2} \email{st148883@stud.uni-stuttgart.de}\\
+\autlabel{*} These authors contributed equally to this work.}
 
 \abstract{
-Ensuring the reproducibility of scientific software is crucial for the advancement of research and the validation of scientific findings.
-However, achieving reproducibility in software-intensive scientific projects is often challenging due to dependencies, system configurations and software environments.
+Ensuring reproducibility of scientific software is crucial for the advancement of research and the validation of scientific findings.
+However, achieving reproducibility in software-intensive scientific projects is often challenging due to dependencies, system configurations, and software environments.
 In this paper, we present a possible solution for these challenges by utilizing Nix and NixOS.
-Nix is a package manager and functional language that allows to mitigate these problems by guaranteeing that a package and all its dependencies can be built reproducibly as long as there is a build plan at the desired time.
-NixOS is a purely functional Linux distribution, built on top of Nix that enables the build of reproducible systems including configuration files, packages and their dependencies.
-We present a case study on improving the reproducibility of preCICE, an open-source coupling library, and some of its main adapters using Nix and NixOS.
-Using this approach, we demonstrate how to create a reproducible and self-contained environment for preCICE and highlight the benefits of using Nix and NixOS for managing software and system configurations, resulting in improved reproducibility.
-In addition, we compare the usability and reproducibility provided by Nix, in the context of preCICE, with two already established high-performance computing (HPC) solutions, Spack and EasyBuild.
-This evaluation enables us to assess the advantages and disadvantages of employing Nix to improve reproducibility in scientific software development within an HPC context.}
+Nix is a package manager and functional language, which guarantees that a package and all its dependencies can be built reproducibly.
+NixOS is a purely functional Linux distribution, built on top of Nix, which enables the build of reproducible systems including configuration files, packages, and their dependencies.
+We study the potential of Nix and NixOS by a case study on the reproducibility of the preCICE ecosystem.
+preCICE is a coupling library for partitioned multiphysics simulations. The ecosystem includes diverse legacy solvers, adapters, and language bindings besides the coupling library itself making it a challenging and representative testcase.
+We demonstrate, how to create a reproducible and self-contained environment for this ecosystem and highlight the benefits of using Nix and NixOS.
+%In addition, we compare the usability and reproducibility provided by Nix, in the context of preCICE, with two already established high-performance computing (HPC) solutions, Spack and EasyBuild.
+%This evaluation enables us to assess the advantages and disadvantages of employing Nix to improve reproducibility in scientific software development within an HPC context.
+}
 
 \keywords{Reproducibility, Nix, NixOS, Spack, EasyBuild, preCICE, HPC}
 
@@ -38,69 +40,32 @@ This evaluation enables us to assess the advantages and disadvantages of employi
 
 \section{Introduction}
 
-In scientific research, it's crucial to be able to reproduce and verify results.
+In scientific research, it is crucial to be able to reproduce and verify results.
 Reproducibility ensures that experiments can be repeated and findings can be validated, which is essential for reliable and credible research.
-Being able to replicate experiments and computations is important for verifying scientific claims.
-However, achieving reproducibility in scientific software has been a challenge due to complex dependencies, conflicting software environments, and changing software systems.
+However, achieving reproducibility in scientific software has been a challenge due to complex dependencies, conflicting software environments, and changing software systems~\cite{Dalle_2012}.
 Problems arise from dependencies, library versions, and system configurations, leading to inconsistencies across different computing environments.
 Traditional approaches to reproducibility, such as manual setup instructions or virtualization techniques, are prone to errors and time-consuming at best.
-It is not scalable and highly inefficient to make every researcher to tediously recreate the exact same environment with traditional approaches.
-This calls for a more efficient and automated solution.
 
-Attempts were made by scientists like Koch et al.~\cite{koch2023sustainable} to solve this situation by using Docker\footnote{\url{https://www.docker.com/}}, a software which describes software environments with the help of text files.
+Many scientists aim to solve this situation using Docker\footnote{\url{https://www.docker.com/}} (e.g.,\cite{koch2023sustainable}),
+a software which describes software environments with the help of text files.
 Those text files are made up of imperative commands which are run inside of containers, one layer at a time.
-The result are several different layers which are all combines into a single output image that can be instantiated to a running container.
+The result is several different layers combined into a single output image, which can be instantiated into a running container.
 Docker images can be copied to different hosts and should then provide the same environment on different machines.
-An issue that arises here, is that usually those images are based on one of the official Docker images\footnote{\url{https://docs.docker.com/trusted-content/official-images/}} all of which bring traditional package managers like \texttt{apt}.
-When a user specifies to install the \texttt{python3} package with a traditional package manager today, the package manager could yield python3.8, whereas running the same command two months from now could yield python in the version 3.9.
-This could potentially lead to different results when a user wants to add a single dependency but has to rebuild the whole image, thus rendering it inpractical in terms of reproducibility.
+Those images are usually based on one of the official Docker images\footnote{\url{https://docs.docker.com/trusted-content/official-images/}}, however, which use traditional package managers, such as apt.
+When a user then specifies to install the python3 package, for instance, a traditional package manager could yield version 3.8 today, but version 3.9 in a few months.
+Full reproducibility can, thus, only be achieved by storing the complete image. Altering a single dependency (e.g., a bugfix) causes a rebuild of the image and, thus, destroys reproducibility.
 
-Another ongoing effort, to at least make it easier to build scientific software, is made by the xSDK community~\cite{xSDK2023}.
-The xSDK declares policies that a scientific software framework or library has to satisfy to be officially part of the xSDK ecosystem.
+There are, moreover, commercial, domain specifig solutions to achieve reproducibility, e.g., CodeOcean\footnote{\url{https://codeocean.com/}} mainly for bioinformatics or Weights and Biases\footnote{\url{https://wandb.ai/site}} for machine learning.
+With these archiving platforms, experiments can be rerun using technologies such as Docker.
+These platforms are closed source, however, such that the source code cannot be reviewed nor adjusted~\cite{koch2023sustainable}.
 
-There are commercial, domain specifig solutions, e.g. CodeOcean\footnote{\url{https://codeocean.com/}} for bioinformatics or Weights and Biases\footnote{\url{https://wandb.ai/site}} for machine learning.
-With these archiving platforms, experiments can be run using technologies like docker so they can be verified by other scientists.
-Those commercial platforms are closed source, so the source code cannot be reviewed nor adjusted as also discussed by~\cite{koch2023sustainable}.
+In past years, the Nix package manager~\cite{Dolstra_2004} and NixOS~\cite{Dolstra_2010}, a Linux distribution built around it, have emerged as promising alternatives~\cite{Devresse_2015}.
+Nix allows functional descriptions of dependencies up to fixed versions, thus avoiding the issue described above.
+Similar ideas are followed by EasyBuild~\cite{easybuil6495863} and Spack~\cite{spack7832814}.
+All have in common that they rely on scientific software following best practices concerning building and packaging. Unfortunately, most legacy software projects do not do this.
+This is why, for example, the xSDK community~\cite{xSDK2023} tries to set a standard for policies for math software.
 
-In the past years, the Nix package manager~\cite{Dolstra_2004} and NixOS~\cite{Dolstra_2010}, a Linux distribution built around it, have emerged as promising solutions to address these challenges.
-This paper explores the use of Nix/NixOS to improve the reproducibility of scientific software.
-
-Conducting a large scale research on building scientific codes reproducibly is quite infeasible due to how many different software there is.
-Therefore, we conduct a case study, focusing on preCICE~\cite{preCICEv2}, its adapters and solvers.
-One of the goals of the case study is to get a first hand experience and estimate on the complexity and possible challenges when packaging scientific software.
-Also, consistent portability of building the software on three different systems is verified.
-preCICE is a well fit for such a case study, as its official adapters and solvers vary in their programming languages, project sizes and other factors, providing a quite manifold set of scientific simulation software while still being able to verify if the software is still correct by running preCICE simulations across several different solver binaries.
-
-In high-performance computing (HPC), where performance and efficiency are critical, managing software dependencies and configurations becomes even more challenging.
-By using Nix, researchers and practitioners in HPC could easily reproduce computational experiments, ensuring that the same software stack, libraries, and configurations are utilized consistently.
-Reproducibility of scientific results can be achieved using the Nix package manager as described by Devresse et al~\cite{Devresse_2015}.
-This not only streamlines the deployment process but also facilitates collaboration and sharing of software environments, making it easier for researchers to validate and build upon each other's work.
-Additionally, because packages in Nix are highly customizable, optimized builds for specific HPC clusters can be realized.
-
-We also compare Nix, EasyBuild~\cite{easybuil6495863}, and Spack~\cite{spack7832814} as package managers in the realm of scientific software and if Nix is feasible for being used in a scientific context at all.
-
-There are several other papers which discuss and highlight the importance of reproducibly of scientific experiments.
-In their paper, Dalle lists technical factors that lead to issues regarding reproducibly of in silico simulation experiments~\cite{Dalle_2012}.
-\begin{enumerate}
-    \item software bugs: if bugs get fixed in future versions of the same software, they may distort results
-    \item software availability: loosing track of old software versions may lead to unreproducible experiments
-    \item floating points numbers: due to interpretation errors of floating point numbers different simulators could produce different results
-    \item computer and operating systems evolutions: evolving software stacks and dependencies could lead to researchers not being able to reproduce results of an experiment
-\end{enumerate}
-Nix could probably solve three out of these four factors:
-\begin{enumerate}
-    \item using Nix, software --- including its bugs --- can be built reproducibly
-    \item using Nix, even old software can be rebuild and used\footnote{\url{https://blinry.org/nix-time-travel/}}
-    \item Nix cannot really help with floating point issues that affect different codes
-    \item using NixOS, entire operating systems can be reproducibly built, including complete dependencies and kernels
-\end{enumerate}
-
-One suggestion to enhance reproducibility by using a virtual machine (VM) running on a hypervisor software, e.g. VirtualBox\footnote{\url{https://www.virtualbox.org/}} is made by Kim~\cite{Kim_2019}.
-A major advantage compared to experiments with a non-reproducible ad-hoc environment is, that other researchers can simply copy the VirtualBox image containing the whole operating system, including the software stack and all dependencies.
-However, when using the original VM image to build on top of simulations and expanding research, practitioners often have to install several other pieces of software which could cause altering dependencies of existing packages which in turn could lead to falsification of the initial results.
-In this scenario, using Nix and NixOS could address this challenge, because here, dependencies of software stacks are always complete and self-contained.
-So even if researchers want to expand research, new software can be installed alongside existing packages without interference.
-
+In this paper, we analyze how well Nix and NixOS can improve reproducibility of scientific software. To this end, we study the preCICE ecosystem~\cite{preCICEv2} as an example. preCICE is a coupling library for partitioned multiphysics simulations. The ecosystem includes diverse legacy solvers, adapters, and language bindings besides the coupling library itself making it a challenging and representative testcase. We try to build the complete ecosystem using Nix and verify portability on three different systems.
 
 \section{Background}
 
