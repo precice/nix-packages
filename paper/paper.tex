@@ -61,7 +61,7 @@ These platforms are closed source, however, such that the source code cannot be 
 
 In past years, the Nix package manager~\cite{Dolstra_2004} and NixOS~\cite{Dolstra_2010}, a Linux distribution built around it, have emerged as promising alternatives~\cite{Devresse_2015}.
 Nix allows functional descriptions of dependencies up to fixed versions, thus avoiding the issue described above.
-Similar ideas are followed by EasyBuild~\cite{easybuil6495863} and Spack~\cite{spack7832814}.
+Similar ideas are followed by the popular high performance computing (HPC) package managers EasyBuild~\cite{easybuil6495863} and Spack~\cite{spack7832814}.
 All have in common that they rely on scientific software following best practices concerning building and packaging.
 Unfortunately, most legacy software projects do not do this.
 This is why, for example, the xSDK community~\cite{xSDK2023} tries to set a standard for policies for math software.
@@ -77,7 +77,7 @@ We try to build the complete ecosystem using Nix and verify portability on three
 In our case study, we use Nix for building and packaging preCICE adapters and their respective solvers.
 This chapter gives a short introduction into Nix and preCICE.
 
-\subsection{Nix}
+\subsection{Nix}\label{sec:nix}
 
 Nix is a purely functional package manager that provides some features to build software derivations reproducibly.
 It does so, by recursively calculating a hash over all the inputs of a derivation and its dependencies to ensure the completeness of the whole derivation.
@@ -427,6 +427,7 @@ Additionally, hard-coding libraries to \texttt{/usr/lib} and \texttt{/usr/includ
 Solutions such as \texttt{pkg-config} that can be configured, so it finds libraries outside the common paths, should always be preferred and work out of the box with the common paths such as \texttt{/usr/lib}.
 
 With Nix' dependency management, we can easily copy the package definitions we just wrote onto different systems, e.g., entirely different Linux distributions, and execute the build of the closures there.
+Building the same closures yields the same outputs, as already described in section \ref{sec:nix}.
 
 \section{Conclusion and Outlook}
 
@@ -440,7 +441,7 @@ Nix itself also is partly at fault, because of its unique nature, that every pie
 But it is worth mentioning that not only Nix would benefit from more streamlined build systems and packaging, because both Spack and EasyBuild do something similar for their packages, where each package also lies in its own FHS.
 The work of the xSDK people and their policy might be a step in the right direction but looking at the current list of software that is available within the latest xSDK release, 26 libraries, indicates that it is an uphill battle that might take several more years, especially if we consider that the first release happened in 2016.
 
-The Nix code for the packages for the case study on the preCICE adapters, solvers and the preCICE VM is available online in a git repository at \url{https://github.com/precice/nix-packages/} with a more indetail report that also includes a comparison between Nix, Spack and EasyBuild and a evaluation of Nix on HPC~\footnote{\url{https://github.com/precice/nix-packages/releases/tag/initial-paper-release}}.
+The Nix code for the packages for the case study on the preCICE adapters, solvers and the preCICE VM is available online in a git repository at \url{https://github.com/precice/nix-packages/} with a more in-detail report that also includes a comparison between Nix, Spack and EasyBuild and a evaluation of Nix on HPC~\footnote{\url{https://github.com/precice/nix-packages/releases/tag/initial-paper-release}}.
 
 While this case study and this comparison has provided valuable insights into the topic of reproducible software, there are still numerous unanswered questions that merit further investigation.
 This includes a full evaluation if there are performance improvements using a full impure system rebuild, with \texttt{-march=native} compared to only rebuilding the package at hand.
