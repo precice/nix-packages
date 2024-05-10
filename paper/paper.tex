@@ -427,7 +427,6 @@ Additionally, hard-coding libraries to \texttt{/usr/lib} and \texttt{/usr/includ
 Solutions such as \texttt{pkg-config} that can be configured, so it finds libraries outside the common paths, should always be preferred and work out of the box with the common paths such as \texttt{/usr/lib}.
 
 With Nix' dependency management, we can easily copy the package definitions we just wrote onto different systems, e.g., entirely different Linux distributions, and execute the build of the closures there.
-Building the same closures yields the same outputs, this will also be described in section \ref{sec:nix-on-hpc}.
 
 \section{Conclusion and Outlook}
 
@@ -440,16 +439,8 @@ The majority of the packages required some solution for a fundamental issue with
 Nix itself also is partly at fault, because of its unique nature, that every piece of software lies within \texttt{/nix/store} and that each store path is its own-isolated tree based on the Filesystem Hierarchy Standard (FHS).
 But it is worth mentioning that not only Nix would benefit from more streamlined build systems and packaging, because both Spack and EasyBuild do something similar for their packages, where each package also lies in its own FHS.
 The work of the xSDK people and their policy might be a step in the right direction but looking at the current list of software that is available within the latest xSDK release, 26 libraries, indicates that it is an uphill battle that might take several more years, especially if we consider that the first release happened in 2016.
-We have also seen, that the current HPC solutions, Spack and EasyBuild make it somewhat possible to reproducibly build software but not to the degree that Nix allows it.
-That is because they focus on flexibility of installing packages.
-Spacks way of allowing users to change the compiler of a package, easily enable additional features on installation, override cflags and more advanced features, for example regarding mpi, shows that the Nix tooling needs more work or a layer on top that strips away the uniqueness of the DSL for something more user- and beginner-friendly.
 
-Lastly we looked at Nix on HPC and have seen that it is possible to get it running, and we are able to run simulations on one node, so we currently assume that with the correct networking setup it should be possible to run a simulation across multiple nodes.
-It is currently not ideally solved on getting Nix running on HPC as a single user installation, so this can be improved in the future.
-
-The Nix code for the packages for the case study on the preCICE adapters, solvers and the preCICE VM is available online in a git repository at \url{https://github.com/precice/nix-packages/}.
-Also the \texttt{setup.sh} and \texttt{clean.sh} scripts used to install Nix on HPC can be found there.\\
-
+The Nix code for the packages for the case study on the preCICE adapters, solvers and the preCICE VM is available online in a git repository at \url{https://github.com/precice/nix-packages/} with a more indetail report that also includes a comparison between Nix, Spack and EasyBuild and a evaluation of Nix on HPC~\footnote{\url{https://github.com/precice/nix-packages/releases/tag/initial-paper-release}}.
 
 While this case study and this comparison has provided valuable insights into the topic of reproducible software, there are still numerous unanswered questions that merit further investigation.
 This includes a full evaluation if there are performance improvements using a full impure system rebuild, with \texttt{-march=native} compared to only rebuilding the package at hand.
