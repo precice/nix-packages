@@ -332,7 +332,7 @@ We clone all of the required dune repos into a directory and additionally clone 
 For the build and install, process we need to manually set \texttt{\$DUNE\_CONTROL\_PATH} and \texttt{\$DUNE\_PY\_DIR} environment variables, both variables also need to be set at runtime.
 Additionally, we need to patch the python install process because the current CMake file that handles this install tries to access the internet with \texttt{pip install}.
 This is not allowed in Nix' sandboxed builds.
-Therefore, we need to patch this \texttt{pip} command with the options \texttt{--no-build-isolation --no-cache-dir --no-index --no-deps} and we need to remove the \texttt{--upgrade} option.\\
+Therefore, we need to patch the \texttt{pip} command with the options \texttt{--no-cache-dir --no-index --no-deps --no-build-isolation} and remove the \texttt{--upgrade} option.\\
 
 \subsubsection{FEniCS}
 
