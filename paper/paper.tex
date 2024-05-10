@@ -109,27 +109,30 @@ This chapter gives a short introduction into Nix and preCICE.
 
 \subsection{Nix}
 
-Nix is a general purpose build tool and purely functional package manager that provides some features that help to build software derivations reproducibly.
+Nix is a purely functional package manager that provides some features to build software derivations reproducibly.
 It does so, by recursively calculating a hash over all the inputs of a derivation and its dependencies to ensure the completeness of the whole derivation.
 If any of the inputs changes, all dependent derivations will have to be rebuilt.
 
-All contents, including source files and resulting build artifacts, are stored inside the Nix store.
-Per default, the Nix store resides in the path \texttt{/nix/store} on the file system and all file- and directory names stored inside the Nix store are prefixed with a cryptographic hash of the inputs of the specific file/directory followed by a human-readable name and a version number.
-This eases checking for integrity the Nix store and ensures that builds using the same inputs are performed only once.
+As Nix is purely functional, it relies on functions that, without side-effects, realize the package derivations.
+Inputs to those functions are parameters such as the package version or the location of the source code.
+Evaluating and realizing those functions with the same inputs, yields the same outputs.
+This is a critical factor where Nix's reproducibility comes from.
+Outputs, i.e. the build artifacts, never change after being built once.
+Nix builds are sandboxed, meaning that there is no internet access possible during a build.
 
-These are two examples for possible directory names for the preCICE 2.5.0 package:
+All contents, including source files and resulting build artifacts, are stored inside the Nix store.
+Per default, the Nix store resides in the path \texttt{/nix/store} on the file system.
+The naming scheme with the preCICE 2.5.0 package as an example is
 
 \begin{itemize}
   \item \texttt{/nix/store/0a5gw3l\ldots-precice-2.5.0}
   \item \texttt{/nix/store/9gpyg37\ldots-precice-2.5.0}
 \end{itemize}
 
-Hashing the inputs and storing them in the manner described above provides several features that other package managers cannot provide.
-Nix enables users to have multiple versions of the same software installed at the same time without the softwares raising conflicts.
-As each build output references their complete dependency graphs inside the Nix store, they do not interfere with other build outputs.
+This eases checking the Nix store for integrity and ensures that builds using the same inputs are performed only once.
+
+As each build output references their complete dependency graphs inside the Nix store, they do not interfere with other build outputs, enabling users to have multiple versions of the same software installed at the same time without raising conflicts.
 An example of a graphical representation of a dependency graph can be seen in Fig. \ref{fig:nix-graph}.
-Nix modifies environment variables, such as the \texttt{PATH} variable, to make calling the binaries more convenient to users.
-This fact allows multiple users to safely install software without the need of elevated permissions, as users cannot exchange the binaries of other users.
 
 \begin{figure}
     \centering
@@ -138,27 +141,10 @@ This fact allows multiple users to safely install software without the need of e
     \label{fig:nix-graph}
 \end{figure}
 
-Package derivations for the Nix package manager are written in a domain specific language which is also called Nix.
-Derivations are the ``build plans'' on how Nix should build a specific software, which resulting build artifacts should be stored where, what the inputs are and so forth.
-There are several different phases during a build, which contain shell code that is being run one phase after the other.
-Those phases default to a given behavior, depending on the build system used.
-All phases can be overridden freely to give users a maximum of flexibility when building and packaging software for Nix.
-The most important phases users will override are the \texttt{patchPhase}, \texttt{buildPhase}, \texttt{installPhase} and \texttt{checkPhase}.
-During the build, a special bash variable \texttt{\$out} is set that contains the path to the target directory inside the Nix store.
-
-As the Nix language is purely functional, evaluating and building the derivation with the same inputs, yields the same outputs.
-This is a critical factor where Nix's reproducibility comes from.
-Also, Nix builds are sandboxed so they can reproducibly be run, meaning that there is no internet access possible during a build.
-
-Another benefit of the reproducibility are remote builds, so a build cluster can build packages and serve its Nix store to other machines running Nix.
-The upstream build cluster is called ``hydra'' and Nix defaults to using the upstream hydra as a substituter, i.e. fetching all packages from the hydras binary cache.
-When evaluating a derivation, Nix checks if the hashed path is existent in the local Nix store.
-If it's not, then it queries all known binary caches, which per default is only the upstream binary cache, and fetches the path and all its dependent paths until the full closure is copied into the local Nix store.
 
 Software patches are quite easy to apply in Nix.
-One can simply provide a list of \texttt{.patch} files inside the Nix file describing a derivation, Nix will then include the patch files in the calculation of the hash.
-This new store path can probably not be found in the upstream binary cache, so Nix will fall back to building from source.
-Nix also provides overriding all inputs freely, so every package can be flexibly adjusted to the users needs.
+One can simply provide a list of \texttt{.patch} files as inputs, Nix will then include the patch files in the build and the calculation of the hash.
+Users can override all inputs freely, so every package can be flexibly adjusted to the users needs.
 
 
 \subsection{preCICE}
