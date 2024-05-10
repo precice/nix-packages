@@ -598,30 +598,6 @@ To summarize the comparison, while Nix has the biggest software library, it lack
 On the other hand, the build sandbox that Nix offers, guarantees a level of reproducibility that Spack and EasyBuild currently cannot provide, because it disallows random linking.
 Spack and EasyBuild on the other side both provide a way better usability to end user with their command line interfaces, Nix still is able to do the same things, such as changing the compiler but generally requires knowledge of the Nix language to make this achievable, but if end user have this knowledge it is possible to change the compile flags for all packages in the dependency graph allowing for additional performance gains, if any package is compiled against the specific hardware.
 
-\section{Nix on HPC}\label{sec:nix-on-hpc}
-
-High-performance computing refers to the utilization of powerful computational resources to tackle computationally intensive scientific problems.
-It involves the parallel execution of tasks across multiple computing units, also called nodes in this context, enabling researchers to perform complex simulations, data analysis, and modeling at large scales.
-HPC systems, such as clusters, supercomputers, and cloud-based infrastructures, usually offer immense processing power, storage capacity, and specialized hardware, supporting scientific research across various domains\footnote{\url{https://www.ibm.com/topics/hpc}}.
-
-In many HPC environments, the \texttt{module} system is being used to load different pieces of software from a local repository of available softwares, such as compilers and different message passing interfaces (MPI).
-With the module command, different users can use different software or different versions of the same software at the same time without interfering with each other.
-One major drawback here is, that without further configuration, users can only load software modules that were previously installed into the cluster by the clusters administrators, so any other software that is needed for a simulation, including its dependencies, have to be compiled by the users that want to conduct an experiment.
-Sometimes, this can be quite hard, as some software expects libraries or other software artifacts at some hard-coded location as \texttt{/usr/lib/\ldots}\footnote{\url{https://hpc-wiki.info/hpc/Modules}}.
-
-As mentioned, Nix uses the Nix store, that lies in \texttt{/nix/store} by default and all software artifacts are linked against libraries inside the Nix store.
-So if there is no such path as \texttt{/nix/store} on the HPC clusters filesystem, all software would need to be recompiled as all links and paths inside the binaries would point to a non existent location.
-We would need administrator rights to be allowed to setup the Nix store globally on the cluster and to install Nix globally for all users.
-However, Nix supports a Linux kernel feature called user namespaces.
-This is a form of kernel based isolation of resources and other attributes such as user ids\footnote{\url{https://www.man7.org/linux/man-pages/man7/user_namespaces.7.html}}.
-
-Using namespaces, it is possible for the Nix package manager to mount an arbitrary user-writable location to \texttt{/nix/store} inside a user namespace, so all programs running in that namespace can access the Nix store as if it would actually be installed under the default store path.
-Another challenge is to get Nix to work without the needed libraries that can usually be found inside the Nix store, leading to a bootstrapping problem.
-We can simply use a statically compiled version the Nix package manager, however, to circumvent this problem.
-In our repository, we provide a setup bash script that simplifies download, configuration and installation of the static Nix binary that can then be used to easily build and access the solvers adapters and the preCICE VM.
-
-After installing Nix on HPC, we were able to produce the same binary output for the adapters and solvers as we built on our local machines as well as within the preCICE VM\footnote{The sha256 hashes of the resulting outputs were compared and matched.}
-
 \section{Conclusion and Outlook}
 
 In conclusion, the case study was a success, as it has shown that packaging of scientific software with Nix is possible, but it is not as trivial as expected.
