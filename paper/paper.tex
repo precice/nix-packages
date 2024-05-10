@@ -92,7 +92,7 @@ Nix builds are sandboxed, meaning that there is no internet access possible duri
 
 All contents, including source files and resulting build artifacts, are stored inside the Nix store.
 Per default, the Nix store resides in the path \texttt{/nix/store} on the file system.
-The naming scheme for the preCICE 2.5.0 package as an example is \texttt{/nix/store/0a5gw3l\ldots-precice-2.5.0}.
+The naming scheme for the preCICE 2.5.0 package as an example is \path{/nix/store/0a5gw3l\ldots-precice-2.5.0}.
 This eases checking the Nix store for integrity and ensures that builds using the same inputs are performed only once.
 
 As each build output references their complete dependency graphs inside the Nix store, they do not interfere with other build outputs, enabling users to have multiple versions of the same software installed at the same time without raising conflicts.
@@ -257,7 +257,7 @@ One package, \texttt{out}, contains the libraries and binaries and another, \tex
 Additionally, code\_aster requires medfile and scotch, that are both available upstream and can be used as a dependency.
 
 Another dependency, that is also provided by code\_aster is metis, that partially builds, so we do not replace this dependency, but we need to fix the second part of the build, including the metis programs such as gpmetis, ndmetis, mpmetis and more.
-The issue is that in the \texttt{CMakeLists.txt} for the metis programs \texttt{link\_directories} is hard-coded to \texttt{/home/karypis/local/lib}.
+The issue is that in the \texttt{CMakeLists.txt} for the metis programs \texttt{link\_directories} is hard-coded to \path{/home/karypis/local/lib}.
 After removing this line, it also installs, so to resolve this issue in the buildPhase, we unpack the metis tarball, remove this line with \texttt{sed} and then repack the directory.
 
 The last 2 dependencies, are not available and need to be packaged, this includes mumps and tfel, also known as mfront.
@@ -272,7 +272,7 @@ The last missing dependency for code\_aster, tfel, uses CMake as a build system 
 After successfully packaging all dependencies, the build phase of code\_aster completes, but the installation part has another issue, that also affects new versions of Ubuntu and other distributions that use a python version greater than 3.9.
 There is a forum post without any resolution from the developers or the community, so we need to manually patch the bug.
 
-The issue is that the custom build system does not correctly calculate the python site-packages directory because it unconditionally slices the first 3 chars from \texttt{sys.version}, that works if your version is 3.9.x but not with 3.10.x because then the code calculates \texttt{lib64/python3.1/site-packages} rather than the expected \texttt{lib64/python3.10/site-packages}.
+The issue is that the custom build system does not correctly calculate the python site-packages directory because it unconditionally slices the first 3 chars from \texttt{sys.version}, that works if your version is 3.9.x but not with 3.10.x because then the code calculates \path{lib64/python3.1/site-packages} rather than the expected \path{lib64/python3.10/site-packages}.
 
 After patching this bug code\_aster successfully installed into \texttt{\$out/14.6/}, so we move around some files until we have a valid directory structure with \texttt{\$out/bin}, \texttt{\$out/lib} and we provide symlinks for \texttt{\$out/14.6/} and \texttt{\$out/stable/} as code\_aster expects configuration files in these directories.
 
