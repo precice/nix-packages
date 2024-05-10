@@ -288,37 +288,29 @@ As an example for the Nix language, you can see the abbreviated Nix code for the
 \begin{figure*}
     \normalsize
     \begin{minted}{nix}
-{ lib, stdenv, fetchFromGitHub, cmake,
-  precice, dealii, enable3d ? false }:
-
+{ lib, stdenv, fetchFromGitHub, cmake, precice,
+  dealii, enable3d ? false }:
 stdenv.mkDerivation rec {
   pname = "precice-dealii-adapter";
   version = "unstable-2022-09-23";
 
   src = fetchFromGitHub {
-    owner = "precice";
-    repo = "dealii-adapter";
-    rev = "dbb25...8367c";
-    sha256 = "sha256-pPQ2...2jlflgUE=";
+    owner = "precice"; repo = "dealii-adapter";
+    rev = "dbb25...8367c"; sha256 = "sha256-pPQ2...2jlflgUE=";
   };
 
   nativeBuildInputs = [ cmake ];
   buildInputs = [ precice dealii ];
 
-  cmakeFlags = lib.optionals enable3d [
-    "-DDIM=3"
-  ];
+  cmakeFlags = lib.optionals enable3d [ "-DDIM=3" ];
 
   installPhase = ''
-    mkdir -p $out/bin
-    cp elasticity $out/bin/elasticity
+    mkdir -p $out/bin && cp elasticity $out/bin/elasticity
   '';
 }
     \end{minted}
     \caption{A sample of Nix code used to package the dealii-adapter, see: \url{https://github.com/precice/dealii-adapter/}}
     \label{lst:dealii-adapter-nix}
-    \hrulefill
-    \vspace*{4pt}
 \end{figure*}
 
 \subsubsection{DUNE}
