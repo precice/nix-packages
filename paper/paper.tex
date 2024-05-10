@@ -126,7 +126,7 @@ These are two examples for possible directory names for the preCICE 2.5.0 packag
 
 Hashing the inputs and storing them in the manner described above provides several features that other package managers cannot provide.
 Nix enables users to have multiple versions of the same software installed at the same time without the softwares raising conflicts.
-As each build output references their complete dependency graphs inside the Nix store, they don't interfere with other build outputs.
+As each build output references their complete dependency graphs inside the Nix store, they do not interfere with other build outputs.
 An example of a graphical representation of a dependency graph can be seen in Fig. \ref{fig:nix-graph}.
 Nix modifies environment variables, such as the \texttt{PATH} variable, to make calling the binaries more convenient to users.
 This fact allows multiple users to safely install software without the need of elevated permissions, as users cannot exchange the binaries of other users.
@@ -235,7 +235,7 @@ For each of these entities, we present possible challenges, how to circumvent th
 
 \subsection{preCICE}
 
-The preCICE library itself is already available in the nixpkgs repository, so we don't have to package the software.
+The preCICE library itself is already available in the nixpkgs repository, so we do not have to package the software.
 Looking at the package definition and the preCICE source code, the library is quite easy to build and package as it uses CMake as a build system.
 
 \subsection{Tools}
@@ -285,7 +285,7 @@ Many of the adapters use solvers that aren't packaged in the upstream repo as we
 \subsubsection{CalculiX}
 
 The preCICE adapter for CSM code CalculiX~\cite{Uekermann2017_Adapters}, requires the original CalculiX source code and provides a new Makefile in the adapter repository.
-By default, this Makefile expects the source code to reside in \texttt{\$HOME}, but it's possible to override this location with a make variable.
+By default, this Makefile expects the source code to reside in \texttt{\$HOME}, but it is possible to override this location with a make variable.
 It then builds the original code and the adapter code together, which results in a combined binary.
 
 The Makefile also has hard-coded dependency location for \texttt{SPOOLES}, \texttt{ARPACK} and \texttt{YAML} so these need to be replaced with the equivalent \texttt{pkg-config} calls, because Nix doesn't have these dependencies at the hard-coded locations, and generally only finds dependencies with \texttt{pkg-config}.
@@ -306,14 +306,14 @@ HDF5 is packaged with multiple outputs.
 One package, \texttt{out}, contains the libraries and binaries and another, \texttt{dev} contains the header files, this is, because most of the time, users installing HDF5 only need the libraries and binaries, and it helps to reduce installation size of this rather large package.
 Additionally, code\_aster requires medfile and scotch, which are both available upstream and can be used as a dependency.
 
-Another dependency, which is also provided by code\_aster is metis, which partially builds, so we do not replace this dependency, but we need to fix the second part of the build, which includes the metis programs like gpmetis, ndmetis, mpmetis and more.
+Another dependency, which is also provided by code\_aster is metis, which partially builds, so we do not replace this dependency, but we need to fix the second part of the build, which includes the metis programs such as gpmetis, ndmetis, mpmetis and more.
 The issue is that in the \texttt{CMakeLists.txt} for the metis programs \texttt{link\_directories} is hard-coded to \texttt{/home/karypis/local/lib}.
 After removing this line, it also installs, so to resolve this issue in the buildPhase, we unpack the metis tarball, remove this line with \texttt{sed} and then repack the directory.
 
 The last 2 dependencies, are not available and need to be packaged, this includes mumps and tfel, also known as mfront.
 
-Mumps builds using a Makefile and can be configured using Makefile.inc, by default it provides a couple of these configurations for systems like Ubuntu, so we use one of these provided configuration files to write our own custom config file.
-It defines the location for dependencies like scotch, metis, parmetis, liblapack, blas, scalapack and blacs.
+Mumps builds using a Makefile and can be configured using Makefile.inc, by default it provides a couple of these configurations for systems such as Ubuntu, so we use one of these provided configuration files to write our own custom config file.
+It defines the location for dependencies such as scotch, metis, parmetis, liblapack, blas, scalapack and blacs.
 Almost all the dependencies, are available upstream, but we need to recompile scotch with additional build flags, \texttt{scotch ptscotch esmumps ptesmumps} using Nix overrideAttrs feature.
 For packaging blacs, which also uses a Makefile, we configure the build using a custom \texttt{Bmake.inc} file, which is used to set compiler flags, the path to the mpi and bash installation.
 
@@ -376,7 +376,7 @@ stdenv.mkDerivation rec {
 The DUNE~\cite{bastian2020dune} package uses a combination of CMake files and custom build scripts which makes the build process quite tedious.
 This might be an issue because of the ongoing migration to CMake from autotools and might be resolved in the future.
 
-It's also a minor issue that the dune-project is a collection of repositories rather than a monorepository, because users have to correctly clone all repositories so the build system finds all relevant information.
+It is also a minor issue that the dune-project is a collection of repositories rather than a monorepository, because users have to correctly clone all repositories so the build system finds all relevant information.
 We clone all of the required dune repos into a directory and additionally clone the adapter into the same directory.
 
 For the build and install, process we need to manually set \texttt{\$DUNE\_CONTROL\_PATH} and \texttt{\$DUNE\_PY\_DIR} environment variables, both variables also need to be set at runtime.
@@ -443,10 +443,10 @@ This inherently breaks reproducibility as the VM fetches files from the internet
 
 Nix comes with the built-in functionality of producing qemu\footnote{\url{https://www.qemu.org/}} VM images.
 We used Nix to define a VM image with NixOS as a base, that can be built reproducibly.
-The image contains all the adapters and solvers from the case study and some additional custom tools that can only be seen in the official, like the \texttt{preciceToPNG} command.
+The image contains all the adapters and solvers from the case study and some additional custom tools that can only be seen in the official VM, such as the \texttt{preciceToPNG} command.
 Also, we generate an iso and a Vagrant VirtualBox file of the VM as additional outputs.
 
-Most of the functionality that can be found in the official VM is also available in our NixOS VM and preCICE tutorials, like the \textit{perpendicular-flap} can be run successfully.
+Most of the functionality that can be found in the official VM is also available in our NixOS VM and preCICE tutorials, such as the \textit{perpendicular-flap} can be run successfully.
 
 \subsection{Discussion}
 
@@ -457,7 +457,7 @@ Generally speaking, there are major gaps regarding the ability to successfully p
 Custom build systems require an disproportional amount of additional work to make them runnable on any system.
 OpenFOAM and Allwmake are prime examples of these issues because now package managers have to understand a whole new build system for exactly one package in order to successfully package it and make it easily available to users.
 It is also worth mentioning that writing your own custom build system, requires additional time to maintain this build system, which could have been spent working on the software itself.
-Packages that use common, industry proven package managers, like CMake and autotools make it easier for developers of the software to build their software as well as package managers to package it.
+Packages that use common, industry proven package managers, such as CMake and autotools make it easier for developers of the software to build their software as well as package managers to package it.
 These build tools, generally also provide interfaces for dependency management which can be used to tell users and package maintainers which dependencies are needed, and it is usually better than only documenting required dependencies, because documentation needs to be kept in sync with the underlying code.
 They also generally already provide proven interfaces for configuring packages with additional features, and these also might be self documenting.
 
@@ -465,7 +465,7 @@ The authors of the xSDK\footnote{\url{https://xsdk.info/}} came to a very simila
 Their goal is to ``identify, adapt, and adopt best practices in software engineering''~\cite{xsdk-website} and ``to provide the foundation of this extensible scientific software ecosystem''~\cite{xsdk-website}.
 To achieve this they provide a list of package policies~\cite{xSDK2023}, which for example specifies as mandatory policy that packages ``must support portable installation through Spack''~\cite{xSDK2023} and that all packages ``should have a build system that is appropriate for the language''~\cite{xSDK2023}, which includes CMake and autoconf as examples.
 If a package supports all these policies, they can be added to the growing list of packages in the xSDK, which currently among other things include PETSc, deal.ii and preCICE.
-These packages are already part of nixpkgs, or it is easy to provide a package for them because they support portable installation, meaning installation into custom prefixes like nix store paths, and common build systems like CMake and autoconf.
+These packages are already part of nixpkgs, or it is easy to provide a package for them because they support portable installation, meaning installation into custom prefixes such as nix store paths, and common build systems such as CMake and autoconf.
 
 Another finding is, that is also addressed in xSDK through portable installations, is the requirement to install software to be installed into \texttt{\$HOME} or requires files to be located at a specific location on your file system.
 Most of the time, it is possible to work around this, but there are already available solutions for dependency management.
@@ -473,7 +473,7 @@ Both, the CalculiX-adapter and SU2-adapter do require the original source code t
 The current solution of the user cloning the code at the specific location works, but it might be better to look into submodules because that also allows the developers to pin the version more easily rather than documenting it, as that could more easily lead to user error, when they try to package and install the adapters.
 
 Additionally, hard-coding libraries to \texttt{/usr/lib} and \texttt{/usr/include} might work on one distribution, but might make it hard or even impossible to install a package on a different distribution or even a later version of the same distribution.
-Solutions like \texttt{pkg-config} that can be configured, so it finds libraries outside the common paths, should always be preferred and work out of the box with the common paths like \texttt{/usr/lib}.
+Solutions such as \texttt{pkg-config} that can be configured, so it finds libraries outside the common paths, should always be preferred and work out of the box with the common paths such as \texttt{/usr/lib}.
 
 With Nix' dependency management, we can easily copy the package definitions we just wrote onto different systems, e.g., entirely different Linux distributions, and execute the build of the closures there.
 Building the same closures yields the same outputs, this will also be described in section \ref{sec:nix-on-hpc}.
@@ -488,7 +488,7 @@ The comparison first takes a high level look on some statistics and how they com
 
 The first table~\ref{table:comparison-overview} shows some basic stats about the amount of packages the solutions provide out of the box and how they are implemented.
 This is important because the higher the number the more likely it is that your package is already packaged and doesn't require additional work.
-It's also important to look how packages are implemented because, if a package needs to be packaged by for example researches, domain specific languages have the downside that, researches now have to get familiar with this DSL, while general purpose languages like python don't have this downside because they are already used in their field.
+It is also important to look how packages are implemented because, if a package needs to be packaged by for example researches, domain specific languages have the downside that, researches now have to get familiar with this DSL, while general purpose languages such as python do not have this downside because they are already used in their field.
 Although this is a downside, DSL usually are design with a purpose in mind and can get you faster to the desired outcome.
 
 \begin{figure*}
@@ -510,7 +510,7 @@ The installing and updating process is documented in the second table~\ref{table
 Spack's way of installing has some problems, with using \texttt{git clone} on the latest default branch, in their case \texttt{develop}, this has the implication, that you aren't using the latest stable release of the software but rather a random commit, that might have broken something recently.
 It also has the problem that you can't easily update the package repository independent from the package manager, this requires additional work from the users if they require this.
 
-It's also worth mentioning that all 3 solutions don't require root for installation but Nix has the option for a system wide installation of the Nix daemon, which then can be used to install packages locally into the users PATH, which no longer requires root.
+It is also worth mentioning that all 3 solutions do not require root for installation but Nix has the option for a system wide installation of the Nix daemon, which then can be used to install packages locally into the users PATH, which no longer requires root.
 
 \begin{figure*}
   \normalsize
@@ -532,7 +532,7 @@ The difference in installing software comes down to the unique way that Nix inst
 Spack and EasyBuild on the other hand use the widely used \texttt{module} system that usually is already found on HPC clusters, it allows loading software into the current environment.
 
 Installing old software also differs for all three solutions, Nix on the one hand keeps some old, widely used software packages around and maintains those, examples are \texttt{boost} which is available in different versions or e.g. \texttt{hdf5} which is available in the latest version and version \texttt{1.10}.
-The other way of installing older software on nix is using something that is called \texttt{overrideAttrs}, it can be used to change anything of a package, like the used sources, meaning it can be used to replace it with an older/newer version or it can be used to add an patch, add a new dependency or install additional files into the \texttt{\$out} directory.
+The other way of installing older software on nix is using something that is called \texttt{overrideAttrs}, it can be used to change anything of a package, such as the used sources, meaning it can be used to replace it with an older/newer version or it can be used to add an patch, add a new dependency or install additional files into the \texttt{\$out} directory.
 An example would be the following \texttt{nix-shell -p 'precice.overrideAttrs(\_: \{ version = "2.4.0"; src = \ldots \} )'}, it replaces the precice version with 2.4.0 and adds the old source, which will then trigger a new build.
 Spack and EasyBuild on the other hand, keep the old software versions in the specifications or keep the whole specification, so you can reinstall an old version by specifying the available version, for example, \texttt{spack install gcc@6.4.0}
 If the required version is not available, you have to edit the current package definition and add the required version.
@@ -546,13 +546,13 @@ On the other hand, EasyBuild, could be installed using pip at an earlier version
 Next, we look at how you can build a package with a specific compiler version using specific compiler flags.
 The flexibility of Nix overrides allows different levels of rebuilds of packages with a specific compiler, you can either just rebuild the requested package with specific compiler, this for example rebuilds curl with clang8 \texttt{nix-shell -p '(curl.override \{ stdenv = clang8Stdenv;\})'} or you can rebuild the package and all required dependencies with a specific compiler by overriding the \texttt{stdenv} on nixpkgs level, \texttt{nix-build -E 'with (import <nixpkgs> \{ config.replaceStdenv = \{ pkgs \}: pkgs.clang8Stdenv; \}); curl'}.
 This is possible because every c/c++/\ldots package, is build using the \texttt{stdenv} which defines the compiler and default compile flags.
-While Nix provides a default stdenv, which is used to compile all packages, it is possible to override and replace the package with your another stdenv provided by nixpkgs, like the clang8Stdenv, you can write your own stdenv, or you can extend the current stdenv with flags.
-By default, there are some useful helpers provided, like \texttt{makeStaticLibraries} which allows compiling any library as a static library, or \texttt{enableDebugging} which sets the compiler flags \texttt{-ggdb -Og} and can then be enabled on the package plus all dependencies.
+While Nix provides a default stdenv, which is used to compile all packages, it is possible to override and replace the package with your another stdenv provided by nixpkgs, such as the clang8Stdenv, you can write your own stdenv, or you can extend the current stdenv with flags.
+By default, there are some useful helpers provided, such as \texttt{makeStaticLibraries} which allows compiling any library as a static library, or \texttt{enableDebugging} which sets the compiler flags \texttt{-ggdb -Og} and can then be enabled on the package plus all dependencies.
 Spack provides an easy way to specify the compiler using \texttt{spack install precice \%clang} and only requires a registered compiler, it can be a system compiler, or the compiler can be installed using Spack.
 On this note, Spack tooling and interface to override compilers, flags and more is way more user friendly and readable than using and invoking the Nix DSL within a one line command call.
 EasyBuild has a whole different system, where packages have defined toolchains.\footnote{\url{https://docs.easybuild.io/common-toolchains/}}
 A toolchain is a set of packages defined at a specific version and users can create their own toolchains.
-For example, EasyBuild provides a foss toolchain which contains packages like, binutils, gcc, OpenMPI, openblas and more and packages are provided against a specific toolchain version like foss-2022b.
+For example, EasyBuild provides a foss toolchain which contains packages such as, binutils, gcc, OpenMPI, openblas and more and packages are provided against a specific toolchain version such as foss-2022b.
 Packages are then provided with toolchains in mind and are never deleted, so installing a package with a different compiler can be achieved by selecting a different eb script with a different toolchain version.
 On the other hand this results in a less elegant user flow, because if a user wants to install a package with a toolchain that isn't provided they have to fork a package definition and update the toolchain.\\
 
@@ -582,9 +582,9 @@ On the other hand this results in a less elegant user flow, because if a user wa
     \label{fig:nix-tree}
 \end{figure}
 
-As previously mentioned, Nix computes an output hash over all its inputs that is unique for this input, so if anything in the inputs changes, like the version of a dependency, the output hash changes resulting in a different software build.
-This guarantees that given the same set of inputs, we are able to compile the same software, including it's dependency tree as you can see in Fig. \ref{fig:nix-tree}.
-One thing to mention is, that Nix currently only builds generic architecture build, so the inputs of a derivation don't include any information about the architecture and/or compiler features.
+As previously mentioned, Nix computes an output hash over all its inputs that is unique for this input, so if anything in the inputs changes, such as the version of a dependency, the output hash changes resulting in a different software build.
+This guarantees that given the same set of inputs, we are able to compile the same software, including it is dependency tree as you can see in Fig. \ref{fig:nix-tree}.
+One thing to mention is, that Nix currently only builds generic architecture build, so the inputs of a derivation do not include any information about the architecture and/or compiler features.
 Another thing to mention is, that all software in the \texttt{/nix/store} can only link back to the \texttt{/nix/store} itself.
 Nix validates this for every package and breaks links than allowing links back to a file in the home directory or the directory that was used for building the software.
 This is required, to guarantee the best possible reproducibly.
@@ -592,7 +592,7 @@ This is required, to guarantee the best possible reproducibly.
 Spack does something similar to Nix where it adds hashes to each installation path, but also stores additional files inside the package installation which include the complete spec of the package than can later be used to reproducibly build the same package.~\cite{Gamblin_2015}.
 It also does something that Nix, currently doesn't support, which is it storing the architecture and cpu features that are used in this build, that way it can provide binary packages that are optimized for specific CPUs.
 None the less it has one problem that Nix doesn't have: it allows packages to link back into system dependencies, for example, while building hpl-2.3 using a gcc 12.2.0 compiled with Spack we see the usage of the following system dependencies \texttt{libm.so}, \texttt{libc.so}, \texttt{libdl.so}, \texttt{libnl-3.so}, \texttt{libnl-route-3.so}, \texttt{librt.so}, \texttt{libutil.so}, \texttt{libpthread.so} as well as the dynamic loader.
-Most of these dependencies are stable, and usually don't change on a system update, but it also means that it simply can't guarantee the best possible reproducibility and it gets worse if the system compiler was used rather than a compiler build from scratch using Spack.
+Most of these dependencies are stable, and usually do not change on a system update, but it also means that it simply can't guarantee the best possible reproducibility and it gets worse if the system compiler was used rather than a compiler build from scratch using Spack.
 It is also worth mentioning that the Spack developers are aware of this problem and are currently working on building these system libraries themselves~\footnote{\url{https://github.com/spack/spack/issues/39560}}~\footnote{\url{https://github.com/spack/spack/pull/42082}}.
 
 EasyBuild does achieve reproducibility with its toolchains and the approach to keep old package definitions, meaning that they also keep old dependency definitions and each dependency is pinned at a specific version~\cite{Geimer_2014}.
@@ -600,29 +600,29 @@ Regarding, CPU architecture and features, EasyBuild does not do generic builds b
 This leads to inherently impure and irreproducible builds as building the same easyconfig on two different host/architectures results in different binaries.
 On the other hand, the already mentioned option for \texttt{osdependencies} goes against the reproducibility idea, because any os dependency is not managed by the package manager and might change at any point.
 This leads to the problem of binaries linking back to the operating system \texttt{/usr/lib}, that Spack also has.
-For example a build of curl, uses libssl, libcrypto, libz, libm and libc, all of which are provided by the operating system, and for EasyBuild it includes libraries that change more frequently like libssl, libcrypto and libz.\\
+For example a build of curl, uses libssl, libcrypto, libz, libm and libc, all of which are provided by the operating system, and for EasyBuild it includes libraries that change more frequently such as libssl, libcrypto and libz.\\
 
 \subsection{Performance}
 
 With Nix' possibility to override stdenv it is also possible to set custom compiler flags and Nix provides an option \texttt{impureUseNativeOptimizations} to build packages optimized for your hardware, using the \texttt{-march=native} compiler flag, it can then be applied to the package, that is being installed, or every dependency in the dependency graph.~\footnote{\url{https://nixos.wiki/wiki/Build_flags}}
 Nix can guarantee these compiler flags for every dependency because Nix wraps its compiler binaries in scripts, which then means it has more control over them and packages can not remove any flags by clearing environment variables.
 The advantage of overriding the stdenv is that every package in a dependency tree can be optimized which might lead to better overall performance of packages, but it also has the downside that every package needs to be rebuild which might take several days, for example preCICE required a rebuild of 1500 packages, which took 2 days on an high-performance computing (HPC) cluster (2x AMD EPYC 7702).
-So it might be sufficient to optimize only the package, which is easily possible with \texttt{(package.override)} like shown before or additionally optimize its direct dependencies, which is possible but more time-consuming to do, because one has to manually override each dependency.
+So it might be sufficient to optimize only the package, which is easily possible with \texttt{(package.override)} such as shown before or additionally optimize its direct dependencies, which is possible but more time-consuming to do, because one has to manually override each dependency.
 
 Spack also allows to override cflags, using \texttt{spack install \ldots cflags='-march=native'}, so the package is then being optimized.
 By setting cflags with \texttt{==}, the cflags are also applied to the dependencies, causing them to be rebuilt.\footnote{\url{https://spack.readthedocs.io/en/latest/basic_usage.html\#compiler-flags}}
 Additionally, there is a way to define flags for a specific registered compiler, but these are only respected by CMake and autotools packages.
 Also, a package might also have unavoidable system dependencies and are not optimized, which might impact performance negatively.
 
-Like previously mentioned, EasyBuild applies \texttt{-march=native} by default, but you can further customize your compiler flags using \texttt{\$CFLAGS}, \texttt{\$CXXFLAGS}, \texttt{\$FFLAGS}, \texttt{\$F90FLAGS}.
+EasyBuild applies \texttt{-march=native} by default, but you can further customize your compiler flags using \texttt{\$CFLAGS}, \texttt{\$CXXFLAGS}, \texttt{\$FFLAGS}, \texttt{\$F90FLAGS}.
 It also has the same problem as Spack that it might have unavoidable unoptimized system package which might impact performance negatively.\\
 
 \subsection{Testing}
 
 We also shortly look at the capabilities of the package managers to run test and evaluate the built packages.
 Nix has something that is called a checkPhase which can be run for each package after being built.
-There are sane defaults for all available build systems, like \texttt{make test} or \texttt{ctest} for makefiles and CMake, \texttt{cargo check} and \texttt{cargo test} for rust packages, \texttt{go test} for go packages and \texttt{pytest} for python packages and more.
-By default, this checkPhase is not enabled for every build system, like the \texttt{stdenv} build system, which is responsible for make, CMake and similar, does not enable it but the \texttt{go}, \texttt{rust} and \texttt{python} build system does.
+There are sane defaults for all available build systems, such as \texttt{make test} or \texttt{ctest} for makefiles and CMake, \texttt{cargo check} and \texttt{cargo test} for rust packages, \texttt{go test} for go packages and \texttt{pytest} for python packages and more.
+By default, this checkPhase is not enabled for every build system, such as the \texttt{stdenv} build system, which is responsible for make, CMake and similar, does not enable it but the \texttt{go}, \texttt{rust} and \texttt{python} build system does.
 For these build systems, package maintainers have to manually disable the check phase or they can override the check phase if the tests aren't working out of the box and make the needed adjustments to resolve the issues.
 
 Spack has something similar, but its not enabled by default, and users, not package maintainers, has to manually specify that they want to run test on installing the package with \texttt{--test=root}.
@@ -637,7 +637,7 @@ The tests are pythons scripts, and it is possible to wait until systemd targets 
 
 To summarize the comparison, while Nix has the biggest software library, it lacks some scientific software compared to Spack and EasyBuild.
 On the other hand, the build sandbox that Nix offers, guarantees a level of reproducibility that Spack and EasyBuild currently can't provide, because it disallows random linking.
-Spack and EasyBuild on the other side both provide a way better usability to end user with their command line interfaces, Nix still is able to do the same things, like changing the compiler but generally requires knowledge of the Nix language to make this achievable, but if end user have this knowledge it's possible to change the compile flags for all packages in the dependency graph which allows some additional performance gains, if any package is compiled against the specific hardware.
+Spack and EasyBuild on the other side both provide a way better usability to end user with their command line interfaces, Nix still is able to do the same things, such as changing the compiler but generally requires knowledge of the Nix language to make this achievable, but if end user have this knowledge it is possible to change the compile flags for all packages in the dependency graph which allows some additional performance gains, if any package is compiled against the specific hardware.
 
 \section{Nix on HPC}\label{sec:nix-on-hpc}
 
@@ -653,7 +653,7 @@ Sometimes, this can be quite hard, as some software expects libraries or other s
 As mentioned, Nix uses the Nix store, which lies in \texttt{/nix/store} by default and all software artifacts are linked against libraries inside the Nix store.
 So if there is no such path as \texttt{/nix/store} on the HPC clusters filesystem, all software would need to be recompiled as all links and paths inside the binaries would point to a non existent location.
 We'd need administrator rights to be allowed to setup the Nix store globally on the cluster and to install Nix globally for all users.
-However, Nix supports a Linux kernel feature called user namespaces, which is a form of kernel based isolation of resources and other attributes like user ids\footnote{\url{https://www.man7.org/linux/man-pages/man7/user_namespaces.7.html}}.
+However, Nix supports a Linux kernel feature called user namespaces, which is a form of kernel based isolation of resources and other attributes such as user ids\footnote{\url{https://www.man7.org/linux/man-pages/man7/user_namespaces.7.html}}.
 
 Using namespaces, it is possible for the Nix package manager to mount an arbitrary user-writable location to \texttt{/nix/store} inside a user namespace, so all programs running in that namespace can access the Nix store as if it would actually be installed under the default store path.
 Another challenge is to get Nix to work without the needed libraries that can usually be found inside the Nix store, leading to a bootstrapping problem.
@@ -677,7 +677,7 @@ We have also seen, that the current HPC solutions, Spack and EasyBuild make it s
 That is because they focus on flexibility of installing packages.
 Spacks way of allowing users to change the compiler of a package, easily enable additional features on installation, override cflags and more advanced features, for example regarding mpi, shows that the Nix tooling needs more work or a layer on top that strips away the uniqueness of the DSL for something more user- and beginner-friendly.
 
-Lastly we looked at Nix on HPC and have seen that it's possible to get it running, and we are able to run simulations on one node, so we currently assume that with the correct networking setup it should be possible to run a simulation across multiple nodes.
+Lastly we looked at Nix on HPC and have seen that it is possible to get it running, and we are able to run simulations on one node, so we currently assume that with the correct networking setup it should be possible to run a simulation across multiple nodes.
 It is currently not ideally solved on getting Nix running on HPC as a single user installation, so this can be improved in the future.
 
 The Nix code for the packages for the case study on the preCICE adapters, solvers and the preCICE VM is available online in a git repository at \url{https://github.com/precice/nix-packages/}.
@@ -685,7 +685,7 @@ Also the \texttt{setup.sh} and \texttt{clean.sh} scripts used to install Nix on 
 
 
 While this case study and this comparison has provided valuable insights into the topic of reproducible software, there are still numerous unanswered questions that merit further investigation.
-This includes a full evaluation if there are performance improvements using a full impure system rebuild, with \texttt{-march=native} compared to only rebuilding the package at hand like we suspect.
+This includes a full evaluation if there are performance improvements using a full impure system rebuild, with \texttt{-march=native} compared to only rebuilding the package at hand.
 It would also be interesting to look at trying to reproduce a nixpkgs commit from 10 years ago, and if there might be issues and incompatibilities with newer Nix versions, which currently get released in a 6 weeks time windows.
 
 Last but not least, it would be interesting to investigate Nix and NixOS on HPC even more.
