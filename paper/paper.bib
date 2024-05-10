@@ -13,17 +13,7 @@
     title = "{xSDK Community Package Policies 1.0.0}",
     year = "2023",
     month = "2",
-    url = "https://figshare.com/articles/online_resource/xSDK_Community_Package_Policies_1_0_0/13087196",
     doi = "10.6084/m9.figshare.13087196.v1"
-}
-@incollection{Kim_2019,
-    doi = "10.1007/978-3-030-12842-5\_8",
-    year = 2019,
-    publisher = {Springer International Publishing},
-    pages = {281--299},
-    author = {Kyeong Soo Kim},
-    title = {Simulation Reproducibility with Python and Pweave},
-    booktitle = {Recent Advances in Network Simulation}
 }
 @inproceedings{Devresse_2015,
     doi = "10.1145/2830168.2830172",
@@ -35,11 +25,17 @@
     booktitle = {Proceedings of the 3rd International Workshop on Software Engineering for High Performance Computing in Computational Science and Engineering}
 }
 @inproceedings{Dolstra_2004,
-    author = {Dolstra, Eelco and Jonge, Merijn and Visser, Eelco},
-    year = 2004,
-    month = {jan},
-    pages = {79-92},
-    title = {Nix: A Safe and Policy-Free System for Software Deployment.}
+    author = {Dolstra, Eelco and de Jonge, Merijn and Visser, Eelco},
+    title = {Nix: A Safe and Policy-Free System for Software Deployment},
+    year = {2004},
+    publisher = {USENIX Association},
+    address = {USA},
+    booktitle = {Proceedings of the 18th USENIX Conference on System Administration},
+    pages = {79–92},
+    numpages = {14},
+    location = {Atlanta, GA},
+    series = {LISA '04},
+    doi={10.5555/1052676.1052686},
 }
 @inproceedings{Dolstra_2010,
     title={NixOS: A purely functional Linux distribution},
@@ -48,7 +44,7 @@
     number={5-6},
     journal={Journal of Functional Programming},
     publisher={Cambridge University Press},
-    author={DOLSTRA, EELCO and LÖH, ANDRES and PIERRON, NICOLAS},
+    author={Dolstra, Eelco and Löh, Andres and Pierron, Nicolas},
     year=2010,
     pages={577–615}
 }
@@ -80,22 +76,15 @@
     title = {Modern Scientific Software Management Using {EasyBuild} and Lmod},
     booktitle = {2014 First International Workshop on {HPC} User Support Tools}
 }
-@misc{xsdk-website,
-    title = {xSDK Website},
-    url = "https://xsdk.info/"
-}
 @inproceedings {spack7832814,
     author = {T. Gamblin and M. LeGendre and M. R. Collette and G. L. Lee and A. Moody and B. R. de Supinski and S. Futral},
     booktitle = {SC15: International Conference for High-Performance Computing, Networking, Storage and Analysis},
     title = {The Spack package manager: bringing order to HPC software chaos},
     year = {2015},
-    volume = {},
     issn = {2167-4337},
     pages = {1-12},
-    abstract = {Large HPC centers spend considerable time supporting software for thousands of users, but the complexity of HPC software is quickly outpacing the capabilities of existing software management tools. Scientific applications require specific versions of compilers, MPI, and other dependency libraries, so using a single, standard software stack is infeasible. However, managing many configurations is difficult because the configuration space is combinatorial in size. We introduce Spack, a tool used at Lawrence Livermore National Laboratory to manage this complexity. Spack provides a novel, recursive specification syntax to invoke parametric builds of packages and dependencies. It allows any number of builds to coexist on the same system, and it ensures that installed packages can find their dependencies, regardless of the environment. We show through real-world use cases that Spack supports diverse and demanding applications, bringing order to HPC software chaos.},
     keywords = {libraries;complexity theory;syntactics;operating systems;production},
     doi = {10.1145/2807591.2807623},
-    url = {https://doi.ieeecomputersociety.org/10.1145/2807591.2807623},
     publisher = {IEEE Computer Society},
     address = {Los Alamitos, CA, USA},
     month = {nov}
@@ -105,8 +94,6 @@
     booktitle={2012 SC Companion: High Performance Computing, Networking Storage and Analysis},
     title={EasyBuild: Building Software with Ease},
     year={2012},
-    volume={},
-    number={},
     pages={572-582},
     keywords={Software;Software packages;Tools;Python;Libraries;Task analysis;Maintenance engineering;scientific software;compilation;installation;Python;automation;build procedure},
     doi={10.1109/SC.Companion.2012.81}
@@ -124,7 +111,6 @@
     pages   = {231--246},
     volume  = {31},
     number  = {3},
-    url     = {https://dealii.org/deal95-preprint.pdf}
 }
 @article{bezanson2017julia,
     title={Julia: A fresh approach to numerical computing},
@@ -135,11 +121,12 @@
     pages={65--98},
     year={2017},
     publisher={SIAM},
-    url={https://doi.org/10.1137/141000671}
+    doi={10.1137/141000671}
 }
 @set{preciceDistribution,
     title={preCICE Distribution Version v2211.0},
     author={Gerasimos Chourdakis and Kyle Davis and Ishaan Desai and Benjamin Rodenberg and David Schneider and Frédéric Simonis and Benjamin Uekermann and Boshra Ariguib and Philip Cardiff and Alexander Jaust and Pavel Kharitenko and Robert Klöfkorn and Niklas Kotarsky and Boris Martin and Erik Scheurer and Valentina Schüller and Gertjan van Zwieten and Kursat Yurt},
+    year={2023},
     doi={10.18419/darus-3576}
 }
 @inproceedings{Uekermann2017_Adapters,
@@ -150,17 +137,22 @@
     year = {2017}
 }
 @misc{bastian2020dune,
-      title={The DUNE Framework: Basic Concepts and Recent Developments},
-      author={Peter Bastian and Markus Blatt and Andreas Dedner and Nils-Arne Dreier and Christian Engwer and René Fritze and Carsten Gräser and Christoph Grüninger and Dominic Kempf and Robert Klöfkorn and Mario Ohlberger and Oliver Sander},
-      year={2020},
-      eprint={1909.13672},
-      archivePrefix={arXiv},
-      primaryClass={cs.MS}
+    title={The DUNE Framework: Basic Concepts and Recent Developments},
+    author={Peter Bastian and Markus Blatt and Andreas Dedner and Nils-Arne Dreier and Christian Engwer and René Fritze and Carsten Gräser and Christoph Grüninger and Dominic Kempf and Robert Klöfkorn and Mario Ohlberger and Oliver Sander},
+    year={2020},
+    eprint={1909.13672},
+    archivePrefix={arXiv},
+    primaryClass={cs.MS},
+    doi={10.1016/j.camwa.2020.06.007},
 }
 @book{fenics,
-    title={Automated Solution of Differential Equations by the Finite Element Method},
-    authors={Anders Logg, Kent-Andre Mardal, Garth Wells},
-    doi={https://doi.org/10.1007/978-3-642-23099-8},
+    title={Automated Solution of Differential Equations by the Finite Element Method: The FEniCS Book},
+    ISBN={9783642230998},
+    ISSN={1439-7358},
+    doi={10.1007/978-3-642-23099-8},
+    journal={Lecture Notes in Computational Science and Engineering},
+    publisher={Springer Berlin Heidelberg},
+    year={2012}
 }
 @article{Rodenberg2021,
     title = {FEniCS--preCICE: Coupling FEniCS to other simulation software},
@@ -169,11 +161,9 @@
     pages = {100807},
     year = {2021},
     issn = {2352-7110},
-    doi = {https://doi.org/10.1016/j.softx.2021.100807},
-    url = {https://www.sciencedirect.com/science/article/pii/S2352711021001072},
+    doi = {10.1016/j.softx.2021.100807},
     author = {Benjamin Rodenberg and Ishaan Desai and Richard Hertrich and Alexander Jaust and Benjamin Uekermann},
     keywords = {FEniCS, Fluid–structure interaction, Conjugate heat transfer, Multiphysics, Coupled problems, Finite element method, preCICE},
-    abstract = {The new software FEniCS–preCICE is a middle software layer, sitting in between the existing finite-element library FEniCS and the coupling library preCICE. The middle layer simplifies coupling (existing) FEniCS application codes to other simulation software via preCICE. To this end, FEniCS–preCICE converts between FEniCS and preCICE mesh and data structures, provides easy-to-use coupling conditions, and manages data checkpointing for implicit coupling. The new software is a library itself and follows a FEniCS-native style. Only a few lines of additional code are necessary to prepare a FEniCS application code for coupling. We illustrate the functionality of FEniCS–preCICE by two examples: aFEniCS heat conduction code coupled to OpenFOAM and a FEniCS linear elasticity code coupled to SU2. The results of both scenarios are compared with other simulation software showing good agreement.}
 }
 @article{OpenFOAMpreCICE,
     author = {Chourdakis, Gerasimos and Schneider, David and Uekermann, Benjamin},
@@ -184,7 +174,6 @@
     month = {Feb},
     pages = {1-25},
     doi = {10.51560/ofj.v3.88},
-    url = {https://doi.org/10.51560/ofj.v3.88}
 }
 
 @misc{koch2023sustainable,
@@ -193,13 +182,6 @@
     year={2023},
     eprint={2301.12830},
     archivePrefix={arXiv},
-    primaryClass={cs.SE}
-}
-@misc{comparision-fosdem,
-    title = {Installing software for scientists on a multi-user HPC system},
-    titleaddon = {A comparison between conda, EasyBuild, Guix, Nix & Spack},
-    author = {Kenneth Hoste},
-    year = {2018},
-    month = {Feb},
-    url = "https://archive.fosdem.org/2018/schedule/event/installing_software_for_scientists/"
+    primaryClass={cs.SE},
+    doi={10.48550/arXiv.2301.12830},
 }

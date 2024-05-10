@@ -419,7 +419,7 @@ These build tools, generally also provide interfaces for dependency management t
 They also generally already provide proven interfaces for configuring packages with additional features, and these also might be self documenting.
 
 The authors of the xSDK\footnote{\url{https://xsdk.info/}} came to a very similar conclusion.
-Their goal is to ``identify, adapt, and adopt best practices in software engineering''~\cite{xsdk-website} and ``to provide the foundation of this extensible scientific software ecosystem''~\cite{xsdk-website}.
+Their goal is to ``identify, adapt, and adopt best practices in software engineering'' and ``to provide the foundation of this extensible scientific software ecosystem''~\footnote{\url{https://xsdk.info/}}.
 To achieve this they provide a list of package policies~\cite{xSDK2023}, that for example specifies as mandatory policy that packages ``must support portable installation through Spack''~\cite{xSDK2023} and that all packages ``should have a build system that is appropriate for the language''~\cite{xSDK2023}, that includes CMake and autoconf as examples.
 If a package supports all these policies, they can be added to the growing list of packages in the xSDK, that currently among other things include PETSc, deal.ii and preCICE.
 These packages are already part of nixpkgs, or it is easy to provide a package for them because they support portable installation, meaning installation into custom prefixes such as nix store paths, and common build systems such as CMake and autoconf.
@@ -438,7 +438,7 @@ Building the same closures yields the same outputs, this will also be described 
 \section{Comparison}
 
 This chapter compares Nix with two widely used solution in HPC environments, Spack and EasyBuild.
-There was a similar comparison done at FOSDEM 2018~\cite{comparision-fosdem} that also included conda and Guix, but this was by the release manager of EasyBuild and we want to provide an update with this comparison.
+There was a similar comparison done at FOSDEM 2018~\footnote{\url{https://archive.fosdem.org/2018/schedule/event/installing_software_for_scientists/}} that also included conda and Guix, but this was by the release manager of EasyBuild and we want to provide an update with this comparison.
 The comparison first takes a high level look on some statistics and how they compare and after that we will discuss, usability, reproducibly and performance in more detail.
 
 \subsection{Overview}
