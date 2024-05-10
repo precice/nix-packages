@@ -62,10 +62,15 @@ These platforms are closed source, however, such that the source code cannot be 
 In past years, the Nix package manager~\cite{Dolstra_2004} and NixOS~\cite{Dolstra_2010}, a Linux distribution built around it, have emerged as promising alternatives~\cite{Devresse_2015}.
 Nix allows functional descriptions of dependencies up to fixed versions, thus avoiding the issue described above.
 Similar ideas are followed by EasyBuild~\cite{easybuil6495863} and Spack~\cite{spack7832814}.
-All have in common that they rely on scientific software following best practices concerning building and packaging. Unfortunately, most legacy software projects do not do this.
+All have in common that they rely on scientific software following best practices concerning building and packaging.
+Unfortunately, most legacy software projects do not do this.
 This is why, for example, the xSDK community~\cite{xSDK2023} tries to set a standard for policies for math software.
 
-In this paper, we analyze how well Nix and NixOS can improve reproducibility of scientific software. To this end, we study the preCICE ecosystem~\cite{preCICEv2} as an example. preCICE is a coupling library for partitioned multiphysics simulations. The ecosystem includes diverse legacy solvers, adapters, and language bindings besides the coupling library itself making it a challenging and representative testcase. We try to build the complete ecosystem using Nix and verify portability on three different systems.
+In this paper, we analyze how well Nix and NixOS can improve reproducibility of scientific software.
+To this end, we study the preCICE ecosystem~\cite{preCICEv2} as an example.
+preCICE is a coupling library for partitioned multiphysics simulations.
+The ecosystem includes diverse legacy solvers, adapters, and language bindings besides the coupling library itself making it a challenging and representative testcase.
+We try to build the complete ecosystem using Nix and verify portability on three different systems.
 
 \section{Background}
 
