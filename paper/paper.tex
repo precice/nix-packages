@@ -92,13 +92,7 @@ Nix builds are sandboxed, meaning that there is no internet access possible duri
 
 All contents, including source files and resulting build artifacts, are stored inside the Nix store.
 Per default, the Nix store resides in the path \texttt{/nix/store} on the file system.
-The naming scheme with the preCICE 2.5.0 package as an example is
-
-\begin{itemize}
-  \item \texttt{/nix/store/0a5gw3l\ldots-precice-2.5.0}
-  \item \texttt{/nix/store/9gpyg37\ldots-precice-2.5.0}
-\end{itemize}
-
+The naming scheme for the preCICE 2.5.0 package as an example is \texttt{/nix/store/0a5gw3l\ldots-precice-2.5.0}.
 This eases checking the Nix store for integrity and ensures that builds using the same inputs are performed only once.
 
 As each build output references their complete dependency graphs inside the Nix store, they do not interfere with other build outputs, enabling users to have multiple versions of the same software installed at the same time without raising conflicts.
