@@ -2,6 +2,10 @@
 
 \usepackage{minted}
 \usepackage{subfig}
+
+\usepackage{xcolor}
+%\newcommand\todo[1]{\textcolor{red}{TODO #1}}
+
 \input{frontmatter}
 
 \usepackage{pdfcomment}
@@ -163,7 +167,8 @@ The diverse languages and diverse solver packages using various build system mak
 
 \section{Results}
 
-We present challenges, solutions, and workarounds for all software packages of the preCICE distribution. 
+We present challenges, solutions, and workarounds for all software packages of the preCICE ecosystem.
+\todo{mention where and which results to find on GitHub} 
 
 
 \subsection{preCICE}
@@ -173,93 +178,77 @@ Looking at the package definition and the preCICE source code, the library is qu
 
 \subsection{Tools}
 
-The preCICE distribution comes with a few tools that ease working with preCICE.
-They are mainly meant for debugging and visualizing several aspects of preCICE and preCICE configuration files.
+The preCICE distribution includes tools around preCICE.
 
 \subsubsection{ASTE}
 
-This package is a collection of tools that help in development of new adapters.
-It stands for Artificial Solver Testing Environment, so it allows for debugging adapter mapping setups and other similar tasks.
+ASTE\footnote{\url{https://github.com/precice/aste}} stands for Artificial Solver Testing Environment. It is a thin wrapper around the preCICE API, which allows, for instance, testing of data mapping with real geometries.
+ASTE requires VTK9\footnote{\url{https://vtk.org/}}, a visualization toolkit, which is built without python support in the nixpkgs repository to reduce compilation time.
+This feature is needed for ASTE, however.
+As already mentioned, Nix allows overriding of inputs, so in this case, we can look at the package definition of VTK.
+The parameter \texttt{enablePython} can simply be set to \texttt{true}. We then also need to supply the version of python, which we set to python3.
 
-ASTE\footnote{\url{https://github.com/precice/aste}} needs VTK9\footnote{\url{https://vtk.org/}}, a visualization toolkit, that is built without python support in the nixpkgs repository to reduce compilation time.
-However, this feature is needed for ASTE.
-As already mentioned, Nix allows easy overriding of inputs, so in this case, we can look at the package definition of VTK.
-The parameter \texttt{enablePython} can simply be set to \texttt{true}, then we also need to supply the version of python we want to compile against, so in our case \texttt{python = python3;}.
+\subsubsection{Config visualizer}
 
-After enabling python support in VTK, the package can be built without further modifications.
-
-Only for testing, we additionally need to replace the absolute paths to \texttt{/bin/bash} and \texttt{/usr/bin/time}, then all tests succeed without any problems.
-
-\subsubsection{config-visualizer}
-
-The precice-config-visualizer\footnote{\url{https://github.com/precice/config-visualizer}} package can be used to generate images that represent a specified preCICE config file to check graphically what is configured in the file.
-
-This tool is already packaged upstream, so we can just use it.
-As it is a python package, it is quite easy to build with Nix, so the package definition is straight forward.
+The preCICE config visualizer\footnote{\url{https://github.com/precice/config-visualizer}}, as the name suggests, visualizes preCICE configuration files. Similarly to preCICE itself, the tool is already packaged upstream.
+As a python package, it is easy to handle with Nix.
 
 \subsection{Bindings}
 
 Bindings are used to offer interfaces to other programming languages.
 
-\subsubsection{python-bindings}
+\todo{matlab and fortran module missing}
 
-The \texttt{pyprecice} package is already available upstream, however it is broken and does not compile as it is not able to find the python module \texttt{pkgconfig}.
+\subsubsection{Python bindings}
+
+The \texttt{pyprecice} package is already available upstream, but it is currently broken: It does not compile as it is not able to find the python module \texttt{pkgconfig}.
 After adding this single dependency as an input to the package definition, the python package builds and can be used as expected.
+
+\todo{fixed upstream?}
 
 \subsubsection{Julia-bindings}
 
 Julia~\cite{bezanson2017julia} support in NixOS is currently still in its early stages and cannot be declaratively be defined by Nix\footnote{\url{https://github.com/NixOS/nixpkgs/issues/20649}}.
 
-\subsection{Adapters}
-
-A preCICE distribution comes bundled with several adapters, that are currently not in the upstream nixpkgs repository.
-Many of the adapters use solvers that are not packaged in the upstream repo as well, so in order to get the adapters to work, these also have to be packaged and sometimes patched.
+\subsection{Solvers and adapters}
 
 \subsubsection{CalculiX}
 
-The preCICE adapter for CSM code CalculiX~\cite{Uekermann2017_Adapters}, requires the original CalculiX source code and provides a new Makefile in the adapter repository.
-By default, this Makefile expects the source code to reside in \texttt{\$HOME}, but it is possible to override this location with a make variable.
+The preCICE adapter for the structural mechanics code CalculiX~\cite{Uekermann2017_Adapters} requires the original CalculiX source code and provides a new makefile in the adapter repository.
+By default, this makefile expects the source code to reside in \texttt{\$HOME}, but it is possible to override this location with a make variable.
 It then builds the original code and the adapter code together, resulting in a combined binary.
 
-The Makefile also has hard-coded dependency location for \texttt{SPOOLES}, \texttt{ARPACK} and \texttt{YAML} so these need to be replaced with the equivalent \texttt{pkg-config} calls, because Nix does not have these dependencies at the hard-coded locations, and generally only finds dependencies with \texttt{pkg-config}.
-Additionally, there is no \texttt{install} target provided by the Makefile so the resulting binary needs to be installed manually by copying it to \texttt{\$out}.\\
+The Makefile also has hard-coded locations its dependencies: \texttt{SPOOLES}, \texttt{ARPACK}, and \texttt{YAML}. These need to be replaced with the equivalent \texttt{pkg-config} calls.
+Additionally, there is no \texttt{install} target provided by the makefile, thus the resulting binary needs to be installed manually by copying it to \texttt{\$out}.\\
 
-\subsubsection{code\_aster}
+\subsubsection{Code\_Aster}
 
-The code\_aster preCICE adapter~\cite{Uekermann2017_Adapters} is a python file that needs to be placed in the code-aster lib directory.
-For this, the code\_aster solver needs to be packaged at the latest stable version 14.6.
-It uses a custom build system based on a \texttt{setup.py} file, that invokes build and install phases for dependencies and in the end for the solver itself.
+The Code\_Aster-preCICE adapter~\cite{Uekermann2017_Adapters} is a python file, which needs to be placed in the Code\_Aster lib directory.
+For this, the Code\_Aster solver needs to be packaged at version 14.6.
+It uses a custom build system based on a \texttt{setup.py} file, which invokes build and install phases for dependencies and in the end for the solver itself.
 
-The stable package also distributes the dependencies as pinned tarballs.
-On Nix almost none of these dependencies, complete the build stage with the \texttt{setup.py}, so we need to pull them out, package them separately as Nix packages and configured the build system with a \texttt{setup.cfg}.
+The Code\_Aster package distributes its dependencies as pinned tarballs.
+On Nix, almost none of these dependencies complete the build stage. We, thus, need to pull them, package them separately as Nix packages, and configure the build system with a \texttt{setup.cfg}.
 In this file, we are able to disable the installation of the pinned dependencies and provide paths to the dependencies instead.
 
-With this approach, we disable HDF5, as it is already packaged in the upstream nixpkgs repository, even at the required version 5.1.10.
+More precisely, we disable HDF5, as it is already packaged in the upstream nixpkgs repository, even at the required version 5.1.10.
 HDF5 is packaged with multiple outputs.
 One package, \texttt{out}, contains the libraries and binaries and another, \texttt{dev} contains the header files, this is, because most of the time, users installing HDF5 only need the libraries and binaries, and it helps to reduce installation size of this rather large package.
-Additionally, code\_aster requires medfile and scotch, that are both available upstream and can be used as a dependency.
+Additionally, Code\_Aster requires Medfile and Scotch, which are both available upstream and can be used as a dependency.
+Another dependency is Metis, which partially builds. Thus, we decide to not replace it, but to fix the remainder of the build.
+The issue is precisely that the \texttt{CMakeLists.txt} for the metis programs hard-codes \texttt{link\_directories} to \path{/home/karypis/local/lib}. We unpack the Metis tarball, remove this line with \texttt{sed}, and repack the directory.
 
-Another dependency, that is also provided by code\_aster is metis, that partially builds, so we do not replace this dependency, but we need to fix the second part of the build, including the metis programs such as gpmetis, ndmetis, mpmetis and more.
-The issue is that in the \texttt{CMakeLists.txt} for the metis programs \texttt{link\_directories} is hard-coded to \path{/home/karypis/local/lib}.
-After removing this line, it also installs, so to resolve this issue in the buildPhase, we unpack the metis tarball, remove this line with \texttt{sed} and then repack the directory.
+The remaining two dependencies, Mumps and Tfel are not available upstream and need to be packaged.
+Mumps uses a Makefile and can be configured using Makefile.inc. By default, it provides a few configurations for systems such as Ubuntu. We use one of these provided configuration files to write our own custom config file.
+It defines the locations for dependencies, such as Scotch, Metis, Parmetis, or Blacs.
+Almost all dependencies are available upstream, but we need to recompile Scotch with additional build flags.
+Moreover, for packaging Blacs, which also uses a Makefile, we configure the build using a custom \texttt{Bmake.inc} file, which is used to set compiler flags, the path to MPI, and the bash installation.
+Tfel, on the other hand, uses CMake as build system making it easy to package it with Nix.
 
-The last 2 dependencies, are not available and need to be packaged, this includes mumps and tfel, also known as mfront.
-
-Mumps builds using a Makefile and can be configured using Makefile.inc, by default it provides a couple of these configurations for systems such as Ubuntu, so we use one of these provided configuration files to write our own custom config file.
-It defines the location for dependencies such as scotch, metis, parmetis, liblapack, blas, scalapack and blacs.
-Almost all the dependencies, are available upstream, but we need to recompile scotch with additional build flags, \texttt{scotch ptscotch esmumps ptesmumps} using Nix overrideAttrs feature.
-For packaging blacs, that also uses a Makefile, we configure the build using a custom \texttt{Bmake.inc} file, that is used to set compiler flags, the path to the mpi and bash installation.
-
-The last missing dependency for code\_aster, tfel, uses CMake as a build system making it trivial to package it with Nix and we only have to set a couple of CMake flags.
-
-After successfully packaging all dependencies, the build phase of code\_aster completes, but the installation part has another issue, that also affects new versions of Ubuntu and other distributions that use a python version greater than 3.9.
-There is a forum post without any resolution from the developers or the community, so we need to manually patch the bug.
-
-The issue is that the custom build system does not correctly calculate the python site-packages directory because it unconditionally slices the first 3 chars from \texttt{sys.version}, that works if your version is 3.9.x but not with 3.10.x because then the code calculates \path{lib64/python3.1/site-packages} rather than the expected \path{lib64/python3.10/site-packages}.
-
-After patching this bug code\_aster successfully installed into \texttt{\$out/14.6/}, so we move around some files until we have a valid directory structure with \texttt{\$out/bin}, \texttt{\$out/lib} and we provide symlinks for \texttt{\$out/14.6/} and \texttt{\$out/stable/} as code\_aster expects configuration files in these directories.
-
-Last but not least, we can copy the code\_aster adapter at the required location.\\
+After successfully packaging all dependencies, the build phase of Code\_Aster completes, but the installation part has another issue, which also affects new versions of Ubuntu and other distributions using a python version greater than 3.9.
+There is a forum post without resolution, so we need to manually patch the bug. \todo{link post}
+The issue is precisely, that the custom build system does not correctly calculate the python site-packages directory. It unconditionally slices the first 3 chars from \texttt{sys.version}, which works for version 3.9.x, but not for version 3.10.x.
+After patching, Code\_Aster successfully installed into \texttt{\$out/14.6/}, so we move around some files until we have a valid directory structure with \texttt{\$out/bin}, \texttt{\$out/lib}, providing symlinks for \texttt{\$out/14.6/} and \texttt{\$out/stable/}.
 
 \subsubsection{deal.II}
 
