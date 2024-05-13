@@ -111,75 +111,60 @@ Users can override all inputs, so that every package can be flexibly adjusted.
 
 \subsection{preCICE}
 
-preCICE (Precise Code Interaction Coupling Environment) is an open-source software library designed to facilitate the coupling of different computational simulation softwares.
-It provides an interface that allows different simulation tools to exchange data and work together in a collaborative manner, enabling multi-physics as well as multi-scale simulations.
-
-Many scientific simulations require complex combinations of multiple solvers, each specialized in a particular aspect of the problem.
+preCICE (Precise Code Interaction Coupling Environment) is an open-source software library designed to facilitate coupling of different simulation software packages.
+It provides an API, which allows different simulation tools to exchange data and work together in a collaborative manner, enabling multi-physics as well as multi-scale simulations.
+In fact, many scientific simulations require complex combinations of multiple solvers, each specialized in a particular aspect of the problem.
 For example, in fluid-structure interaction problems, where fluid flow interacts with deformable structures, separate solvers can be used to model the fluid dynamics and structural mechanics.
-preCICE acts as a bridge between all solvers participating in the simulation, allowing them to exchange data and synchronize their computations.
-
-preCICE offers a flexible and generic framework for coupling simulations.
-It supports a wide range of solvers, including finite element, finite volume, and particle-based methods.
-The library provides methods for interpolating data between meshes, managing communication between solvers, and handling time stepping and convergence.
-It can handle different types of coupling scenarios, such as one-way or bidirectional couplings, loose or tight couplings, and static or dynamic meshes.
-The core principle of preCICE's functionality is shown visually in Fig. \ref{fig:precice}.
 
 \begin{figure}
     \centering
     \includegraphics[width=0.5\textwidth]{figures/precice.png}
-    \caption{A visual representation on how preCICE works in principle, see: \url{https://precice.org}}
+    \caption{Software setup of preCICE from the preCICE website \url{https://precice.org}}
     \label{fig:precice}
 \end{figure}
 
-One main idea behind preCICE is to enable the combination of existing simulation tools without requiring significant modifications to their original source code.
-Instead, preCICE provides an abstraction layer that sits between the individual solvers, allowing them to communicate and exchange data efficiently.
-This approach promotes code reusability and reduces the effort required for coupling simulations.
+preCICE supports a wide range of existing (Legacy) solvers. For each solver, there is typically a specific adapter: an either independent software package or simply a source code patch that integrates the preCICE API into the solver, see Fig.~\ref{fig:precice}.
+The preCICE library itself is implemented in C++, bindings to other languages are either supported through native bindings (C, Fortran) or through independent software packages (Python, Julia, Matlab, Fortran).
+Many official adapters, all bindings, the library itself, tutorials, additional tools, and the website including user documentation are collected and released in so-called preCICE distributions\footnote{\url{https://precice.org/installation-distribution.html}}.
+In our case study, we target the distribution v2211.0~\cite{preciceDistribution}. To execute simulations, such as the included tutorials, requires the actual solvers next to the distribution. These are included, for example, in the preCICE VM\footnote{\url{https://precice.org/installation-vm.html}} and also part of our case study. Table \ref{table:label-distribution} lists all software packages of the case study. We try to reproducibly build all of these packages with Nix and try to run all tutorial cases. 
+The diverse languages and diverse solver packages using various build system makes the preCICE ecosystem a challenging testcase, which is, however, representative for current research software in our experience. 
 
-preCICE is an open-source project, that means its source code is freely available and can be modified and distributed by the community.
-This fosters collaboration and encourages the development of new features and improvements by researchers and engineers worldwide.
 
-Overall, preCICE simplifies the process of coupling different simulation programs, enabling the simulation of complex multi-physics problems.
-It promotes interoperability, code reusability, and collaboration, making it a valuable tool in various engineering and scientific domains.
-
-\section{Results}
-
-To see how well Nix can be used to build and package scientific software reliably and reproducibly, we conduct a case study in the context of the latest preCICE distribution~\cite{preciceDistribution}, currently preCICE \texttt{v2211.0}.
-The preCICE distribution consists out of the preCICE core library, as well as some tools, bindings, adapters, tutorials, the website and documentation, and the preCICE VM\footnote{\url{https://precice.org/installation-distribution.html}}.
-Table \ref{table:label-distribution} shows an overview over all packages provided by the preCICE distribution and their respected versions.
-
-\begin{figure*}[!t]
+\begin{table}[!t]
   \normalsize
-  \caption{Overview of preCICE distribution}
+  \caption{Software packages of the case study}
   \label{table:label-distribution}
   \centering
-  \begin{tabular}{|c|c|c|c|}
+  \begin{tabular}{|l|l|l|l|}
     \hline
-    \bfseries Package & \bfseries Type & \bfseries Build System & \bfseries Version \\ \hline
+    \bfseries Package & \bfseries Type & \bfseries Build system & \bfseries Version \\ \hline
     precice & library & cmake & 2.5.0 \\ \hline
     fortran-module & bindings & make & 9e3f405 \\ \hline
-    julia & bindings & julia & v2.5.0 \\ \hline
-    matlab & bindings & matlab build script & v2.5.0.0 \\ \hline
+    julia & bindings & julia & 2.5.0 \\ \hline
+    matlab & bindings & matlab build script & 2.5.0.0 \\ \hline
     pyprecice & bindings & setup.py & 2.5.0.1 \\ \hline
     config-visualizer & tooling & setup.py & 60f2165 \\ \hline
-    precice-aste & adapter & cmake & 3.0.0 \\ \hline
+    precice-aste & tooling & cmake & 3.0.0 \\ \hline
     dealii & solver & cmake & 9.4.1 \\ \hline
     precice-dealii-adapter & adapter & cmake & dbb25bea \\ \hline
-    precice-calculix-adapter & adapter & makefile & 2.20 \\ \hline
-    fenics & solver & cmake + setup.py & 2019.1.0 \\ \hline
+    precice-calculix-adapter & solver + adapter & makefile & 2.20 \\ \hline
+    fenics & solver library& cmake + setup.py & 2019.1.0 \\ \hline
     precice-fenics-adapter & adapter & setup.py & 1.4.0 \\ \hline
     precice-dune & adapter & scripts + cmake & 2.8.0 \\ \hline
-    Dune-fem & library & setup.py & 2.8.0.0 \\ \hline
+    dune-fem & solver library & setup.py & 2.8.0.0 \\ \hline
     code-aster & solver & custom build system in python & 14.6.0 \\ \hline
     openfoam & solver & wmake/Allwmake & 2206 \\ \hline
     openfoam-adapter & adapter & wmake/Allwmake & 1.2.1 \\ \hline
-    Precice-su2 & solver + adapter & patch script + autoconf & 6.0.0 \\ \hline
-    Nutils & library & setup.py & 7.0.0 \\ \hline
+    precice-su2 & solver + adapter & patch script + autoconf & 6.0.0 \\ \hline
+    nutils & solver library & setup.py & 7.0.0 \\ \hline
   \end{tabular}
-\end{figure*}
+\end{table}
 
 
-We are mainly interested in the tools, adapters including their solvers and the preCICE VM.
-For each of these entities, we present possible challenges, how to circumvent those and also comment on how software can be designed to make it as easy as possible for other users to build and package the software in question.
+\section{Results}
+
+We present challenges, solutions, and workarounds for all software packages of the preCICE distribution. 
+
 
 \subsection{preCICE}
 
