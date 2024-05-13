@@ -48,7 +48,7 @@ Traditional approaches to reproducibility, such as manual setup instructions or 
 
 Many scientists aim to solve this situation using Docker\footnote{\url{https://www.docker.com/}} (e.g.,\cite{koch2023sustainable}),
 a software which describes software environments with the help of text files.
-Those text files are made up of imperative commands which are run inside of containers, one layer at a time.
+These text files are made up of imperative commands, which are run inside of containers, one layer at a time.
 The result is several different layers combined into a single output image, which can be instantiated into a running container.
 Docker images can be copied to different hosts and should then provide the same environment on different machines.
 Those images are usually based on one of the official Docker images\footnote{\url{https://docs.docker.com/trusted-content/official-images/}}, however, which use traditional package managers, such as apt.
@@ -74,29 +74,14 @@ We try to build the complete ecosystem using Nix and verify portability on three
 
 \section{Background}
 
-In our case study, we use Nix for building and packaging preCICE adapters and their respective solvers.
 This chapter gives a short introduction into Nix and preCICE.
 
 \subsection{Nix}\label{sec:nix}
 
-Nix is a purely functional package manager that provides some features to build software derivations reproducibly.
-It does so, by recursively calculating a hash over all the inputs of a derivation and its dependencies to ensure the completeness of the whole derivation.
-If any of the inputs changes, all dependent derivations will have to be rebuilt.
-
-As Nix is purely functional, it relies on functions that, without side-effects, realize the package derivations.
-Inputs to those functions are parameters such as the package version or the location of the source code.
-Evaluating and realizing those functions with the same inputs, yields the same outputs.
-This is a critical factor where Nix's reproducibility comes from.
-Outputs, i.e. the build artifacts, never change after being built once.
-Nix builds are sandboxed, meaning that there is no internet access possible during a build.
-
-All contents, including source files and resulting build artifacts, are stored inside the Nix store.
-Per default, the Nix store resides in the path \texttt{/nix/store} on the file system.
-The naming scheme for the preCICE 2.5.0 package as an example is \path{/nix/store/0a5gw3l\ldots-precice-2.5.0}.
-This eases checking the Nix store for integrity and ensures that builds using the same inputs are performed only once.
-
-As each build output references their complete dependency graphs inside the Nix store, they do not interfere with other build outputs, enabling users to have multiple versions of the same software installed at the same time without raising conflicts.
-An example of a graphical representation of a dependency graph can be seen in Fig. \ref{fig:nix-graph}.
+Nix is a purely functional package manager, which provides features to build software derivations reproducibly.
+It does so, by recursively calculating a hash over all inputs of a derivation and its dependencies to ensure the completeness of the whole derivation.
+If any of the inputs changes, all dependent derivations have to be rebuilt.
+Fig.~\ref{fig:nix-graph} shows the dependency graph of the coreutils package as an example.
 
 \begin{figure}
     \centering
@@ -105,10 +90,23 @@ An example of a graphical representation of a dependency graph can be seen in Fi
     \label{fig:nix-graph}
 \end{figure}
 
+As Nix is purely functional, it relies on functions that, without side-effects, realize the package derivations.
+Inputs of these functions are parameters such as the package version or the location of the source code.
+Evaluating these functions with the same inputs yields the same outputs.
+This is a critical factor for Nix's reproducibility.
+Outputs, i.e. the build artifacts, never change after being built once.
+Nix builds are, moreover, sandboxed, meaning that there is no internet access possible during a build.
 
-Software patches are quite easy to apply in Nix.
-One can simply provide a list of \texttt{.patch} files as inputs, Nix will then include the patch files in the build and the calculation of the hash.
-Users can override all inputs freely, so every package can be flexibly adjusted to the users needs.
+All contents, including source files and resulting build artifacts, are stored inside the Nix store.
+Per default, the Nix store resides in the path \texttt{/nix/store} on the file system.
+The naming scheme for packages includes the above mentioned hash, for preCICE v2.5.0, for example, 
+\path{/nix/store/0a5gw3l...-precice-2.5.0}.
+This eases checking the Nix store for integrity and ensures that builds using the same inputs are performed only once.
+As all build outputs reference their complete dependency graphs inside the Nix store, they do not interfere with other build outputs, enabling installation of multiple versions of the same software without conflicts.
+
+Software patches are easy to apply in Nix.
+One can simply provide a list of \texttt{.patch} files as inputs, Nix then includes the patch files in the build and in the calculation of the hash.
+Users can override all inputs, so that every package can be flexibly adjusted.
 
 
 \subsection{preCICE}
