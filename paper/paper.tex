@@ -219,7 +219,7 @@ By default, this makefile expects the source code to reside in \texttt{\$HOME}, 
 It then builds the original code and the adapter code together, resulting in a combined binary.
 
 The Makefile also has hard-coded locations its dependencies: \texttt{SPOOLES}, \texttt{ARPACK}, and \texttt{YAML}. These need to be replaced with the equivalent \texttt{pkg-config} calls.
-Additionally, there is no \texttt{install} target provided by the makefile, thus the resulting binary needs to be installed manually by copying it to \texttt{\$out}.\\
+Additionally, there is no \texttt{install} target provided by the makefile, thus the resulting binary needs to be installed manually by copying it to \texttt{\$out}.
 
 \subsubsection{Code\_Aster}
 
@@ -252,10 +252,10 @@ After patching, Code\_Aster successfully installed into \texttt{\$out/14.6/}, so
 
 \subsubsection{deal.II}
 
-In order to package this adapter, we first need to package deal.II~\cite{dealII95}, that uses CMake as build system and works without any adjustments.
-The same applies for the adapter, that also uses CMake and needs preCICE as a dependency.
-When supplied with the inputs, the adapter builds without any problems.
-As an example for the Nix language, you can see the abbreviated Nix code for the dealii.II adapter in Fig. \ref{lst:dealii-adapter-nix}.\\
+
+To package the deal.II-preCICE adapter, we first need to package deal.II~\cite{dealII95} itself, which uses CMake as build system and works without any adjustments.
+The same then applies for the adapter, which also uses CMake.
+As an example for the Nix language, we provide the Nix code for the deal.II-preCICE adapter in Fig.~\ref{lst:dealii-adapter-nix}.
 
 \begin{figure*}
     \normalsize
@@ -281,66 +281,45 @@ stdenv.mkDerivation rec {
   '';
 }
     \end{minted}
-    \caption{A sample of Nix code used to package the dealii-adapter, see: \url{https://github.com/precice/dealii-adapter/}}
+    \caption{Nix code to package the deal.II-preCICE adapter}
     \label{lst:dealii-adapter-nix}
 \end{figure*}
 
 \subsubsection{DUNE}
 
-The DUNE~\cite{bastian2020dune} package uses a combination of CMake files and custom build scripts making the build process quite tedious.
-This might be an issue because of the ongoing migration to CMake from autotools and might be resolved in the future.
-
-It is also a minor issue that the dune-project is a collection of repositories rather than a monorepository, because users have to correctly clone all repositories so the build system finds all relevant information.
-We clone all of the required dune repos into a directory and additionally clone the adapter into the same directory.
-
-For the build and install, process we need to manually set \texttt{\$DUNE\_CONTROL\_PATH} and \texttt{\$DUNE\_PY\_DIR} environment variables, both variables also need to be set at runtime.
-Additionally, we need to patch the python install process because the current CMake file that handles this install tries to access the internet with \texttt{pip install}.
-This is not allowed in Nix' sandboxed builds.
-Therefore, we need to patch the \texttt{pip} command with the options \texttt{--no-cache-dir --no-index --no-deps --no-build-isolation} and remove the \texttt{--upgrade} option.\\
+DUNE~\cite{bastian2020dune} uses a combination of CMake files and custom build scripts making the build process in Nix tedious.
+There is an ongoing migration from autotools to CMake for DUNE, which might improve the situation in the future.
+Another minor issue is that the DUNE project is rather a collection of repositories than a monorepo. This means, users have to correctly clone all repositories such that the build system finds all relevant information.
+We clone all of the required DUNE repositories into a directory and additionally clone the DUNE-preCICE adapter into the same directory.
+For the build and install process, we need to manually set the \texttt{\$DUNE\_CONTROL\_PATH} and the \texttt{\$DUNE\_PY\_DIR} environment variables. Both variables also need to be set at runtime.
+Additionally, we need to patch the python install process because the current CMake file tries to access the internet with \texttt{pip install}, which is not allowed in Nix' sandboxed builds.
 
 \subsubsection{FEniCS}
 
-We are explicitly referring to the legacy version of FEniCS~\cite{fenics} here, not the newer and still experimental FEniCSx.
-This adapter~\cite{Rodenberg2021} uses the open source computing platform FEniCS, that is already packaged within nixpkgs, to provide preCICE support.
+FEniCS~\cite{fenics} is already packaged upstream, however, not will all features the FEniCs-preCICE adapter~\cite{Rodenberg2021} relies on, in particular PETSc support.
+This is why, we need to package PETSc4py, the python bindings package of PETSc, which is not available upstream.
+The build process uses the internal \texttt{buildPythonApplication} build tool and runs successfully once we add the option \texttt{build\_src --force} to rebuild cython code.
+We could not enable tests for PETSc4py, however, because they depend on OpenMPI and the network, which is not available within Nix' build sandbox.
+Afterwards, we specify PETSc4py as dependency for FEniCS and enable the PETSc support.
 
-Although it is available, not all features the adapter needs are enabled, including PETSc support.
-To fix this, we need to package PETSc4py, that provides python bindings for PETSc and is not present in the upstream nixpkgs repository.
-The build process is possible without any issues, because it uses the internal \texttt{buildPythonApplication} build tool, but we need to add the additional build optional \texttt{build\_src --force} because the cython code needs to be rebuilt.
-We also are not able to enable tests for this package because tests depend on OpenMPI and the network, that is not available within the Nix build sandbox.
-
-After this, we can specify PETSc4py as dependency for FEniCS and can enable support for this feature.
-
-Building the adapter with Nix is now possible with \texttt{buildPythonPackage} and does not require any special workarounds.
-A majority of the \texttt{pytest} ran successfully, but two tests failed inside the Nix sandbox, that means all tests needed to be disabled.\\
+Building the FEniCS-preCICE adapter is now directly possible with \texttt{buildPythonPackage}.
+All but two of the adapter's tests run successfully, which means, however, that we need to disable the tests.
 
 \subsubsection{OpenFOAM}
 
-There are two flavors of OpenFOAM, we are referring to the OpenFOAM fork of OpenCFD Ltd\footnote{\url{https://www.openfoam.com/}}.
+The preCICE-OpenFOAM adapter~\cite{OpenFOAMpreCICE} supports multiple flavors of OpenFOAM. We restrict our analysis to the OpenFOAM fork of OpenCFD Ltd\footnote{\url{https://www.openfoam.com/}}.
 
-OpenFOAM uses its own custom build system called \texttt{wmake} that is sometimes called with a wrapper script called \texttt{Allwmake}.
-The build system sets 36 environment variables that are set by wmake, one step at a time by checking several parameters, e.g. the cpu architecture or the location of the source code, and concatenating some other environment variables together.
+OpenFOAM uses its own custom build system called \texttt{wmake}, which is typically called with a \texttt{Allwmake} wrapper script.
+The build system sets 36 environment variables, one step at a time by checking several parameters, e.g. the CPU architecture or the location of the source code. Also during runtime, these variables need to be set, either by a wrapper script or by manually sourcing a file inside the installation directory of OpenFOAM.
+For Nix, these properties are unfortunate. To compile OpenFOAM with Nix, we need to patch the shebangs\footnote{\url{https://foldoc.org/shebang}} of wmake to make it run during the build.
+We also use a shell script called \texttt{set-openfoam-vars}, which exports the environment variables to the current shell session.
+For simplicity, we hard-code all parameters, such as the processor architecture. These could be parametrized, however, based on the Nix inputs to allow for optimized builds. We use the script during the build phase to source all variables such that, for example, \texttt{OPENFOAM\_SRC\_PATH} points to the default location \texttt{/build/openfoam}.
+Afterwards, \texttt{./Allwmake -j -q} is sufficient to start the build.
+The install phase then copies the necessary files and directories to \texttt{\$out}, replaces the mock \texttt{OPENFOAM\_SRC\_PATH} by the value of \texttt{\$out}, and creates a wrapper for the \texttt{openfoam} shell script.
 
-Allwmake and wmake rely on these environment variables to be set, as otherwise the tools will exit with a warning.
-During runtime, before running any OpenFOAM commands, a small wrapper script has to be started that sets all relevant environment variables, or a user has to manually source a file inside the installation directory of OpenFOAM.
-OpenFOAM uses modules for extensibility and flexibility that need the source code of OpenFOAM and also require wmake as a build tool.
-
-For Nix, these properties are rather unfortunate.
-To compile OpenFOAM with Nix, we first need to patch the shebangs\footnote{\url{https://foldoc.org/shebang}} of wmake to make it run during the build.
-Secondly, we render a shell script we call \texttt{set-openfoam-vars} that exports all necessary environment variables to the current shell session.
-At the time of writing, all parameters such as the processor architecture are hard-coded for simplicity reasons but could be parametrized based on the Nix inputs to allow for optimized builds.
-During the buildPhase, the rendered script will be sourced to set all variables, e.g. so the \texttt{OPENFOAM\_SRC\_PATH} points to \texttt{/build/openfoam} being the default location for Nix builds inside the sandbox.
-After sourcing the script, the single command \texttt{./Allwmake -j -q} is sufficient to start the build.
-
-The installPhase then simply copies the necessary files and directories to \texttt{\$out}, replaces the mock \texttt{OPENFOAM\_SRC\_PATH} by the value of \texttt{\$out} and creates a wrapper for the \texttt{openfoam} shell script.
-
-As the preCICE OpenFOAM-adapter~\cite{OpenFOAMpreCICE} is an OpenFOAM module, the derivation of the adapter needs OpenFOAM and wmake as build inputs.
-The correct environment variables have to be set again, but this is rather easy now, as we have the \texttt{set-openfoam-vars} script that we can simply source during the buildPhase.
-The last thing we need to change before launching the build with Allwmake is to set the target directory for the adapter.
-A single shared library that can be copied to \texttt{\$out/lib/} is the only output for this build.
-
-Debug and timing modes for the adapter can simply be enabled by setting the \texttt{debugMode} and \texttt{enableTimings} inputs to the derivation to true.
-
-OpenFOAM is available on Spack and EasyBuild that both patch the OpenFOAM source files as those tools also have to set environment variables to make a build compatible with wmake.\\
+The preCICE-OpenFOAM adapter is an OpenFOAM function object, requiring OpenFOAM and wmake as build inputs.
+The environment variables have to be set again through the \texttt{set-openfoam-vars} script.
+Afterwards, we set the target directory for the adapter to \texttt{\$out/lib/} as the adapter is a shared library. Building then works successfully.
 
 \subsubsection{su2-adapter}
 
