@@ -75,7 +75,7 @@ To this end, we study the preCICE ecosystem~\cite{preCICEv2} as an example.
 preCICE is a coupling library for partitioned multiphysics simulations.
 The ecosystem includes diverse legacy solvers, adapters, language bindings, and testcases besides the coupling library itself making it a challenging and representative testcase.
 We try to build the complete ecosystem using Nix and run all testcases.
- 
+
 \section{Background}
 
 This chapter gives a short introduction into Nix and preCICE.
@@ -103,7 +103,7 @@ Nix builds are, moreover, sandboxed, meaning that there is no internet access po
 
 All contents, including source files and resulting build artifacts, are stored inside the Nix store.
 Per default, the Nix store resides in the path \texttt{/nix/store} on the file system.
-The naming scheme for packages includes the above mentioned hash, for preCICE v2.5.0, for example, 
+The naming scheme for packages includes the above mentioned hash, for preCICE v2.5.0, for example,
 \path{/nix/store/0a5gw3l...-precice-2.5.0}.
 This eases checking the Nix store for integrity and ensures that builds using the same inputs are performed only once.
 As all build outputs reference their complete dependency graphs inside the Nix store, they do not interfere with other build outputs, enabling installation of multiple versions of the same software without conflicts.
@@ -130,8 +130,8 @@ For example, in fluid-structure interaction problems, where fluid flow interacts
 preCICE supports a wide range of existing (Legacy) solvers. For each solver, there is typically a specific adapter: an either independent software package or simply a source code patch that integrates the preCICE API into the solver, see Fig.~\ref{fig:precice}.
 The preCICE library itself is implemented in C++, bindings to other languages are either supported through native bindings (C, Fortran) or through independent software packages (Python, Julia, Matlab, Fortran).
 Many official adapters, all bindings, the library itself, tutorials, additional tools, and the website including user documentation are collected and released in so-called preCICE distributions\footnote{\url{https://precice.org/installation-distribution.html}}.
-In our case study, we target the distribution v2211.0~\cite{preciceDistribution}. To execute simulations, such as the included tutorials, requires the actual solvers next to the distribution. These are included, for example, in the preCICE VM\footnote{\url{https://precice.org/installation-vm.html}} and also part of our case study. Table \ref{table:label-distribution} lists all software packages of the case study. We try to reproducibly build all of these packages with Nix and try to run all tutorial cases. 
-The diverse languages and diverse solver packages using various build system makes the preCICE ecosystem a challenging testcase, which is, however, representative for current research software in our experience. 
+In our case study, we target the distribution v2211.0~\cite{preciceDistribution}. To execute simulations, such as the included tutorials, requires the actual solvers next to the distribution. These are included, for example, in the preCICE VM\footnote{\url{https://precice.org/installation-vm.html}} and also part of our case study. Table \ref{table:label-distribution} lists all software packages of the case study. We try to reproducibly build all of these packages with Nix and try to run all tutorial cases.
+The diverse languages and diverse solver packages using various build system makes the preCICE ecosystem a challenging testcase, which is, however, representative for current research software in our experience.
 
 
 \begin{table}[!t]
