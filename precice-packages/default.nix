@@ -42,6 +42,9 @@
 
       precice-fenics-adapter = super.callPackage ./precice-fenics-adapter { } ;
 
+      precice-fortran-module = super.callPackage ./fortran-module { };
+      precice-fortran-solverdummy = super.callPackage ./precice-fortran-solverdummy { };
+
       openfoam = super.callPackage ./openfoam { };
       precice-openfoam-adapter = super.callPackage ./openfoam-adapter { };
 
