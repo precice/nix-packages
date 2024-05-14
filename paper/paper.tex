@@ -331,7 +331,7 @@ Afterwards, we set the target directory for the adapter to \texttt{\$out/lib/} a
 
 \subsubsection{su2-adapter}
 
-The SU2-preCICE adapter~\cite{Uekermann2017_Adapters} patches and extends the original CFD code SU2 \todo{cite SU2}.
+The SU2-preCICE adapter~\cite{Uekermann2017_Adapters} patches and extends the original CFD code SU2~\cite{su2}.
 To this end, the adapter provides a script to run before the build phase.
 We do this in Nix' patch phase. Afterwards, \texttt{stdenv} automatically recognizes that SU2 uses autotools for building and runs the configure phase.
 Finally, to find the preCICE installation, we need to set the configuration flags \texttt{--with-include} and \texttt{--with-lib}.
