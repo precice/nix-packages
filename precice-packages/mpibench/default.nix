@@ -1,9 +1,10 @@
-{ lib
-, stdenv
-, fetchFromGitHub
-, gcc
-, mpi
-, perl
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  gcc,
+  mpi,
+  perl,
 }:
 stdenv.mkDerivation rec {
   pname = "mpibench";
@@ -20,7 +21,10 @@ stdenv.mkDerivation rec {
     substituteInPlace crunch_mpiBench --replace '#!/usr/bin/perl' '#!${perl}/bin/perl'
   '';
 
-  nativeBuildInputs = [ gcc mpi ];
+  nativeBuildInputs = [
+    gcc
+    mpi
+  ];
 
   installPhase = ''
     mkdir -p $out/bin

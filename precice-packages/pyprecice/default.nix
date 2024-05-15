@@ -1,10 +1,11 @@
-{ lib
-, fetchFromGitHub
-, python3
-, precice
-, pkg-config
-, openmpi
-, openssh
+{
+  lib,
+  fetchFromGitHub,
+  python3,
+  precice,
+  pkg-config,
+  openmpi,
+  openssh,
 }:
 
 python3.pkgs.buildPythonPackage rec {

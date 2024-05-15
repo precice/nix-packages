@@ -1,16 +1,17 @@
-{ lib
-, stdenv
-, fetchurl
-, gcc
-, gfortran
-, openmpi
-, blas
-, liblapack
-, metis
-, parmetis
-, scotch
-, scalapack
-, blacs
+{
+  lib,
+  stdenv,
+  fetchurl,
+  gcc,
+  gfortran,
+  openmpi,
+  blas,
+  liblapack,
+  metis,
+  parmetis,
+  scotch,
+  scalapack,
+  blacs,
 }:
 let
   scotch_full = scotch.overrideAttrs (_: {
@@ -87,7 +88,11 @@ stdenv.mkDerivation rec {
     EOF
   '';
 
-  nativeBuildInputs = [ gcc gfortran openmpi ];
+  nativeBuildInputs = [
+    gcc
+    gfortran
+    openmpi
+  ];
 
   installPhase = ''
     mkdir -p $out/{include,lib}

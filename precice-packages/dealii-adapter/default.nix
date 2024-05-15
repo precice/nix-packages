@@ -1,4 +1,12 @@
-{ lib, stdenv, fetchFromGitHub, cmake, precice, dealii, enable3d ? false }:
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  cmake,
+  precice,
+  dealii,
+  enable3d ? false,
+}:
 
 stdenv.mkDerivation {
   pname = "precice-dealii-adapter";
@@ -12,11 +20,12 @@ stdenv.mkDerivation {
   };
 
   nativeBuildInputs = [ cmake ];
-  buildInputs = [ precice dealii ];
-
-  cmakeFlags = lib.optionals enable3d [
-    "-DDIM=3"
+  buildInputs = [
+    precice
+    dealii
   ];
+
+  cmakeFlags = lib.optionals enable3d [ "-DDIM=3" ];
 
   installPhase = ''
     mkdir -p $out/bin

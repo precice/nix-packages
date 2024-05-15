@@ -1,4 +1,10 @@
-{ lib, python3, openmpi, openssh, petsc }:
+{
+  lib,
+  python3,
+  openmpi,
+  openssh,
+  petsc,
+}:
 python3.pkgs.buildPythonPackage rec {
   pname = "petsc4py";
   version = "3.19.1";
@@ -16,7 +22,11 @@ python3.pkgs.buildPythonPackage rec {
   # generated with incompatible cython versions.
   setupPyBuildFlags = [ "build_src --force" ];
 
-  nativeBuildInputs = with python3.pkgs; [ cython openmpi openssh ];
+  nativeBuildInputs = with python3.pkgs; [
+    cython
+    openmpi
+    openssh
+  ];
   propagatedBuildInputs = with python3.pkgs; [ numpy ];
   checkInputs = with python3.pkgs; [ pytest ];
 

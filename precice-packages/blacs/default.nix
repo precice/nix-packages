@@ -1,10 +1,11 @@
-{ lib
-, stdenv
-, fetchurl
-, bash
-, gcc
-, gfortran
-, openmpi
+{
+  lib,
+  stdenv,
+  fetchurl,
+  bash,
+  gcc,
+  gfortran,
+  openmpi,
 }:
 stdenv.mkDerivation {
   pname = "blacs";
@@ -88,7 +89,11 @@ stdenv.mkDerivation {
     cp LIB/*.a $out/lib
   '';
 
-  nativeBuildInputs = [ gcc gfortran openmpi ];
+  nativeBuildInputs = [
+    gcc
+    gfortran
+    openmpi
+  ];
 
   enableParallelBuilding = true;
 

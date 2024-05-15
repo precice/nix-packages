@@ -7,7 +7,7 @@
   precice,
 
   debugMode ? false,
-  enableTimings ? false
+  enableTimings ? false,
 }:
 
 stdenv.mkDerivation rec {
@@ -21,7 +21,11 @@ stdenv.mkDerivation rec {
     hash = "sha256-+8VfiKIXzWXu2L/hd3IJV56BBWM/Nb73DWv4BTHvBbQ=";
   };
 
-  nativeBuildInputs = [ openfoam pkg-config precice ];
+  nativeBuildInputs = [
+    openfoam
+    pkg-config
+    precice
+  ];
 
   buildPhase = ''
     source ${openfoam}/bin/set-openfoam-vars

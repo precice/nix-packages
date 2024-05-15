@@ -1,25 +1,26 @@
-{ lib
-, stdenv
-, symlinkJoin
-, fetchFromGitLab
-, fetchFromGitHub
-, gcc
-, cmake
-, ninja
-, pkg-config
-, blas
-, lapack
-, arpack
-, openmpi
-, python3
-, metis
-, parmetis
-, vc
-, gmp
-, precice
-, llvmPackages
-, petsc
-, suitesparse
+{
+  lib,
+  stdenv,
+  symlinkJoin,
+  fetchFromGitLab,
+  fetchFromGitHub,
+  gcc,
+  cmake,
+  ninja,
+  pkg-config,
+  blas,
+  lapack,
+  arpack,
+  openmpi,
+  python3,
+  metis,
+  parmetis,
+  vc,
+  gmp,
+  precice,
+  llvmPackages,
+  petsc,
+  suitesparse,
 }:
 let
   version = "2.8.0";
@@ -105,149 +106,151 @@ let
     rev = "5f2364d57b517698914cb1d5f9979efe692d9254";
     hash = "sha256-fsYyc2DzK4AJJbXo5doX+QopKVfoNLpBKb1rfbUDgyc=";
   };
-  dune = python3.pkgs.toPythonModule(stdenv.mkDerivation rec {
-    pname = "dune";
-    inherit version;
+  dune = python3.pkgs.toPythonModule (
+    stdenv.mkDerivation rec {
+      pname = "dune";
+      inherit version;
 
-    unpackPhase = ''
-      runHook preUnpack
+      unpackPhase = ''
+        runHook preUnpack
 
-      cp -r ${dune_common_src} dune-common
-      cp -r ${dune_istl_src} dune-istl
-      cp -r ${dune_localfunctions_src} dune-localfunctions
-      cp -r ${dune_grid_src} dune-grid
-      cp -r ${dune_geometry_src} dune-geometry
-      cp -r ${dune_functions_src} dune-functions
-      cp -r ${dune_uggrid_src} dune-uggrid
-      cp -r ${dune_typetree_src} dune-typetree
-      cp -r ${dune_alugrid_src} dune-alugrid
-      cp -r ${dune_foamgrid_src} dune-foamgrid
-      cp -r ${dune_elastodynamics_src} dune-elastodynamics
-      cp -r ${dune_adapter_src} dune-adapter
+        cp -r ${dune_common_src} dune-common
+        cp -r ${dune_istl_src} dune-istl
+        cp -r ${dune_localfunctions_src} dune-localfunctions
+        cp -r ${dune_grid_src} dune-grid
+        cp -r ${dune_geometry_src} dune-geometry
+        cp -r ${dune_functions_src} dune-functions
+        cp -r ${dune_uggrid_src} dune-uggrid
+        cp -r ${dune_typetree_src} dune-typetree
+        cp -r ${dune_alugrid_src} dune-alugrid
+        cp -r ${dune_foamgrid_src} dune-foamgrid
+        cp -r ${dune_elastodynamics_src} dune-elastodynamics
+        cp -r ${dune_adapter_src} dune-adapter
 
-      chmod -R +w .
+        chmod -R +w .
 
-      runHook postUnpack
-    '';
-
-    patches = [
-      ./0001-no-upgrade.patch
-      ./0002-no-dune-configure.patch
-    ];
-
-    nativeBuildInputs = [
-      gcc
-      cmake
-      ninja
-      pkg-config
-      blas
-      lapack
-      arpack
-      openmpi
-      python3
-      metis
-      parmetis
-      vc
-      gmp
-      precice
-      llvmPackages.openmp
-      petsc
-      suitesparse
-    ];
-    propagatedBuildInputs = [
-      python3.pkgs.pip
-      python3.pkgs.setuptools
-      python3.pkgs.virtualenv
-      python3.pkgs.wheel
-      python3.pkgs.scikit-build
-      python3.pkgs.requests
-      python3.pkgs.portalocker
-      python3.pkgs.numpy
-      python3.pkgs.mpi4py
-      python3.pkgs.fenics
-
-      # Not great but we need these at runtime
-      pkg-config
-      cmake
-      metis
-      parmetis
-    ];
-
-    configurePhase = ''
-      runHook preConfigure
-
-      patchShebangs .
-
-      # PATH needs to be empty
-      export DUNE_CONTROL_PATH=
-      export DUNE_PY_DIR=$PWD/.cache/dune-py
-      mkdir -p $DUNE_PY_DIR
-
-      export CMAKE_FLAGS=" \
-        -DCMAKE_BUILD_TYPE=Release \
-        -DCMAKE_INSTALL_PREFIX=$out \
-        -DDUNE_GRID_GRIDTYPE_SELECTOR=ON \
-        -DCMAKE_DISABLE_FIND_PACKAGE_ParMETIS=ON \
-        -DDUNE_GRID_EXPERIMENTAL_GRID_EXTENSIONS=ON \
-        -DDUNE_PYTHON_INSTALL_LOCATION=\"system\" \
-        -DDUNE_ENABLE_PYTHONBINDINGS=ON \
-        -DBUILD_SHARED_LIBS=TRUE \
-        -DDUNE_PYTHON_ADDITIONAL_PIP_PARAMS=\"--prefix=$out\" \
-      "
-
-      ./dune-common/bin/dunecontrol cmake
-
-      runHook postConfigure
-    '';
-
-    buildPhase = ''
-      runHook preBuild
-
-      ./dune-common/bin/dunecontrol make -j
-
-      runHook postBuild
-    '';
-
-    installPhase = ''
-      runHook preInstall
-
-      mkdir -p $out
-      ./dune-common/bin/dunecontrol make install
-      ./dune-common/bin/dunecontrol make install_python
-
-      # TODO: figure out why cmake isn't linking correctly and we need to patchelf
-      patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/common/_common.so)" $out/lib/python3.10/site-packages/dune/common/_common.so
-      patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/geometry/_geometry.so)" $out/lib/python3.10/site-packages/dune/geometry/_geometry.so
-      patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/istl/_istl.so)" $out/lib/python3.10/site-packages/dune/istl/_istl.so
-      patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/localfunctions/_localfunctions.so)" $out/lib/python3.10/site-packages/dune/localfunctions/_localfunctions.so
-      patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/grid/_grid.so)" $out/lib/python3.10/site-packages/dune/grid/_grid.so
-
-      cat <<EOF > $out/bin/set-dune-vars
-        export DUNE_CONTROL_PATH=$out
-        export DUNE_PY_DIR=\$HOME/.cache/dune-py/${version}
-
-        # we kinda wanna index this once and make sure this works
-        python -c "from dune.grid import structuredGrid"
-      EOF
-      chmod +x $out/bin/set-dune-vars
-
-      runHook postInstall
-    '';
-
-    dontMoveLib64 = true;
-
-    meta = {
-      description = ''
-        DUNE, the Distributed and Unified Numerics Environment is a modular
-        toolbox for solving partial differential equations with grid-based
-        methods.
+        runHook postUnpack
       '';
-      homepage = "https://www.dune-project.org/";
-      license = with lib.licenses; [ gpl2 ];
-      maintainers = with lib.maintainers; [ conni2461 ];
-      platforms = lib.platforms.unix;
-    };
-  });
+
+      patches = [
+        ./0001-no-upgrade.patch
+        ./0002-no-dune-configure.patch
+      ];
+
+      nativeBuildInputs = [
+        gcc
+        cmake
+        ninja
+        pkg-config
+        blas
+        lapack
+        arpack
+        openmpi
+        python3
+        metis
+        parmetis
+        vc
+        gmp
+        precice
+        llvmPackages.openmp
+        petsc
+        suitesparse
+      ];
+      propagatedBuildInputs = [
+        python3.pkgs.pip
+        python3.pkgs.setuptools
+        python3.pkgs.virtualenv
+        python3.pkgs.wheel
+        python3.pkgs.scikit-build
+        python3.pkgs.requests
+        python3.pkgs.portalocker
+        python3.pkgs.numpy
+        python3.pkgs.mpi4py
+        python3.pkgs.fenics
+
+        # Not great but we need these at runtime
+        pkg-config
+        cmake
+        metis
+        parmetis
+      ];
+
+      configurePhase = ''
+        runHook preConfigure
+
+        patchShebangs .
+
+        # PATH needs to be empty
+        export DUNE_CONTROL_PATH=
+        export DUNE_PY_DIR=$PWD/.cache/dune-py
+        mkdir -p $DUNE_PY_DIR
+
+        export CMAKE_FLAGS=" \
+          -DCMAKE_BUILD_TYPE=Release \
+          -DCMAKE_INSTALL_PREFIX=$out \
+          -DDUNE_GRID_GRIDTYPE_SELECTOR=ON \
+          -DCMAKE_DISABLE_FIND_PACKAGE_ParMETIS=ON \
+          -DDUNE_GRID_EXPERIMENTAL_GRID_EXTENSIONS=ON \
+          -DDUNE_PYTHON_INSTALL_LOCATION=\"system\" \
+          -DDUNE_ENABLE_PYTHONBINDINGS=ON \
+          -DBUILD_SHARED_LIBS=TRUE \
+          -DDUNE_PYTHON_ADDITIONAL_PIP_PARAMS=\"--prefix=$out\" \
+        "
+
+        ./dune-common/bin/dunecontrol cmake
+
+        runHook postConfigure
+      '';
+
+      buildPhase = ''
+        runHook preBuild
+
+        ./dune-common/bin/dunecontrol make -j
+
+        runHook postBuild
+      '';
+
+      installPhase = ''
+        runHook preInstall
+
+        mkdir -p $out
+        ./dune-common/bin/dunecontrol make install
+        ./dune-common/bin/dunecontrol make install_python
+
+        # TODO: figure out why cmake isn't linking correctly and we need to patchelf
+        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/common/_common.so)" $out/lib/python3.10/site-packages/dune/common/_common.so
+        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/geometry/_geometry.so)" $out/lib/python3.10/site-packages/dune/geometry/_geometry.so
+        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/istl/_istl.so)" $out/lib/python3.10/site-packages/dune/istl/_istl.so
+        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/localfunctions/_localfunctions.so)" $out/lib/python3.10/site-packages/dune/localfunctions/_localfunctions.so
+        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/grid/_grid.so)" $out/lib/python3.10/site-packages/dune/grid/_grid.so
+
+        cat <<EOF > $out/bin/set-dune-vars
+          export DUNE_CONTROL_PATH=$out
+          export DUNE_PY_DIR=\$HOME/.cache/dune-py/${version}
+
+          # we kinda wanna index this once and make sure this works
+          python -c "from dune.grid import structuredGrid"
+        EOF
+        chmod +x $out/bin/set-dune-vars
+
+        runHook postInstall
+      '';
+
+      dontMoveLib64 = true;
+
+      meta = {
+        description = ''
+          DUNE, the Distributed and Unified Numerics Environment is a modular
+          toolbox for solving partial differential equations with grid-based
+          methods.
+        '';
+        homepage = "https://www.dune-project.org/";
+        license = with lib.licenses; [ gpl2 ];
+        maintainers = with lib.maintainers; [ conni2461 ];
+        platforms = lib.platforms.unix;
+      };
+    }
+  );
   dune-fem = python3.pkgs.buildPythonPackage rec {
     pname = "dune-fem";
     version = "2.8.0";

@@ -1,20 +1,21 @@
-{ lib
-, stdenv
-, fetchFromGitHub
-, autoreconfHook
-, gcc
-, python3
-, pkg-config
-, precice
-, makeWrapper
-, enableMPI ? false
-, openmpi
-, enableCgns ? false
-, enableDOT ? false
-, enableMSH ? false
-, enableDEF ? false
-, enableSOL ? false
-, enableGEO ? false
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  autoreconfHook,
+  gcc,
+  python3,
+  pkg-config,
+  precice,
+  makeWrapper,
+  enableMPI ? false,
+  openmpi,
+  enableCgns ? false,
+  enableDOT ? false,
+  enableMSH ? false,
+  enableDEF ? false,
+  enableSOL ? false,
+  enableGEO ? false,
 }:
 let
   version = "6.0.0";
@@ -62,21 +63,24 @@ stdenv.mkDerivation {
     runHook postPatch
   '';
 
-  configureFlags = [
-    "--with-include=${precice}/include"
-    "--with-lib=${precice}/lib"
-  ]
-  ++ lib.optional enableMPI [ "--enable-mpi" "--with-cc=${openmpi}/bin/mpicc" "--with-cxx=${openmpi}/bin/mpicxx" ]
-  ++ lib.optional (!enableCgns) "--disable-cgns"
-  ++ lib.optional (!enableDOT) "--disable-DOT"
-  ++ lib.optional (!enableMSH) "--disable-MSH"
-  ++ lib.optional (!enableDEF) "--disable-DEF"
-  ++ lib.optional (!enableSOL) "--disable-SOL"
-  ++ lib.optional (!enableGEO) "--disable-GEO";
+  configureFlags =
+    [
+      "--with-include=${precice}/include"
+      "--with-lib=${precice}/lib"
+    ]
+    ++ lib.optional enableMPI [
+      "--enable-mpi"
+      "--with-cc=${openmpi}/bin/mpicc"
+      "--with-cxx=${openmpi}/bin/mpicxx"
+    ]
+    ++ lib.optional (!enableCgns) "--disable-cgns"
+    ++ lib.optional (!enableDOT) "--disable-DOT"
+    ++ lib.optional (!enableMSH) "--disable-MSH"
+    ++ lib.optional (!enableDEF) "--disable-DEF"
+    ++ lib.optional (!enableSOL) "--disable-SOL"
+    ++ lib.optional (!enableGEO) "--disable-GEO";
 
-  makeWrapperArgs = [
-    "--prefix SU2_RUN : $out/bin"
-  ];
+  makeWrapperArgs = [ "--prefix SU2_RUN : $out/bin" ];
 
   postInstall = ''
     wrapPythonProgramsIn "$out/bin" "$out $pythonPath"
@@ -93,14 +97,20 @@ stdenv.mkDerivation {
     makeWrapper
     python3.pkgs.wrapPython
   ];
-  propagatedBuildInputs = [ python3 python3.pkgs.numpy ];
+  propagatedBuildInputs = [
+    python3
+    python3.pkgs.numpy
+  ];
 
   doCheck = true;
 
   meta = {
     description = "preCICE-adapter for the CFD code SU2";
     homepage = "https://github.com/precice/su2-adapter";
-    license = with lib.licenses; [ lgpl21Only lgpl3Only ];
+    license = with lib.licenses; [
+      lgpl21Only
+      lgpl3Only
+    ];
     maintainers = with lib.maintainers; [ conni2461 ];
     platforms = lib.platforms.unix;
   };
