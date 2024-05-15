@@ -48,6 +48,12 @@
       system = "x86_64-linux";
       modules = [ home-manager.nixosModules.home-manager ./configuration.nix ];
     };
+    precice-system-vm = {
+      system = "x86_64-linux";
+      modules = [ home-manager.nixosModules.home-manager ./configuration.nix {
+        virtualisation.memorySize = 4096;
+        virtualisation.diskSize = 4096;
+      }];};
     precice-system-virtualbox = precice-system // {
       modules = precice-system.modules ++ [{
         virtualbox = {
@@ -90,7 +96,7 @@
       iso-light = nixos-generators.nixosGenerate (precice-system-light // { format = "iso"; });
       vagrant-vbox-image = nixos-generators.nixosGenerate (precice-system-virtualbox // { format = "vagrant-virtualbox"; });
       vagrant-vbox-image-light = nixos-generators.nixosGenerate (precice-system-virtualbox-light // { format = "vagrant-virtualbox"; });
-      vm = nixos-generators.nixosGenerate (precice-system // { format = "vm"; });
+      vm = nixos-generators.nixosGenerate (precice-system-vm // { format = "vm"; });
       vm-light = nixos-generators.nixosGenerate (precice-system-light // { format = "vm"; });
 
       precice-simulation-environment = pkgs.stdenvNoCC.mkDerivation {
