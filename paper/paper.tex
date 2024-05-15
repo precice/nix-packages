@@ -76,8 +76,8 @@ This is why, for example, the xSDK community~\cite{xSDK2023} tries to set a stan
 In this paper, we analyze how well Nix and NixOS can improve reproducibility of scientific software.
 To this end, we study the preCICE ecosystem~\cite{preCICEv2} as an example.
 preCICE is a coupling library for partitioned multiphysics simulations.
-The ecosystem includes diverse legacy solvers, adapters, language bindings, and testcases besides the coupling library itself making it a challenging and representative testcase.
-We try to build the complete ecosystem using Nix and run all testcases.
+The ecosystem includes diverse legacy solvers, adapters, language bindings, and tutorials besides the coupling library itself making it a challenging and representative testcase.
+We try to build the complete ecosystem using Nix and run all tutorials.
 
 \section{Background}
 
@@ -207,7 +207,7 @@ Also, as matlab is not installed in the VM, we decided to not proceed in packagi
 
 \subsubsection{Fortran bindings}
 
-preCICE provides bindings\footnote{\url{https://github.com/precice/fortran-module}} to the fortran programming language.
+preCICE provides bindings\footnote{\url{https://github.com/precice/fortran-module}} to the Fortran programming language.
 We were able to package these by providing custom phases for the \texttt{buildPhase} and the \texttt{installPhase}.
 The resulting binary could run the example that comes with the module.
 
@@ -350,9 +350,18 @@ We used Nix to define a VM image with NixOS as a base, that can be built reprodu
 The image contains all the adapters and solvers from the case study and some additional custom tools that can only be seen in the official VM, such as the \texttt{preciceToPNG} command.
 Also, we generate an iso and a Vagrant VirtualBox file of the VM as additional outputs.
 
-\begin{sloppypar}
-Most of the functionality that can be found in the official VM is also available in our NixOS VM and all preCICE tutorials could be run successfully, except \texttt{turek-hron-fsi2} as the tutorial needs \texttt{swak4foam}, an add-on to OpenFOAM, we were not able to package, \texttt{flow-over-heated-plate-steady-state} as the manual steps involved were unclear, \texttt{partitioned-heat-conduction-complex} and \texttt{partitioned-heat-conduction-direct} as the \texttt{mshr} python dependency was missing.
-\end{sloppypar}
+\subsection{preCICE tutorials}
+
+The preCICE tutorials included in the distribution can not only be used as reference examples on how to couple different adapters, but also to verify functionality of adapter and solver installations by executing them.
+
+All v202211.0 test can be run successfully inside our NixOS VM and also in a \texttt{nix develop} environment, except \texttt{turek-hron-fsi2} and \texttt{flow-over-heated-plate-steady-state}.
+
+We could not manage to build \texttt{swak4foam}, an add-on to OpenFOAM that is needed in the \texttt{turek-hron-fsi2} tutorial, from source.
+The official preCICE VM uses a prebuilt version of swak4foam, however also patching the prebuilt binary did not work.
+
+The second simulation we were not able to run is \texttt{flow-over-heated-plate-steady-state}.
+This testcase needs code-aster to work, that we managed to package as already mentioned.
+However, when running the simulation after executing the manual steps as written in the documentation, there occurs a segmentation fault, crashing code-aster when the python code tries to call a Fortran subroutine.
 
 \section{Discussion}
 
