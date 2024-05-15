@@ -66,7 +66,10 @@ These platforms are closed source, however, such that the source code cannot be 
 In past years, the Nix package manager~\cite{Dolstra_2004} and NixOS~\cite{Dolstra_2010}, a Linux distribution built around it, have emerged as promising alternatives~\cite{Devresse_2015}.
 Nix allows functional descriptions of dependencies up to fixed versions, thus avoiding the issue described above.
 Similar ideas are followed by the popular high performance computing (HPC) package managers EasyBuild~\cite{easybuil6495863} and Spack~\cite{spack7832814}.
-All have in common that they rely on scientific software following best practices concerning building and packaging.
+At FOSDEM 2018, Spack, EasyBuild and Nix were compared with each other~\footnote{\url{https://archive.fosdem.org/2018/schedule/event/installing\_software\_for\_scientists/}} by the EasyBuild release manager.
+While looking into Spack and EasyBuild we found some deficits regarding reproducibility, that they link against core system libraries, that can break independently if those libraries get updated, but the Spack developers are aware of these shortcomings and are already working on improvements~\footnote{\url{https://github.com/spack/spack/issues/39560}}~\footnote{\url{https://github.com/spack/spack/pull/42082}}.
+EasyBuild, on the other hand, even has an option for linking against system libraries called \texttt{osdependencies}~\footnote{\url{https://docs.easybuild.io/writing-easyconfig-files/\#dependency\_specs}}, so packages need to be vetted and potentially updated prior to usage that this option isn't used in any package of the dependency graph if the best possible reproducibility is desired.
+All three solutions have in common that they rely on scientific software following best practices concerning building and packaging.
 Unfortunately, most legacy software projects do not do this.
 This is why, for example, the xSDK community~\cite{xSDK2023} tries to set a standard for policies for math software.
 
