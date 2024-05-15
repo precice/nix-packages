@@ -110,6 +110,8 @@ stdenv.mkDerivation rec {
   '';
 
   installPhase = ''
+    runHook preInstall
+
     ${rsync}/bin/rsync -av $out/14.6/* $out
     rm -rf $out/14.6
 
@@ -124,6 +126,8 @@ stdenv.mkDerivation rec {
 
     # DELETE tests to save space
     rm -rfv $out/share/aster/tests
+
+    runHook postInstall
   '';
 
   propagatedBuildInputs = [
