@@ -40,6 +40,8 @@
       precice-calculix-adapter = super.callPackage ./calculix-adapter { };
       precice-su2 = super.callPackage ./su2 { };
 
+      fenics = super.callPackage ./fenics { };
+      fenics-mshr = super.callPackage ./fenics-mshr { };
       precice-fenics-adapter = super.callPackage ./precice-fenics-adapter { } ;
 
       precice-fortran-module = super.callPackage ./fortran-module { };

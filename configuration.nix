@@ -149,10 +149,14 @@
         # nutils
         ps.matplotlib
         nutils
+        petsc4py
 
         ps.virtualenv
-        ps.pyprecice
         ps.pandas
+
+        # pyprecice is here thanks to the propagatedBuildInputs
+        precice-dune
+        precice-fenics-adapter
       ]);
       preciceToPNG = writeShellScriptBin "preciceToPNG" "cat \"\${1:-precice-config.xml}\" | ${precice-config-visualizer}/bin/precice-config-visualizer | ${graphviz}/bin/dot -Tpng > precice-config.png";
       preciceToPDF = writeShellScriptBin "preciceToPDF" "cat \"\${1:-precice-config.xml}\" | ${precice-config-visualizer}/bin/precice-config-visualizer | ${graphviz}/bin/dot -Tpdf > precice-config.pdf";
