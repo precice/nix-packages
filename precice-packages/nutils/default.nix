@@ -11,7 +11,7 @@
 
 buildPythonPackage rec {
   pname = "nutils";
-  version = "7.3";
+  version = "6.3";
   format = "pyproject";
 
   disabled = pythonOlder "3.7";
@@ -20,8 +20,10 @@ buildPythonPackage rec {
     owner = "evalf";
     repo = "nutils";
     rev = "refs/tags/v${version}";
-    hash = "sha256-3VtQFnR8vihxoIyRkbE1a1Rs8Np3/79PWNKReTBZDg8=";
+    hash = "sha256-sgQnL2PiwcH/nNaougUsRXfCiYdXFn4JxwiWFn6aNsw=";
   };
+
+  nativeBuildInputs = [ python3Packages.setuptools ];
 
   propagatedBuildInputs = [
     python3Packages.numpy
