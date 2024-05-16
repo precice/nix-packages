@@ -150,7 +150,7 @@ The diverse languages and diverse solver packages using various build system mak
     preCICE & library & cmake & 2.5.0 \\ \hline
     Fortran module & bindings & make & 9e3f405 \\ \hline
     Julia bindings & bindings & julia & 2.5.0 \\ \hline
-    Matlab bindings & bindings & matlab build script & 2.5.0.0 \\ \hline
+    MATLAB bindings & bindings & matlab build script & 2.5.0.0 \\ \hline
     Python bindings & bindings & setup.py & 2.5.0.1 \\ \hline
     ASTE & tooling & cmake & 3.0.0 \\ \hline
     Config visualizer & tooling & setup.py & 60f2165 \\ \hline
@@ -202,11 +202,11 @@ As a python package, it is easy to handle with Nix.
 
 Bindings are used to offer interfaces to other programming languages.
 
-\subsubsection{Matlab bindings}
+\subsubsection{MATLAB bindings}
 
-There were several attempts to package matlab\footnote{\url{https://de.mathworks.com/products/matlab.html}} for NixOS in the past\footnote{\url{https://github.com/NixOS/nixpkgs/issues/56887}}, yet there was no success so far.
-This might be due to the fact, that matlab needs to be installed by running an installation wizard that downloads files during the installation process and verifies the licence.
-Also, as matlab is not installed in the VM, we decided to not proceed in packaging the software.
+There were several attempts to package MATLAB\footnote{\url{https://de.mathworks.com/products/matlab.html}} for NixOS in the past\footnote{\url{https://github.com/NixOS/nixpkgs/issues/56887}}, yet there was no success so far.
+This might be due to the fact, that MATLAB needs to be installed by running an installation wizard that downloads files during the installation process and verifies the licence.
+Also, as MATLAB is not installed in the preCICE VM, we do not proceed in packaging the software.
 
 \subsubsection{Fortran module}
 
