@@ -1,25 +1,28 @@
-{ lib
-, stdenv
-, fetchFromGitHub
-, cmake
-, gcc
-, openmpi
-, boost # dont use bundled boost
-, adolc
-, arpack
-, assimp
-, liblapack
-, cgal_5, gmp, mpfr
-, gmsh
-, gsl
-, scalapack
-, blacs
-, metis
-, hdf5-mpi
-, p4est
-, petsc
-, zlib
-, openssh
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  cmake,
+  gcc,
+  openmpi,
+  boost, # dont use bundled boost
+  adolc,
+  arpack,
+  assimp,
+  liblapack,
+  cgal_5,
+  gmp,
+  mpfr,
+  gmsh,
+  gsl,
+  scalapack,
+  blacs,
+  metis,
+  hdf5-mpi,
+  p4est,
+  petsc,
+  zlib,
+  openssh,
 }:
 
 stdenv.mkDerivation rec {
@@ -50,10 +53,13 @@ stdenv.mkDerivation rec {
     arpack
     assimp
     liblapack
-    cgal_5 gmp mpfr # for cgal gmp and mpfr are also required
+    cgal_5
+    gmp
+    mpfr # for cgal gmp and mpfr are also required
     gmsh
     gsl
-    scalapack blacs # both are needed
+    scalapack
+    blacs # both are needed
     metis
     hdf5-mpi
     p4est

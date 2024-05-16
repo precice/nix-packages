@@ -1,11 +1,12 @@
-{ lib
-, stdenv
-, pythonOlder
-, python3Packages
-, buildPythonPackage
-, pytestCheckHook
-, fetchFromGitHub
-, bottombar
+{
+  lib,
+  stdenv,
+  pythonOlder,
+  python3Packages,
+  buildPythonPackage,
+  pytestCheckHook,
+  fetchFromGitHub,
+  bottombar,
 }:
 
 buildPythonPackage rec {
@@ -30,13 +31,9 @@ buildPythonPackage rec {
     bottombar
   ];
 
-  nativeCheckInputs = [
-    pytestCheckHook
-  ];
+  nativeCheckInputs = [ pytestCheckHook ];
 
-  pythonImportsCheck = [
-    "nutils"
-  ];
+  pythonImportsCheck = [ "nutils" ];
 
   disabledTestPaths = [
     # AttributeError: type object 'setup' has no attribute '__code__'

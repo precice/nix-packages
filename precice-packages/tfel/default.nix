@@ -1,4 +1,13 @@
-{lib, stdenv, fetchFromGitHub, gcc, cmake, gfortran, python3, boost }:
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  gcc,
+  cmake,
+  gfortran,
+  python3,
+  boost,
+}:
 stdenv.mkDerivation rec {
   pname = "tfel";
   version = "4.1.0";
@@ -10,7 +19,14 @@ stdenv.mkDerivation rec {
     hash = "sha256-dUcjOOIwYFAJgCGXubTgzNUn0Ti56J630X21VObv6mQ=";
   };
 
-  nativeBuildInputs = [ gcc gfortran cmake python3 boost python3.pkgs.boost ];
+  nativeBuildInputs = [
+    gcc
+    gfortran
+    cmake
+    python3
+    boost
+    python3.pkgs.boost
+  ];
 
   cmakeFlags = [
     "-DTFEL_SVN_REVISION=${version}"

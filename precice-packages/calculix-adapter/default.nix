@@ -1,16 +1,17 @@
-{ lib
-, stdenv
-, fetchFromGitHub
-, fetchzip
-, gcc
-, pkg-config
-, arpack
-, lapack
-, blas
-, spooles
-, libyamlcpp
-, precice
-, openmpi
+{
+  lib,
+  stdenv,
+  fetchFromGitHub,
+  fetchzip,
+  gcc,
+  pkg-config,
+  arpack,
+  lapack,
+  blas,
+  spooles,
+  libyamlcpp,
+  precice,
+  openmpi,
 }:
 let
   ccx_version = "2.20";
@@ -33,7 +34,17 @@ stdenv.mkDerivation rec {
     hash = "sha256-zyJ9VOpmjyBeettPWA3bFZIfyJuvs5D1nMxRcP5ySRY=";
   };
 
-  nativeBuildInputs = [ gcc pkg-config arpack lapack blas spooles libyamlcpp precice openmpi ];
+  nativeBuildInputs = [
+    gcc
+    pkg-config
+    arpack
+    lapack
+    blas
+    spooles
+    libyamlcpp
+    precice
+    openmpi
+  ];
 
   buildPhase = ''
     mpifort --version

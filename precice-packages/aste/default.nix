@@ -1,30 +1,35 @@
-{ lib
-, pkgs
-, stdenv
-, fetchFromGitHub
-, cmake
-, gcc
-, precice
-, boost
-, vtk_9
-, libGL
-, libX11
-, metis
-, openmpi
-, python3
-, openssh
+{
+  lib,
+  pkgs,
+  stdenv,
+  fetchFromGitHub,
+  cmake,
+  gcc,
+  precice,
+  boost,
+  vtk_9,
+  libGL,
+  libX11,
+  metis,
+  openmpi,
+  python3,
+  openssh,
 }:
 let
-  python = python3.withPackages (ps: with ps; [
-    numpy
-    sympy
-    scipy
-  ]);
+  python = python3.withPackages (
+    ps: with ps; [
+      numpy
+      sympy
+      scipy
+    ]
+  );
 
-  python_vtk_9 = python3.pkgs.toPythonModule (vtk_9.override {
-    inherit python;
-    enablePython = true;
-  });
+  python_vtk_9 = python3.pkgs.toPythonModule (
+    vtk_9.override {
+      inherit python;
+      enablePython = true;
+    }
+  );
 in
 stdenv.mkDerivation rec {
   pname = "precice-aste";
@@ -55,7 +60,10 @@ stdenv.mkDerivation rec {
   ];
 
   doCheck = true;
-  checkInputs = [ openssh python3.pkgs.jinja2 ];
+  checkInputs = [
+    openssh
+    python3.pkgs.jinja2
+  ];
   preCheck = ''
     patchShebangs ..
     substituteInPlace ../tools/mapping-tester/generate.py --replace '/bin/bash' '${pkgs.runtimeShell}'

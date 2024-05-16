@@ -1,4 +1,8 @@
-{ sha, pkgs ? import <nixpkgs> {}, ... }:
+{
+  sha,
+  pkgs ? import <nixpkgs> { },
+  ...
+}:
 pkgs.stdenv.mkDerivation {
   name = "Reproducibility Research Paper";
 

@@ -1,4 +1,15 @@
-{ lib, stdenv, fetchgit, gnumake, openmpi, m4, zlib, flex, makeWrapper, writeScript }:
+{
+  lib,
+  stdenv,
+  fetchgit,
+  gnumake,
+  openmpi,
+  m4,
+  zlib,
+  flex,
+  makeWrapper,
+  writeScript,
+}:
 
 let
   version = "2206";
@@ -55,7 +66,8 @@ let
     export LD_LIBRARY_PATH=$FOAM_LIBBIN/dummy:$LD_LIBRARY_PATH
     export LD_LIBRARY_PATH=/run/current-system/sw/lib/:$LD_LIBRARY_PATH
   '';
-in stdenv.mkDerivation rec {
+in
+stdenv.mkDerivation rec {
   pname = "openfoam";
   inherit version;
 
@@ -65,8 +77,16 @@ in stdenv.mkDerivation rec {
     hash = "sha256-snrFOsENf/siqFd1mzxAsYbw1ba67TXMgaNDpb26uX0=";
   };
 
-  nativeBuildInputs = [ gnumake m4 makeWrapper ];
-  buildInputs = [ openmpi zlib flex ];
+  nativeBuildInputs = [
+    gnumake
+    m4
+    makeWrapper
+  ];
+  buildInputs = [
+    openmpi
+    zlib
+    flex
+  ];
 
   postPatch = ''
     patchShebangs --build wmake/scripts/wrap-lemon

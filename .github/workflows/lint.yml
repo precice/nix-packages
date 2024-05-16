@@ -2,7 +2,10 @@
 name: Lint
 run-name: Linting
 on:
-  workflow_dispatch:
+  check_suite:
+    types: [completed]
+  push: {}
+  pull_request: {}
 jobs:
   lint:
     runs-on: ubuntu-latest
@@ -17,3 +20,5 @@ jobs:
         run: "nix-shell -p deadnix --run 'deadnix .'"
       - name: statix
         run: "nix-shell -p statix --run 'statix check'"
+      - name: nixfmt
+        run: "nix-shell -p treefmt nixfmt-rfc-style --run 'treefmt --no-cache --fail-on-change'"
