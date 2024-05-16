@@ -147,25 +147,26 @@ The diverse languages and diverse solver packages using various build system mak
   \begin{tabular}{|l|l|l|l|}
     \hline
     \bfseries Package & \bfseries Type & \bfseries Build system & \bfseries Version \\ \hline
-    precice & library & cmake & 2.5.0 \\ \hline
-    fortran-module & bindings & make & 9e3f405 \\ \hline
-    julia & bindings & julia & 2.5.0 \\ \hline
-    matlab & bindings & matlab build script & 2.5.0.0 \\ \hline
-    pyprecice & bindings & setup.py & 2.5.0.1 \\ \hline
-    config-visualizer & tooling & setup.py & 60f2165 \\ \hline
-    precice-aste & tooling & cmake & 3.0.0 \\ \hline
-    dealii & solver & cmake & 9.4.1 \\ \hline
-    precice-dealii-adapter & adapter & cmake & dbb25bea \\ \hline
-    precice-calculix-adapter & solver + adapter & makefile & 2.20 \\ \hline
-    fenics & solver library& cmake + setup.py & 2019.1.0 \\ \hline
-    precice-fenics-adapter & adapter & setup.py & 1.4.0 \\ \hline
-    precice-dune & adapter & scripts + cmake & 2.8.0 \\ \hline
-    dune-fem & solver library & setup.py & 2.8.0.0 \\ \hline
-    code-aster & solver & custom build system in python & 14.6.0 \\ \hline
-    openfoam & solver & wmake/Allwmake & 2206 \\ \hline
-    openfoam-adapter & adapter & wmake/Allwmake & 1.2.1 \\ \hline
-    precice-su2 & solver + adapter & patch script + autoconf & 6.0.0 \\ \hline
-    nutils & solver library & setup.py & 7.0.0 \\ \hline
+    preCICE & library & cmake & 2.5.0 \\ \hline
+    Fortran module & bindings & make & 9e3f405 \\ \hline
+    Julia bindings & bindings & julia & 2.5.0 \\ \hline
+    Matlab bindings & bindings & matlab build script & 2.5.0.0 \\ \hline
+    Python bindings & bindings & setup.py & 2.5.0.1 \\ \hline
+    ASTE & tooling & cmake & 3.0.0 \\ \hline
+    Config visualizer & tooling & setup.py & 60f2165 \\ \hline
+    preCICE-CalculiX adapter & solver + adapter & makefile & 2.20 \\ \hline
+    Code\_Aster & solver & custom system in python & 14.6.0 \\ \hline
+    Code\_Aster-preCICE adapter & adapter & custom system in python & ce995e0 \\ \hline
+    deal.II & solver & cmake & 9.4.1 \\ \hline
+    preCICE-deal.II adapter & adapter & cmake & dbb25bea \\ \hline
+    DUNE-FEM & solver library & setup.py & 2.8.0 \\ \hline
+    preCICE-DUNE adapter& adapter & scripts + cmake & 5f2364d \\ \hline
+    FEniCS & solver library& cmake + setup.py & 2019.1.0 \\ \hline
+    preCICE-FEniCS adapter & adapter & setup.py & 1.4.0 \\ \hline
+    Nutils & solver library & setup.py & 7.0.0 \\ \hline
+    OpenFOAM & solver & wmake/Allwmake & 2206 \\ \hline
+    preCICE-OpenFOAM adapter & adapter & wmake/Allwmake & 1.2.1 \\ \hline
+    preCICE-SU2 adapter & solver + adapter & patch script + autoconf & 6.0.0 \\ \hline
   \end{tabular}
 \end{table}
 
@@ -207,7 +208,7 @@ There were several attempts to package matlab\footnote{\url{https://de.mathworks
 This might be due to the fact, that matlab needs to be installed by running an installation wizard that downloads files during the installation process and verifies the licence.
 Also, as matlab is not installed in the VM, we decided to not proceed in packaging the software.
 
-\subsubsection{Fortran bindings}
+\subsubsection{Fortran module}
 
 preCICE provides bindings\footnote{\url{https://github.com/precice/fortran-module}} to the Fortran programming language.
 We were able to package these by providing custom phases for the \texttt{buildPhase} and the \texttt{installPhase}.
