@@ -379,28 +379,19 @@ The current solution of cloning the code at the specific location works, but it 
 Finally, hard-coding libraries to \texttt{/usr/lib} and \texttt{/usr/include} might work on one system, but might make it hard or even impossible to install a package on a different system.
 Configurable solutions, such as \texttt{pkg-config}, should always be preferred and work out of the box with common paths such as \texttt{/usr/lib}.
 
-\section{Conclusion and Outlook}
+\section{Conclusion}
 
-In conclusion, the case study was a success, as it has shown that packaging of scientific software with Nix is possible, but it is not as trivial as expected.
-Once the software is packaged, it is quite easy to be used and combined in environments with other packaged softwares without conflicts.
-The packaged adapters and solvers work well together with the preCICE library and simulations can be run successfully, so this specific case study has shown the potential of Nix in the domain of scientific software.
-More research has to be done on the topic, yet we are positive about possible future results in Nix abilities and its flexibility in similar domains.
+We investigated on whether Nix und NixOS are a potential solution to enable full reproducibility of research software environments. As a case study, we tried to package and test all components of the preCICE ecosystem -- a very heterogeneous set of legacy software packages, which is, however, representative for the state of research software today in our opinion.
 
-The majority of the packages required some solution for a fundamental issue within the scientific software or its build system that is not solvable for none experienced Nix users, making it hard for people to use it even for their own software.
-Nix itself also is partly at fault, because of its unique nature, that every piece of software lies within \texttt{/nix/store} and that each store path is its own-isolated tree based on the Filesystem Hierarchy Standard (FHS).
-But it is worth mentioning that not only Nix would benefit from more streamlined build systems and packaging, because both Spack and EasyBuild do something similar for their packages, where each package also lies in its own FHS.
-The work of the xSDK people and their policy might be a step in the right direction but looking at the current list of software that is available within the latest xSDK release, 26 libraries, indicates that it is an uphill battle that might take several more years, especially if we consider that the first release happened in 2016.
+We were able to package nearly all components and run nearly all test cases showing the potential of Nix in the domain of scientific software. Many packages required workarounds, however, which might be difficult to achieve for none-experienced Nix users. 
+Nix also comes with a few peculiarities, which complicate workarounds.
+In fact, every piece of software has to lie within \texttt{/nix/store} and each path therein is its own-isolated tree based on the Filesystem Hierarchy Standard (FHS).
 
-While this case study and this comparison has provided valuable insights into the topic of reproducible software, there are still numerous unanswered questions that merit further investigation.
-This includes a full evaluation if there are performance improvements using a full impure system rebuild, with \texttt{-march=native} compared to only rebuilding the package at hand.
-It would also be interesting to look at trying to reproduce a nixpkgs commit from 10 years ago, and if there might be issues and incompatibilities with newer Nix versions, that currently get released in a 6 weeks time windows.
+Most problems, however, can be traced back to a lack of standardization in research software, especially regarding build systems. 
+Software packages that follow best practices for their programming language are also straightforward to package.
+The xSDK initiative defined such standardization policies for math software. Components of the preCICE ecosystem that already adhere to this standard, were among the easiest ones to package -- even though xSDK  ultimately targets Spack and not Nix.
 
-Last but not least, it would be interesting to investigate Nix and NixOS on HPC even more.
-It would be interesting to see how an HPC cluster completely build on NixOS could improve maintaining the HPC cluster, with slurm already being available as a nixpkgs package and module providing a systemd service.
-
-Finally, it would be interesting to investigate a nix store that is shared between users and how it might optimize the amount of storage needed for a cluster as each user is not required to rebuild the same package in their respective home directories.
-
-This summary shows, how diverse and complex Nix is, and how much more opportunities there are to be researched in the future.
+This paper is the result of a student research project and a streamlined version of its report~\cite{TODO}. Beyond this paper, the report also includes a detailed comparison of Nix to Spack and EasyBuild, and a discussion on how to use Nix on HPC systems. 
 
 \acknowledge{
 We thankfully acknowledge the funding by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Germany's Excellence Strategy EXC 2075 -- 390740016 and the support by the Stuttgart Center for Simulation Science (SimTech).
