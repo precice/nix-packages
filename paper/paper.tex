@@ -332,7 +332,7 @@ The preCICE-OpenFOAM adapter is an OpenFOAM function object, requiring OpenFOAM 
 The environment variables have to be set again through the \texttt{set-openfoam-vars} script.
 Afterwards, we set the target directory for the adapter to \texttt{\$out/lib/} as the adapter is a shared library. Building then works successfully.
 
-\subsubsection{su2-adapter}
+\subsubsection{SU2}
 
 The SU2-preCICE adapter~\cite{Uekermann2017_Adapters} patches and extends the original CFD code SU2~\cite{su2}.
 To this end, the adapter provides a script to run before the build phase.
@@ -341,27 +341,24 @@ Finally, to find the preCICE installation, we need to set the configuration flag
 
 \subsection{preCICE VM}
 
-The current preCICE VM is built on top of Vagrant\footnote{\url{https://www.vagrantup.com/}} using Ubuntu as a base image.
-When it is run for the first time, it further installs software, compiles programs and the preCICE tutorials\footnote{\url{https://github.com/precice/tutorials/}}.
-This inherently breaks reproducibility as the VM fetches files from the internet that are at this very point in time the ``latest'' version, e.g. the \texttt{main} branch of the preCICE repository.
+The current preCICE VM\footnote{\url{https://precice.org/installation-vm.html}} is built on top of Vagrant\footnote{\url{https://www.vagrantup.com/}} using Ubuntu as a base image.
+When it is run for the first time, it further installs software, compiles programs, and the preCICE tutorials\footnote{\url{https://github.com/precice/tutorials/}}.
+This inherently breaks reproducibility as the VM fetches files from the internet that are at this very point in time the \textit{latest} version, e.g. the \texttt{main} branch of the preCICE repository.
 
 Nix comes with the built-in functionality of producing qemu\footnote{\url{https://www.qemu.org/}} VM images.
-We used Nix to define a VM image with NixOS as a base, that can be built reproducibly.
-The image contains all the adapters and solvers from the case study and some additional custom tools that can only be seen in the official VM, such as the \texttt{preciceToPNG} command.
+We use Nix to define a VM image with NixOS as a base, which can be built reproducibly.
+The image contains all components of the case study and some additional custom tools that can only be seen in the official VM, such as the \texttt{preciceToPNG} command.
 Also, we generate an iso and a Vagrant VirtualBox file of the VM as additional outputs.
 
 \subsection{preCICE tutorials}
 
-The preCICE tutorials included in the distribution can not only be used as reference examples on how to couple different adapters, but also to verify functionality of adapter and solver installations by executing them.
-
-All v202211.0 test can be run successfully inside our NixOS VM and also in a \texttt{nix develop} environment, except \texttt{turek-hron-fsi2} and \texttt{flow-over-heated-plate-steady-state}.
-
-We could not manage to build \texttt{swak4foam}, an add-on to OpenFOAM that is needed in the \texttt{turek-hron-fsi2} tutorial, from source.
+The preCICE tutorials included in the distribution cannot only be used as reference examples on how to couple different solvers, but also to verify functionality of solver and adapter installations by executing them.
+To this end, we execute all 23 tutorials such that each participant option is at least run once. We do not compare results, but only test whether the cases complete.
+We test inside the NixOS VM and also in an ad-hoc shell environment provided by the \texttt{nix develop} command. All tests pass except the \textit{Turek-Hron FSI3} and the \textit{flow over heated plate steady state} cases.
+We could not build swak4foam, an add-on to OpenFOAM, which is needed in the Turek-Hron FSI3 tutorial.
 The official preCICE VM uses a prebuilt version of swak4foam, however also patching the prebuilt binary did not work.
-
-The second simulation we were not able to run is \texttt{flow-over-heated-plate-steady-state}.
-This testcase needs code-aster to work, that we managed to package as already mentioned.
-However, when running the simulation after executing the manual steps as written in the documentation, there occurs a segmentation fault, crashing code-aster when the python code tries to call a Fortran subroutine.
+The dependency is, however, no longer required in the v202404.0 release of the distribution.
+The flow over heated plate steady state tutorial requires Code\_Aster. Even though we manage to package the solver, we observe a segmentation fault at runtime when the python code tries to call a Fortran subroutine -- a problem we did not manage to debug.
 
 \section{Discussion}
 
