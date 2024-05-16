@@ -363,6 +363,9 @@ The official preCICE VM uses a prebuilt version of swak4foam, however also patch
 The dependency is, however, no longer required in the v202404.0 release of the distribution.
 The flow over heated plate steady state tutorial requires Code\_Aster. Even though we manage to package the solver, we observe a segmentation fault at runtime when the python code tries to call a Fortran subroutine -- a problem we did not manage to debug.
 
+% \begin{sloppypar}
+% \end{sloppypar}
+
 \section{Discussion}
 
 After detailing the challenges of building and packaging all components of the preCICE ecosystem and running the tutorials as testcases, we want to discuss common points between these scientific software packages.
@@ -386,15 +389,15 @@ Configurable solutions, such as \texttt{pkg-config}, should always be preferred 
 
 We investigated on whether Nix und NixOS are a potential solution to enable full reproducibility of research software environments. As a case study, we tried to package and test all components of the preCICE ecosystem -- a very heterogeneous set of legacy software packages, which is, however, representative for the state of research software today in our opinion.
 
-We were able to package nearly all components and run nearly all test cases showing the potential of Nix in the domain of scientific software. Many packages required workarounds, however, which might be difficult to achieve for none-experienced Nix users. 
+We were able to package nearly all components and run nearly all test cases showing the potential of Nix in the domain of scientific software. Many packages required workarounds, however, which might be difficult to achieve for none-experienced Nix users.
 Nix also comes with a few peculiarities, which complicate workarounds.
 In fact, every piece of software has to lie within \texttt{/nix/store} and each path therein is its own-isolated tree based on the Filesystem Hierarchy Standard (FHS).
 
-Most problems, however, can be traced back to a lack of standardization in research software, especially regarding build systems. 
+Most problems, however, can be traced back to a lack of standardization in research software, especially regarding build systems.
 Software packages that follow best practices for their programming language are also straightforward to package.
 The xSDK initiative defined such standardization policies for math software. Components of the preCICE ecosystem that already adhere to this standard, were among the easiest ones to package -- even though xSDK  ultimately targets Spack and not Nix.
 
-This paper is the result of a student research project and a streamlined version of its report~\cite{studentreport}. Beyond this paper, the report also includes a detailed comparison of Nix to Spack and EasyBuild, and a discussion on how to use Nix on HPC systems. 
+This paper is the result of a student research project and a streamlined version of its report~\cite{studentreport}. Beyond this paper, the report also includes a detailed comparison of Nix to Spack and EasyBuild, and a discussion on how to use Nix on HPC systems.
 
 \acknowledge{
 We thankfully acknowledge the funding by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Germany's Excellence Strategy EXC 2075 -- 390740016 and the support by the Stuttgart Center for Simulation Science (SimTech).
