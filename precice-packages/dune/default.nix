@@ -224,6 +224,10 @@ let
         patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/localfunctions/_localfunctions.so)" $out/lib/python3.10/site-packages/dune/localfunctions/_localfunctions.so
         patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/grid/_grid.so)" $out/lib/python3.10/site-packages/dune/grid/_grid.so
 
+        # This is the example adapter
+        cp dune-adapter/dune-precice-howto/build-cmake/examples/dune-perpendicular-flap $out/bin
+        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/bin/dune-perpendicular-flap)" $out/bin/dune-perpendicular-flap
+
         cat <<EOF > $out/bin/set-dune-vars
           export DUNE_CONTROL_PATH=$out
           export DUNE_PY_DIR=\$HOME/.cache/dune-py/${version}
