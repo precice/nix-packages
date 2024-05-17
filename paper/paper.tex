@@ -305,8 +305,8 @@ Another minor issue is that the DUNE project is rather a collection of repositor
 We clone all of the required DUNE repositories into a directory and additionally clone the DUNE-preCICE adapter into the same directory.
 For the build and install process, we need to manually set the \texttt{\$DUNE\_CONTROL\_PATH} and the \texttt{\$DUNE\_PY\_DIR} environment variables. Both variables also need to be set at runtime.
 Additionally, we need to patch the python install process because the current CMake file tries to access the internet with \texttt{pip install}, which is not allowed in Nix's sandboxed builds.
-In order for DUNE to work properly, the two environment variables must be set at runtime.
-This can be achieved by souring the \texttt{set-dune-vars} script, which we provide, after that DUNE can be used as expected.
+The two environment variables must also be set at runtime.
+This can be achieved by sourcing the \texttt{set-dune-vars} script, which we provide.
 
 \subsubsection{FEniCS}
 
