@@ -23,7 +23,17 @@ python3.pkgs.buildPythonPackage rec {
   setupPyBuildFlags = [ "build_src --force" ];
 
   nativeBuildInputs = with python3.pkgs; [
-    cython
+    # We need to pin cython to v0.29.33, see https://gitlab.com/petsc/petsc/-/issues/1359
+    (cython.overridePythonAttrs rec {
+      version = "0.29.33";
+      doCheck = false;
+
+      src = fetchPypi {
+        pname = "Cython";
+        inherit version;
+        hash = "sha256-UEB2TEpNLOlko5XaJPDRrlgUSZXauSxrlvRMP01yKGo=";
+      };
+    })
     openmpi
     openssh
   ];

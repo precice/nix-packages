@@ -2,7 +2,7 @@
   lib,
   stdenv,
   fetchurl,
-  fetchpatch,
+  fetchpatch2,
   blas,
   boost,
   cmake,
@@ -19,6 +19,10 @@
   swig,
   zlib,
   nixosTests,
+  petsc,
+  petsc4py,
+  metis,
+  parmetis,
 }:
 
 let
@@ -159,14 +163,23 @@ let
       sha256 = "0kbyi4x5f6j4zpasch0swh0ch81w2h92rqm1nfp3ydi4a93vky33";
     };
     patches = [
-      (fetchpatch {
+      (fetchpatch2 {
         name = "fix-double-prefix.patch";
         url = "https://bitbucket.org/josef_kemetmueller/dolfin/commits/328e94acd426ebaf2243c072b806be3379fd4340/raw";
         sha256 = "1zj7k3y7vsx0hz3gwwlxhq6gdqamqpcw90d4ishwx5ps5ckcsb9r";
       })
-      (fetchpatch {
+      (fetchpatch2 {
         url = "https://bitbucket.org/fenics-project/dolfin/issues/attachments/1116/fenics-project/dolfin/1602778118.04/1116/0001-Use-__BYTE_ORDER__-instead-of-removed-Boost-endian.h.patch";
         hash = "sha256-wPaDmPU+jaD3ce3nNEbvM5p8e3zBdLozamLTJ/0ai2c=";
+      })
+      # fixing petsc
+      (fetchpatch2 {
+        url = "https://bitbucket.org/fenics-project/dolfin/commits/57bb03fe018506d05f795f44a73e94b15821b9a4/raw";
+        hash = "sha256-K/HNGgMOg0bv/Fm/dI1bt/LaZx4kuK1fo8m1kvtPknU=";
+      })
+      (fetchpatch2 {
+        url = "https://bitbucket.org/fenics-project/dolfin/commits/74d7efe1e84d65e9433fd96c50f1d278fa3e3f3f/raw";
+        hash = "sha256-KEf0ESKpmAUSh2UY8usYV1u6QrfkIcCn7hCeafGF+ds=";
       })
     ];
     # https://aur.archlinux.org/cgit/aur.git/plain/PKGBUILD?h=dolfin&id=a965ad934f7b3d49a5e77fa6fb5e3c710ec2163e
@@ -208,6 +221,12 @@ let
       python3.pkgs.sympy
       ufl
       zlib
+
+      # optional
+      petsc
+      petsc4py
+      metis
+      parmetis
     ];
     cmakeFlags = [
       "-DDOLFIN_CXX_FLAGS=-std=c++11"
@@ -220,9 +239,9 @@ let
       "-DDOLFIN_ENABLE_UMFPACK=ON"
       "-DDOLFIN_ENABLE_ZLIB=ON"
       "-DDOLFIN_SKIP_BUILD_TESTS=ON" # Otherwise SCOTCH is not found
+      "-DDOLFIN_ENABLE_PARMETIS=ON"
+      "-DDOLFIN_ENABLE_PETSC=ON"
       # TODO: Enable the following features
-      "-DDOLFIN_ENABLE_PARMETIS=OFF"
-      "-DDOLFIN_ENABLE_PETSC=OFF"
       "-DDOLFIN_ENABLE_SLEPC=OFF"
       "-DDOLFIN_ENABLE_TRILINOS=OFF"
     ];
@@ -245,6 +264,7 @@ let
     nativeBuildInputs = [
       python3.pkgs.pybind11
       cmake
+      pkg-config
     ];
     dontUseCmakeConfigure = true;
     preConfigure = ''
@@ -257,6 +277,7 @@ let
     buildInputs = [
       dolfin
       boost
+      petsc
     ];
 
     propagatedBuildInputs = [
@@ -267,6 +288,7 @@ let
       ufl
       python3.pkgs.pkgconfig
       python3.pkgs.pybind11
+      petsc4py
     ];
     doCheck = false; # Tries to orte_ess_init and call ssh to localhost
     passthru = {

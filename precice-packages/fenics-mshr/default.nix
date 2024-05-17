@@ -1,4 +1,5 @@
 {
+  lib,
   stdenv,
   fetchFromBitbucket,
   python3,
@@ -10,6 +11,7 @@
   cmake,
   fenics,
   pkg-config,
+  petsc,
 }:
 let
   mshr = stdenv.mkDerivation rec {
@@ -34,6 +36,7 @@ let
       cgal
       eigen
       fenics.dolfin
+      petsc
     ];
 
     enableParallelBuilding = true;
@@ -65,4 +68,12 @@ python3.pkgs.buildPythonPackage {
   ];
 
   doCheck = false;
+
+  meta = {
+    description = "mshr is the mesh generation component of FEniCS. It generates simplicial DOLFIN meshes in 2D and 3D from geometries described by Constructive Solid Geometry (CSG) or from surface files, utilizing CGAL and Tetgen as mesh generation backends.";
+    homepage = "https://bitbucket.org/fenics-project/mshr";
+    license = with lib.licenses; [ gpl3 ];
+    maintainers = with lib.maintainers; [ conni2461 ];
+    platforms = lib.platforms.unix;
+  };
 }
