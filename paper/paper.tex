@@ -344,10 +344,9 @@ To this end, the adapter provides a script to run before the build phase.
 We do this in Nix' patch phase. Afterwards, \texttt{stdenv} automatically recognizes that SU2 uses autotools for building and runs the configure phase.
 Finally, to find the preCICE installation, we need to set the configuration flags \texttt{--with-include} and \texttt{--with-lib}.
 
-\subsubsection{nutils}
+\subsubsection{Nutils}
 
-The nutils~\cite{nutils} project can be build using \texttt{buildPythonPackage}, one test needs to be disabled, the rest of the testsuite passed without any issues.
-While the preCICE distribution ships with nutils v7.0, one tutorial case requires v6.3 because of the usage of a deprecated function.
+The Nutils~\cite{nutils} solver can be build using \texttt{buildPythonPackage}. One test needs to be disabled, but the rest of the testsuite passes without issues. There is no dedicated Nutils-preCICE adapter, but preCICE is typically directly called from Nutils application scripts. 
 
 \subsection{preCICE VM}
 
