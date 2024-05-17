@@ -321,6 +321,10 @@ Lastly, we also package mshr, so all required features for the adapter package a
 Building the FEniCS-preCICE adapter is now directly possible with \texttt{buildPythonPackage}.
 All but two of the adapter's tests run successfully, which means, however, that we need to disable the tests.
 
+\subsubsection{Nutils}
+
+The Nutils~\cite{nutils} solver can be build using \texttt{buildPythonPackage}. One test needs to be disabled, but the rest of the testsuite passes without issues. There is no dedicated Nutils-preCICE adapter, but preCICE is typically directly called from Nutils application scripts.
+
 \subsubsection{OpenFOAM}
 
 The preCICE-OpenFOAM adapter~\cite{OpenFOAMpreCICE} supports multiple flavors of OpenFOAM. We restrict our analysis to the OpenFOAM fork of OpenCFD Ltd\footnote{\url{https://www.openfoam.com/}}.
@@ -343,10 +347,6 @@ The SU2-preCICE adapter~\cite{Uekermann2017_Adapters} patches and extends the or
 To this end, the adapter provides a script to run before the build phase.
 We do this in Nix' patch phase. Afterwards, \texttt{stdenv} automatically recognizes that SU2 uses autotools for building and runs the configure phase.
 Finally, to find the preCICE installation, we need to set the configuration flags \texttt{--with-include} and \texttt{--with-lib}.
-
-\subsubsection{Nutils}
-
-The Nutils~\cite{nutils} solver can be build using \texttt{buildPythonPackage}. One test needs to be disabled, but the rest of the testsuite passes without issues. There is no dedicated Nutils-preCICE adapter, but preCICE is typically directly called from Nutils application scripts. 
 
 \subsection{preCICE VM}
 
