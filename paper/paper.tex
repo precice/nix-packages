@@ -391,7 +391,7 @@ We investigated on whether Nix und NixOS are a potential solution to enable full
 
 We were able to package nearly all components and run nearly all test cases showing the potential of Nix in the domain of scientific software. Many packages required workarounds, however, which might be difficult to achieve for none-experienced Nix users.
 Nix also comes with a few peculiarities, which complicate workarounds.
-In fact, every piece of software has to lie within \texttt{/nix/store} and each path therein is its own-isolated tree based on the Filesystem Hierarchy Standard (FHS).
+In fact, every piece of software has to lie within \texttt{/nix/store} and each path therein is its own-isolated tree inspired by the Filesystem Hierarchy Standard (FHS).
 
 Most problems, however, can be traced back to a lack of standardization in research software, especially regarding build systems.
 Software packages that follow best practices for their programming language are also straightforward to package.
