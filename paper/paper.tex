@@ -32,7 +32,7 @@ Nix is a package manager and functional language, which guarantees that a packag
 NixOS is a purely functional Linux distribution, built on top of Nix, which enables the build of reproducible systems including configuration files, packages, and their dependencies.
 We study the potential of Nix and NixOS by a case study on the reproducibility of the preCICE ecosystem.
 preCICE is a coupling library for partitioned multiphysics simulations. The ecosystem includes diverse legacy solvers, adapters, and language bindings besides the coupling library itself making it a challenging and representative testcase.
-We demonstrate, how to create a reproducible and self-contained environment for this ecosystem and highlight the benefits of using Nix and NixOS.
+We demonstrate how to create a reproducible and self-contained environment for this ecosystem and discuss the benefits and limitations of using Nix and NixOS.
 %In addition, we compare the usability and reproducibility provided by Nix, in the context of preCICE, with two already established high-performance computing (HPC) solutions, Spack and EasyBuild.
 %This evaluation enables us to assess the advantages and disadvantages of employing Nix to improve reproducibility in scientific software development within an HPC context.
 }
@@ -57,18 +57,18 @@ The result is several different layers combined into a single output image, whic
 Docker images can be copied to different hosts and should then provide the same environment on different machines.
 Those images are usually based on one of the official Docker images\footnote{\url{https://docs.docker.com/trusted-content/official-images/}}, however, which use traditional package managers, such as apt.
 When a user then specifies to install the python3 package, for instance, a traditional package manager could yield version 3.8 today, but version 3.9 in a few months.
-Full reproducibility can, thus, only be achieved by storing the complete image. Altering a single dependency (e.g., a bugfix) causes a rebuild of the image and, thus, destroys reproducibility.
+Full reproducibility can, thus, only be achieved by storing the complete image. Altering a single dependency (e.g., by a bugfix) causes a rebuild of the image and, thus, destroys reproducibility.
 
 There are, moreover, commercial, domain specifig solutions to achieve reproducibility, e.g., CodeOcean\footnote{\url{https://codeocean.com/}} mainly for bioinformatics or Weights and Biases\footnote{\url{https://wandb.ai/site}} for machine learning.
 With these archiving platforms, experiments can be rerun using technologies such as Docker.
-These platforms are closed source, however, such that the source code cannot be reviewed nor adjusted~\cite{koch2023sustainable}.
+The platforms are closed source, however, such that the source code cannot be reviewed nor adjusted~\cite{koch2023sustainable}.
 
 In past years, the Nix package manager~\cite{Dolstra_2004} and NixOS~\cite{Dolstra_2010}, a Linux distribution built around it, have emerged as promising alternatives~\cite{Devresse_2015}.
 Nix allows functional descriptions of dependencies up to fixed versions, thus avoiding the issue described above.
 Similar ideas are followed by the popular high performance computing (HPC) package managers EasyBuild~\cite{easybuil6495863} and Spack~\cite{spack7832814}.
-At FOSDEM 2018, Spack, EasyBuild and Nix were compared with each other~\footnote{\url{https://archive.fosdem.org/2018/schedule/event/installing\_software\_for\_scientists/}} by the EasyBuild release manager.
-While looking into Spack and EasyBuild we found some deficits regarding reproducibility, that they link against core system libraries, that can break independently if those libraries get updated, but the Spack developers are aware of these shortcomings and are already working on improvements~\footnote{\url{https://github.com/spack/spack/issues/39560}}~\footnote{\url{https://github.com/spack/spack/pull/42082}}.
-EasyBuild, on the other hand, even has an option for linking against system libraries called \texttt{osdependencies}~\footnote{\url{https://docs.easybuild.io/writing-easyconfig-files/\#dependency\_specs}}, so packages need to be vetted and potentially updated prior to usage that this option isn't used in any package of the dependency graph if the best possible reproducibility is desired.
+At FOSDEM 2018, Kenneth Hoste compares Spack, EasyBuild, and Nix with each other~\cite{Hoste}.
+Minor deficits regarding reproducibility of Spack and EasyBuild are that they link against core system libraries, which can break independently. The Spack developers are aware of these shortcomings and are working on improvements\footnote{\url{https://github.com/spack/spack/issues/39560}}$^,$\footnote{\url{https://github.com/spack/spack/pull/42082}}.
+EasyBuild, on the other hand, even has an option for linking against system libraries called \texttt{osdependencies}\footnote{\url{https://docs.easybuild.io/writing-easyconfig-files/\#dependency\_specs}}. Thus, packages need to be vetted and potentially updated prior to usage.
 All three solutions have in common that they rely on scientific software following best practices concerning building and packaging.
 Unfortunately, most legacy software projects do not do this.
 This is why, for example, the xSDK community~\cite{xSDK2023} tries to set a standard for policies for math software.
@@ -78,7 +78,6 @@ To this end, we study the preCICE ecosystem~\cite{preCICEv2} as an example.
 preCICE is a coupling library for partitioned multiphysics simulations.
 The ecosystem includes diverse legacy solvers, adapters, language bindings, and tutorials besides the coupling library itself making it a challenging and representative testcase.
 We try to build the complete ecosystem using Nix and run all tutorials.
-
 This paper is the result of a student research project and a streamlined version of its report~\cite{studentreport}.
 
 \section{Background}
@@ -173,17 +172,17 @@ The diverse languages and diverse solver packages using various build system mak
 
 \section{Results}
 
-We present challenges, solutions, and workarounds for all software packages of the preCICE ecosystem.
-The Nix code for the packages for the case study on the preCICE adapters, solvers and the preCICE VM is available online in a git repository at \url{https://github.com/precice/nix-packages/} with a more in-detail report that also includes a comparison between Nix, Spack and EasyBuild and a evaluation of Nix on HPC~\footnote{\url{https://github.com/precice/nix-packages/releases/tag/initial-paper-release}}.
+We present challenges, solutions, and workarounds for packaging all components of the preCICE ecosystem.
+The Nix code for all components is available online\footnote{\url{https://github.com/precice/nix-packages/}}.
 
 \subsection{preCICE}
 
-The preCICE library itself is already available in the nixpkgs repository, so we do not have to package the software.
+The preCICE library itself is already available in the nixpkgs repository\footnote{\url{https://github.com/NixOS/nixpkgs}}, so we do not have to package the software.
 Looking at the package definition and the preCICE source code, the library is quite easy to build and package as it uses CMake as a build system.
 
 \subsection{Tools}
 
-The preCICE distribution includes tools around preCICE.
+The preCICE distribution includes several tools around preCICE.
 
 \subsubsection{ASTE}
 
@@ -210,8 +209,7 @@ Also, as MATLAB is not installed in the preCICE VM, we do not proceed in packagi
 
 \subsubsection{Fortran module}
 
-preCICE provides bindings\footnote{\url{https://github.com/precice/fortran-module}} to the Fortran programming language.
-We were able to package these by providing custom phases for the \texttt{buildPhase} and the \texttt{installPhase}.
+We were able to package the Fortran module of preCICE by providing custom phases for the build phase and the install phase of Nix.
 The resulting binary could run the example that comes with the module.
 
 \subsubsection{Python bindings}
@@ -232,8 +230,8 @@ The preCICE adapter for the structural mechanics code CalculiX~\cite{Uekermann20
 By default, this makefile expects the source code to reside in \texttt{\$HOME}, but it is possible to override this location with a make variable.
 It then builds the original code and the adapter code together, resulting in a combined binary.
 
-The Makefile also has hard-coded locations its dependencies: \texttt{SPOOLES}, \texttt{ARPACK}, and \texttt{YAML}. These need to be replaced with the equivalent \texttt{pkg-config} calls.
-Additionally, there is no \texttt{install} target provided by the makefile, thus the resulting binary needs to be installed manually by copying it to \texttt{\$out}.
+The Makefile also has hard-coded locations of its dependencies: SPOOLES, ARPACK, and yaml-cpp. These need to be replaced with the equivalent pkg-config calls.
+Additionally, there is no install target provided by the makefile, thus the resulting binary needs to be installed manually by copying it to \texttt{\$out}.
 
 \subsubsection{Code\_Aster}
 
@@ -247,14 +245,14 @@ In this file, we are able to disable the installation of the pinned dependencies
 
 More precisely, we disable HDF5, as it is already packaged in the upstream nixpkgs repository, even at the required version 5.1.10.
 HDF5 is packaged with multiple outputs.
-One package, \texttt{out}, contains the libraries and binaries and another, \texttt{dev} contains the header files, this is, because most of the time, users installing HDF5 only need the libraries and binaries, and it helps to reduce installation size of this rather large package.
-Additionally, Code\_Aster requires Medfile and Scotch, which are both available upstream and can be used as a dependency.
-Another dependency is Metis, which partially builds. Thus, we decide to not replace it, but to fix the remainder of the build.
-The issue is precisely that the \texttt{CMakeLists.txt} for the metis programs hard-codes \texttt{link\_directories} to \path{/home/karypis/local/lib}. We unpack the Metis tarball, remove this line with \texttt{sed}, and repack the directory.
+One package, \texttt{out}, contains the libraries and binaries and another, \texttt{dev} contains the header files, since most of the time, users installing HDF5 only need the libraries and binaries, and it helps to reduce installation size of this rather large package.
+Additionally, Code\_Aster requires Medfile and Scotch, which are both available upstream and can be used as dependencies.
+Another dependency is METIS, which partially builds. Thus, we decide to not replace it, but to fix the remainder of the build.
+The issue is precisely that the \texttt{CMakeLists.txt} for the METIS programs hard-codes \texttt{link\_directories} to \path{/home/karypis/local/lib}. We unpack the METIS tarball, remove this line with sed, and repack the directory.
 
 The remaining two dependencies, Mumps and Tfel are not available upstream and need to be packaged.
 Mumps uses a Makefile and can be configured using Makefile.inc. By default, it provides a few configurations for systems such as Ubuntu. We use one of these provided configuration files to write our own custom config file.
-It defines the locations for dependencies, such as Scotch, Metis, Parmetis, or Blacs.
+It defines the locations for dependencies, such as Scotch, METIS, ParMETIS, or Blacs.
 Almost all dependencies are available upstream, but we need to recompile Scotch with additional build flags.
 Moreover, for packaging Blacs, which also uses a Makefile, we configure the build using a custom \texttt{Bmake.inc} file, which is used to set compiler flags, the path to MPI, and the bash installation.
 Tfel, on the other hand, uses CMake as build system making it easy to package it with Nix.
@@ -306,17 +304,17 @@ There is an ongoing migration from autotools to CMake for DUNE, which might impr
 Another minor issue is that the DUNE project is rather a collection of repositories than a monorepo. This means, users have to correctly clone all repositories such that the build system finds all relevant information.
 We clone all of the required DUNE repositories into a directory and additionally clone the DUNE-preCICE adapter into the same directory.
 For the build and install process, we need to manually set the \texttt{\$DUNE\_CONTROL\_PATH} and the \texttt{\$DUNE\_PY\_DIR} environment variables. Both variables also need to be set at runtime.
-Additionally, we need to patch the python install process because the current CMake file tries to access the internet with \texttt{pip install}, which is not allowed in Nix' sandboxed builds.
+Additionally, we need to patch the python install process because the current CMake file tries to access the internet with \texttt{pip install}, which is not allowed in Nix's sandboxed builds.
 
 \subsubsection{FEniCS}
 
-FEniCS~\cite{fenics} is already packaged upstream, however, not with all features the FEniCs-preCICE adapter~\cite{Rodenberg2021} relies on, in particular PETSc support and without mshr.
+FEniCS~\cite{fenics} is already packaged upstream, however, not with all features the FEniCs-preCICE adapter~\cite{Rodenberg2021} relies on, in particular PETSc support and mshr, the FEniCS mesh generator.
 This is why, we need to package PETSc4py, the python bindings package of PETSc, which is not available upstream.
 The build process uses the internal \texttt{buildPythonApplication} build tool and runs successfully once we add the option \texttt{build\_src --force} to rebuild cython code and pin the cython version to \texttt{0.29.34}~\footnote{\url{https://gitlab.com/petsc/petsc/-/issues/1359}}.
-We could not enable tests for PETSc4py, however, because they depend on OpenMPI and the network, which is not available within Nix' build sandbox.
+We could not enable tests for PETSc4py, however, because they depend on OpenMPI and the network, which is not available within Nix's build sandbox.
 Afterwards, we specify PETSc4py as dependency for FEniCS and enable the PETSc support.
-Additionally, we need to recompile PETSc with additional features enabled that are not enabled by the upstream Nix package, these include parmetis, hypre and scalapack, this is done using \texttt{overrideAttrs}, a Nix feature that allows to change an existing package.
-Lastly, we also package FEniCS mshr, so all required features for the adapter package are now are available.
+Additionally, we need to recompile PETSc with additional features enabled that are not enabled by the upstream Nix package. These include ParMETIS, HYPRE and ScaLAPACK. We use \texttt{overrideAttrs}, a Nix feature that allows us to change an existing package.
+Lastly, we also package mshr, so all required features for the adapter package are now are available.
 
 Building the FEniCS-preCICE adapter is now directly possible with \texttt{buildPythonPackage}.
 All but two of the adapter's tests run successfully, which means, however, that we need to disable the tests.
@@ -326,15 +324,15 @@ All but two of the adapter's tests run successfully, which means, however, that 
 The preCICE-OpenFOAM adapter~\cite{OpenFOAMpreCICE} supports multiple flavors of OpenFOAM. We restrict our analysis to the OpenFOAM fork of OpenCFD Ltd\footnote{\url{https://www.openfoam.com/}}.
 
 OpenFOAM uses its own custom build system called \texttt{wmake}, which is typically called with a \texttt{Allwmake} wrapper script.
-The build system sets 36 environment variables, one step at a time by checking several parameters, e.g. the CPU architecture or the location of the source code. Also during runtime, these variables need to be set, either by a wrapper script or by manually sourcing a file inside the installation directory of OpenFOAM.
+The build system sets 36 environment variables, one step at a time by checking several parameters, e.g.~the CPU architecture or the location of the source code. Also during runtime, these variables need to be set, either by a wrapper script or by manually sourcing a file inside the installation directory of OpenFOAM.
 For Nix, these properties are unfortunate. To compile OpenFOAM with Nix, we need to patch the shebangs\footnote{\url{https://foldoc.org/shebang}} of wmake to make it run during the build.
-We also use a shell script called \texttt{set-openfoam-vars}, which exports the environment variables to the current shell session.
+We also use a shell script, which exports the environment variables to the current shell session.
 For simplicity, we hard-code all parameters, such as the processor architecture. These could be parametrized, however, based on the Nix inputs to allow for optimized builds. We use the script during the build phase to source all variables such that, for example, \texttt{OPENFOAM\_SRC\_PATH} points to the default location \texttt{/build/openfoam}.
 Afterwards, \texttt{./Allwmake -j -q} is sufficient to start the build.
 The install phase then copies the necessary files and directories to \texttt{\$out}, replaces the mock \texttt{OPENFOAM\_SRC\_PATH} by the value of \texttt{\$out}, and creates a wrapper for the \texttt{openfoam} shell script.
 
 The preCICE-OpenFOAM adapter is an OpenFOAM function object, requiring OpenFOAM and wmake as build inputs.
-The environment variables have to be set again through the \texttt{set-openfoam-vars} script.
+The environment variables have to be set again through the shell script mentioned above.
 Afterwards, we set the target directory for the adapter to \texttt{\$out/lib/} as the adapter is a shared library. Building then works successfully.
 
 \subsubsection{SU2}
@@ -347,7 +345,7 @@ Finally, to find the preCICE installation, we need to set the configuration flag
 \subsection{preCICE VM}
 
 The current preCICE VM\footnote{\url{https://precice.org/installation-vm.html}} is built on top of Vagrant\footnote{\url{https://www.vagrantup.com/}} using Ubuntu as a base image.
-When it is run for the first time, it further installs software, compiles programs, and the preCICE tutorials\footnote{\url{https://github.com/precice/tutorials/}}.
+When run for the first time, it further installs software, compiles programs, and clones the preCICE tutorials\footnote{\url{https://github.com/precice/tutorials/}}.
 This inherently breaks reproducibility as the VM fetches files from the internet that are at this very point in time the \textit{latest} version, e.g. the \texttt{main} branch of the preCICE repository.
 
 Nix comes with the built-in functionality of producing qemu\footnote{\url{https://www.qemu.org/}} VM images.
@@ -358,10 +356,10 @@ Also, we generate an iso and a Vagrant VirtualBox file of the VM as additional o
 \subsection{preCICE tutorials}
 
 The preCICE tutorials included in the distribution cannot only be used as reference examples on how to couple different solvers, but also to verify functionality of solver and adapter installations by executing them.
-To this end, we execute all 23 tutorials such that each participant option is at least run once. We do not compare results, but only test whether the cases complete.
+To this end, we execute all 23 tutorials of the distribution such that each participant option is at least run once. We do not compare results, but only test whether the cases complete.
 We test inside the NixOS VM and also in an ad-hoc shell environment provided by the \texttt{nix develop} command. All tests pass except the \textit{Turek-Hron FSI3} and the \textit{flow over heated plate steady state} cases.
 We could not build swak4foam, an add-on to OpenFOAM, which is needed in the Turek-Hron FSI3 tutorial.
-The official preCICE VM uses a prebuilt version of swak4foam, however also patching the prebuilt binary did not work.
+The official preCICE VM uses a prebuilt version of swak4foam, but also patching the prebuilt binary did not work.
 The dependency is, however, no longer required in the v202404.0 release of the distribution.
 The flow over heated plate steady state tutorial requires Code\_Aster. Even though we manage to package the solver, we observe a segmentation fault at runtime when the python code tries to call a Fortran subroutine -- a problem we did not manage to debug.
 
@@ -389,7 +387,7 @@ Configurable solutions, such as \texttt{pkg-config}, should always be preferred 
 
 \section{Conclusion}
 
-We investigated on whether Nix und NixOS are a potential solution to enable full reproducibility of research software environments. As a case study, we tried to package and test all components of the preCICE ecosystem -- a very heterogeneous set of legacy software packages, which is, however, representative for the state of research software today in our opinion.
+We investigated on whether Nix und NixOS are a potential solution to enable full reproducibility of research software environments. As a case study, we tried to package and test all components of the preCICE ecosystem -- a very heterogeneous set of legacy software packages, which is, however, representative for the state of research software today in our experience.
 
 We were able to package nearly all components and run nearly all test cases showing the potential of Nix in the domain of scientific software. Many packages required workarounds, however, which might be difficult to achieve for none-experienced Nix users.
 Nix also comes with a few peculiarities, which complicate workarounds.
@@ -399,7 +397,7 @@ Most problems, however, can be traced back to a lack of standardization in resea
 Software packages that follow best practices for their programming language are also straightforward to package.
 The xSDK initiative defined such standardization policies for math software. Components of the preCICE ecosystem that already adhere to this standard, were among the easiest ones to package -- even though xSDK  ultimately targets Spack and not Nix.
 
-This paper is the result of a student research project and a streamlined version of its report~\cite{studentreport}. Beyond this paper, the report also includes a detailed comparison of Nix to Spack and EasyBuild, and a discussion on how to use Nix on HPC systems.
+This paper is the result of a student research project and a streamlined version of its report~\cite{studentreport}. Beyond the content of this paper, the report also includes a detailed comparison of Nix to Spack and EasyBuild, and a discussion on how to use Nix on HPC systems.
 
 \acknowledge{
 We thankfully acknowledge the funding by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Germany's Excellence Strategy EXC 2075 -- 390740016 and the support by the Stuttgart Center for Simulation Science (SimTech).
