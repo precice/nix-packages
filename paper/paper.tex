@@ -310,11 +310,13 @@ Additionally, we need to patch the python install process because the current CM
 
 \subsubsection{FEniCS}
 
-FEniCS~\cite{fenics} is already packaged upstream, however, not will all features the FEniCs-preCICE adapter~\cite{Rodenberg2021} relies on, in particular PETSc support.
+FEniCS~\cite{fenics} is already packaged upstream, however, not with all features the FEniCs-preCICE adapter~\cite{Rodenberg2021} relies on, in particular PETSc support and without mshr.
 This is why, we need to package PETSc4py, the python bindings package of PETSc, which is not available upstream.
-The build process uses the internal \texttt{buildPythonApplication} build tool and runs successfully once we add the option \texttt{build\_src --force} to rebuild cython code.
+The build process uses the internal \texttt{buildPythonApplication} build tool and runs successfully once we add the option \texttt{build\_src --force} to rebuild cython code and pin the cython version to \texttt{0.29.34}~\footnote{\url{https://gitlab.com/petsc/petsc/-/issues/1359}}.
 We could not enable tests for PETSc4py, however, because they depend on OpenMPI and the network, which is not available within Nix' build sandbox.
 Afterwards, we specify PETSc4py as dependency for FEniCS and enable the PETSc support.
+Additionally, we need to recompile PETSc with additional features enabled that are not enabled by the upstream Nix package, these include parmetis, hypre and scalapack, this is done using \texttt{overrideAttrs}, a Nix feature that allows to change an existing package.
+Lastly, we also package FEniCS mshr, so all required features for the adapter package are now are available.
 
 Building the FEniCS-preCICE adapter is now directly possible with \texttt{buildPythonPackage}.
 All but two of the adapter's tests run successfully, which means, however, that we need to disable the tests.

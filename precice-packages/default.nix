@@ -11,7 +11,7 @@
       };
     };
   })
-  (_: super: {
+  (self: super: {
     # We fetch parmetis from archive.org because the server is not very reliable
     parmetis = super.parmetis.overrideAttrs (oA: {
       src = super.fetchurl {
@@ -28,6 +28,27 @@
         url = "https://www.open-mpi.org/software/hwloc/v${super.lib.versions.majorMinor version}/downloads/hwloc-${version}.tar.bz2";
         sha256 = "sha256-fMSTGiD+9Ffgkzrz83W+bq+ncD/eIeE3v7loWxQJWZ4=";
       };
+    });
+
+    # We need to build petsc with support for hypre and parmetis, upstream does not have these features
+    hypre = super.callPackage ./hypre { };
+    petsc = super.petsc.overrideAttrs (oA: {
+      buildInputs = oA.buildInputs ++ [
+        super.metis
+        self.parmetis
+        self.hypre
+        super.scalapack
+      ];
+
+      preConfigure = ''
+        ${oA.preConfigure}
+        configureFlagsArray+=(
+          "--with-metis=1"
+          "--with-parmetis=1"
+          "--with-hypre=1"
+          "--with-scalapack=1"
+        )
+      '';
     });
 
     pyprecice = super.callPackage ./pyprecice { };
