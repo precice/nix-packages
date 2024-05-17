@@ -194,34 +194,34 @@
         tree
 
         # Devel applications
-        git
         cmakeWithGui
-        pkg-config
+        git
+        gnome.gedit
         gnumake
-        gcc
+        gnuplot
         nano
         neovim
-        gnome.gedit
+        pkg-config
         precice-python-packages
-        gnuplot
+        stdenv
 
         # Precice
         precice
         precice-config-visualizer
 
-        precice-dealii-adapter
-        precice-calculix-adapter
-        precice-fenics-adapter
-        precice-aste
-        precice-su2
-        precice-openfoam-adapter
         openfoam
+        precice-aste
         precice-aster
+        precice-calculix-adapter
+        precice-dealii-adapter
         precice-dune
+        precice-fenics-adapter
+        precice-openfoam-adapter
+        precice-su2
 
         # From the .alias file in the VM repo
-        preciceToPNG
         preciceToPDF
+        preciceToPNG
         preciceToSVG
 
         # Additional packages
