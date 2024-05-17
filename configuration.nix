@@ -225,8 +225,16 @@
         preciceToSVG
 
         # Additional packages
+        bashInteractive
+        openmpi
         paraview
         wget
+
+        # Additional packages to build the tutorials
+        blas
+        lapack
+        bison
+        flex
       ];
   };
 
