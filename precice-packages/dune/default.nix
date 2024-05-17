@@ -21,6 +21,7 @@
   llvmPackages,
   petsc,
   suitesparse,
+  fenics,
 }:
 let
   version = "2.8.0";
@@ -107,7 +108,7 @@ let
     hash = "sha256-fsYyc2DzK4AJJbXo5doX+QopKVfoNLpBKb1rfbUDgyc=";
   };
   dune = python3.pkgs.toPythonModule (
-    stdenv.mkDerivation rec {
+    stdenv.mkDerivation {
       pname = "dune";
       inherit version;
 
@@ -166,7 +167,7 @@ let
         python3.pkgs.portalocker
         python3.pkgs.numpy
         python3.pkgs.mpi4py
-        python3.pkgs.fenics
+        fenics
 
         # Not great but we need these at runtime
         pkg-config
@@ -218,24 +219,15 @@ let
         ./dune-common/bin/dunecontrol make install_python
 
         # TODO: figure out why cmake isn't linking correctly and we need to patchelf
-        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/common/_common.so)" $out/lib/python3.10/site-packages/dune/common/_common.so
-        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/geometry/_geometry.so)" $out/lib/python3.10/site-packages/dune/geometry/_geometry.so
-        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/istl/_istl.so)" $out/lib/python3.10/site-packages/dune/istl/_istl.so
-        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/localfunctions/_localfunctions.so)" $out/lib/python3.10/site-packages/dune/localfunctions/_localfunctions.so
-        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/lib/python3.10/site-packages/dune/grid/_grid.so)" $out/lib/python3.10/site-packages/dune/grid/_grid.so
+        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/${python3.sitePackages}/dune/common/_common.so)" $out/${python3.sitePackages}/dune/common/_common.so
+        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/${python3.sitePackages}/dune/geometry/_geometry.so)" $out/${python3.sitePackages}/dune/geometry/_geometry.so
+        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/${python3.sitePackages}/dune/istl/_istl.so)" $out/${python3.sitePackages}/dune/istl/_istl.so
+        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/${python3.sitePackages}/dune/localfunctions/_localfunctions.so)" $out/${python3.sitePackages}/dune/localfunctions/_localfunctions.so
+        patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/${python3.sitePackages}/dune/grid/_grid.so)" $out/${python3.sitePackages}/dune/grid/_grid.so
 
         # This is the example adapter
         cp dune-adapter/dune-precice-howto/build-cmake/examples/dune-perpendicular-flap $out/bin
         patchelf --set-rpath "$out/lib64:$(patchelf --print-rpath $out/bin/dune-perpendicular-flap)" $out/bin/dune-perpendicular-flap
-
-        cat <<EOF > $out/bin/set-dune-vars
-          export DUNE_CONTROL_PATH=$out
-          export DUNE_PY_DIR=\$HOME/.cache/dune-py/${version}
-
-          # we kinda wanna index this once and make sure this works
-          python -c "from dune.grid import structuredGrid"
-        EOF
-        chmod +x $out/bin/set-dune-vars
 
         runHook postInstall
       '';
@@ -259,12 +251,10 @@ let
     pname = "dune-fem";
     version = "2.8.0";
 
-    src = fetchFromGitLab {
-      domain = "gitlab.dune-project.org";
-      owner = "dune-fem";
-      repo = "dune-fem";
-      rev = "v${version}.0";
-      hash = "sha256-70u9jBWO+JFzyn8m7HDZ5KDUrmwES/BF8m/ByaOxZpc=";
+    src = python3.pkgs.fetchPypi {
+      inherit pname;
+      version = "${version}.0";
+      hash = "sha256-sug55x+DFoRRmJXTt/nK+yJQ2GYs4LHwjYjviZ1U8HI=";
     };
 
     preBuild = ''
@@ -277,7 +267,7 @@ let
       dune
       openmpi
       pkg-config
-      python3.pkgs.fenics
+      fenics
     ];
     # Don't know why we need this
     propagatedBuildInputs = [
@@ -309,4 +299,15 @@ python3.pkgs.toPythonModule (symlinkJoin {
     dune
     dune-fem
   ];
+  postBuild = ''
+    cat <<EOF > $out/bin/set-dune-vars
+      export DUNE_CONTROL_PATH=$out
+      export DUNE_PY_DIR=\$HOME/.cache/dune-py/${version}
+
+      # we kinda wanna index this once and make sure this works
+      python -c "from dune.grid import structuredGrid"
+      python -c "from dune.fem import parameter"
+    EOF
+    chmod +x $out/bin/set-dune-vars
+  '';
 })
