@@ -37,7 +37,7 @@ We demonstrate how to create a reproducible and self-contained environment for t
 %This evaluation enables us to assess the advantages and disadvantages of employing Nix to improve reproducibility in scientific software development within an HPC context.
 }
 
-\keywords{Reproducibility, Nix, NixOS, Spack, EasyBuild, preCICE, HPC}
+\keywords{Reproducibility, Nix, NixOS}
 
 \begin{document}
 \maketitle
@@ -59,7 +59,7 @@ Those images are usually based on one of the official Docker images\footnote{\ur
 When a user then specifies to install the python3 package, for instance, a traditional package manager could yield version 3.8 today, but version 3.9 in a few months.
 Full reproducibility can, thus, only be achieved by storing the complete image. Altering a single dependency (e.g., by a bugfix) causes a rebuild of the image and, thus, destroys reproducibility.
 
-There are, moreover, commercial, domain specifig solutions to achieve reproducibility, e.g., CodeOcean\footnote{\url{https://codeocean.com/}} mainly for bioinformatics or Weights and Biases\footnote{\url{https://wandb.ai/site}} for machine learning.
+There are, moreover, commercial, domain specific solutions to achieve reproducibility, e.g., CodeOcean\footnote{\url{https://codeocean.com/}} mainly for bioinformatics or Weights and Biases\footnote{\url{https://wandb.ai/site}} for machine learning.
 With these archiving platforms, experiments can be rerun using technologies such as Docker.
 The platforms are closed source, however, such that the source code cannot be reviewed nor adjusted~\cite{koch2023sustainable}.
 
@@ -67,7 +67,7 @@ In past years, the Nix package manager~\cite{Dolstra_2004} and NixOS~\cite{Dolst
 Nix allows functional descriptions of dependencies up to fixed versions, thus avoiding the issue described above.
 Similar ideas are followed by the popular high performance computing (HPC) package managers EasyBuild~\cite{easybuil6495863} and Spack~\cite{spack7832814}.
 At FOSDEM 2018, Kenneth Hoste compares Spack, EasyBuild, and Nix with each other~\cite{Hoste}.
-Minor deficits regarding reproducibility of Spack and EasyBuild are that they link against core system libraries, which can break independently. The Spack developers are aware of these shortcomings and are working on improvements\footnote{\url{https://github.com/spack/spack/issues/39560}}$^,$\footnote{\url{https://github.com/spack/spack/pull/42082}}.
+Minor deficits regarding reproducibility of Spack and EasyBuild are that they link against core system libraries, e.g., glibc, which can break independently. The Spack developers are aware of these shortcomings and are working on improvements\footnote{\url{https://github.com/spack/spack/issues/39560}}$^,$\footnote{\url{https://github.com/spack/spack/pull/42082}}.
 EasyBuild, on the other hand, even has an option for linking against system libraries called \texttt{osdependencies}\footnote{\url{https://docs.easybuild.io/writing-easyconfig-files/\#dependency\_specs}}. Thus, packages need to be vetted and potentially updated prior to usage.
 All three solutions have in common that they rely on scientific software following best practices concerning building and packaging.
 Unfortunately, most legacy software projects do not do this.
@@ -78,7 +78,8 @@ To this end, we study the preCICE ecosystem~\cite{preCICEv2} as an example.
 preCICE is a coupling library for partitioned multiphysics simulations.
 The ecosystem includes diverse legacy solvers, adapters, language bindings, and tutorials besides the coupling library itself making it a challenging and representative testcase.
 We try to build the complete ecosystem using Nix and run all tutorials.
-This paper is the result of a student research project and a streamlined version of its report~\cite{studentreport}.
+This paper is the result of a student research project and a streamlined version of its report~\cite{studentreport}. Beyond the content of this paper, the report also includes a detailed comparison of Nix to Spack and EasyBuild, and a discussion on how to use Nix on HPC systems.
+
 
 \section{Background}
 
@@ -134,7 +135,7 @@ For example, in fluid-structure interaction problems, where fluid flow interacts
 preCICE supports a wide range of existing (Legacy) solvers. For each solver, there is typically a specific adapter: an either independent software package or simply a source code patch that integrates the preCICE API into the solver, see Fig.~\ref{fig:precice}.
 The preCICE library itself is implemented in C++, bindings to other languages are either supported through native bindings (C, Fortran) or through independent software packages (Python, Julia, Matlab, Fortran).
 Many official adapters, all bindings, the library itself, tutorials, additional tools, and the website including user documentation are collected and released in so-called preCICE distributions\footnote{\url{https://precice.org/installation-distribution.html}}.
-In our case study, we target the distribution v2211.0~\cite{preciceDistribution}. To execute simulations, such as the included tutorials, requires the actual solvers next to the distribution. These are included, for example, in the preCICE VM\footnote{\url{https://precice.org/installation-vm.html}} and also part of our case study. Table \ref{table:label-distribution} lists all software packages of the case study. We try to reproducibly build all of these packages with Nix and try to run all tutorial cases.
+In our case study, we target the distribution v2211.0~\cite{preciceDistribution}. To execute simulations, such as the included tutorials, the actual solvers are required besides the distribution. These are included, for example, in the preCICE VM\footnote{\url{https://precice.org/installation-vm.html}} and also part of our case study. Table \ref{table:label-distribution} lists all software packages of the case study. We try to reproducibly build all of these packages with Nix and try to run all tutorial cases.
 The diverse languages and diverse solver packages using various build system makes the preCICE ecosystem a challenging testcase, which is, however, representative for current research software in our experience.
 
 
@@ -147,12 +148,12 @@ The diverse languages and diverse solver packages using various build system mak
     \hline
     \bfseries Package & \bfseries Type & \bfseries Build system & \bfseries Version \\ \hline
     preCICE & library & cmake & 2.5.0 \\ \hline
-    Fortran module & bindings & make & 9e3f405 \\ \hline
-    Julia bindings & bindings & julia & 2.5.0 \\ \hline
-    MATLAB bindings & bindings & matlab build script & 2.5.0.0 \\ \hline
-    Python bindings & bindings & setup.py & 2.5.0.1 \\ \hline
     ASTE & tooling & cmake & 3.0.0 \\ \hline
     Config visualizer & tooling & setup.py & 60f2165 \\ \hline
+    MATLAB bindings & bindings & matlab build script & 2.5.0.0 \\ \hline
+    Fortran module & bindings & make & 9e3f405 \\ \hline
+    Python bindings & bindings & setup.py & 2.5.0.1 \\ \hline
+    Julia bindings & bindings & julia & 2.5.0 \\ \hline
     preCICE-CalculiX adapter & solver + adapter & makefile & 2.20 \\ \hline
     Code\_Aster & solver & custom system in python & 14.6.0 \\ \hline
     Code\_Aster-preCICE adapter & adapter & custom system in python & ce995e0 \\ \hline
@@ -177,25 +178,23 @@ The Nix code for all components is available online\footnote{\url{https://github
 
 \subsection{preCICE}
 
-The preCICE library itself is already available in the nixpkgs repository\footnote{\url{https://github.com/NixOS/nixpkgs}}, so we do not have to package the software.
+The preCICE library itself is already available in the nixpkgs repository\footnote{\url{https://github.com/NixOS/nixpkgs/blob/nixos-24.05/pkgs/development/libraries/precice/default.nix\#L41}}, so we do not have to package the software.
 Looking at the package definition and the preCICE source code, the library is quite easy to build and package as it uses CMake as a build system.
 
 \subsection{Tools}
 
-The preCICE distribution includes several tools around preCICE.
+The preCICE distribution includes two tools that enhance the preCICE user experience.
 
-\subsubsection{ASTE}
-
-ASTE\footnote{\url{https://github.com/precice/aste}} stands for Artificial Solver Testing Environment. It is a thin wrapper around the preCICE API, which allows, for instance, testing of data mapping with real geometries.
-ASTE requires VTK9\footnote{\url{https://vtk.org/}}, a visualization toolkit, which is built without python support in the nixpkgs repository to reduce compilation time.
+One of the tools is ASTE\footnote{\url{https://github.com/precice/aste}}, which stands for Artificial Solver Testing Environment. It is a thin wrapper around the preCICE API, which allows, for instance, testing of data mapping with real geometries.
+ASTE requires VTK\footnote{\url{https://vtk.org/}}, a visualization toolkit, which is built without python support in the nixpkgs repository to reduce compilation time.
 This feature is needed for ASTE, however.
 As already mentioned, Nix allows overriding of inputs, so in this case, we can look at the package definition of VTK.
 The parameter \texttt{enablePython} can simply be set to \texttt{true}. We then also need to supply the version of python, which we set to python3.
 
-\subsubsection{Config visualizer}
-
-The preCICE config visualizer\footnote{\url{https://github.com/precice/config-visualizer}}, as the name suggests, visualizes preCICE configuration files. Similarly to preCICE itself, the tool is already packaged upstream.
-As a python package, it is easy to handle with Nix.
+The second tool is the preCICE config visualizer.
+As the name suggests, it visualizes preCICE configuration files.
+Similarly to preCICE itself, the tool is already packaged upstream\footnote{\url{https://github.com/NixOS/nixpkgs/blob/nixos-24.05/pkgs/tools/misc/precice-config-visualizer/default.nix\#L25}}.
+This tool is easy to handle with Nix, as it is a python package.
 
 \subsection{Bindings}
 
@@ -204,8 +203,8 @@ Bindings are used to offer interfaces to other programming languages.
 \subsubsection{MATLAB bindings}
 
 There were several attempts to package MATLAB\footnote{\url{https://de.mathworks.com/products/matlab.html}} for NixOS in the past\footnote{\url{https://github.com/NixOS/nixpkgs/issues/56887}}, yet there was no success so far.
-This might be due to the fact, that MATLAB needs to be installed by running an installation wizard that downloads files during the installation process and verifies the licence.
-Also, as MATLAB is not installed in the preCICE VM, we do not proceed in packaging the software.
+This might be due to the fact, that MATLAB needs to be installed by running an installation wizard that downloads files during the installation process and verifies the license.
+As MATLAB has some licensing issues and is also not installed in the preCICE VM, we do not proceed in packaging the software.
 
 \subsubsection{Fortran module}
 
@@ -214,13 +213,13 @@ The resulting binary could run the example that comes with the module.
 
 \subsubsection{Python bindings}
 
-The \texttt{pyprecice} package is already available upstream, but did not compile as it is not able to find the python module \texttt{pkgconfig}.
+The \texttt{pyprecice} package is already available upstream, but does not compile as it is not able to find the python module \texttt{pkgconfig}.
 After adding this single dependency as an input to the package definition, the python package builds and can be used as expected.
-This solution was contributed to the upstream nixpkgs repository.
+This solution was contributed to the upstream nixpkgs repository\footnote{\url{https://github.com/NixOS/nixpkgs/commit/fd8962162ac21be59fc3a05fb6a250eeab6b2bec}}.
 
 \subsubsection{Julia bindings}
 
-Julia~\cite{bezanson2017julia} support in NixOS is currently still in its early stages and cannot be declaratively be defined by Nix\footnote{\url{https://github.com/NixOS/nixpkgs/issues/20649}}.
+Julia~\cite{bezanson2017julia} support in NixOS is currently still in its early stages and cannot be declaratively defined by Nix at the current state\footnote{\url{https://github.com/NixOS/nixpkgs/issues/20649}}.
 
 \subsection{Solvers and adapters}
 
@@ -231,7 +230,7 @@ By default, this makefile expects the source code to reside in \texttt{\$HOME}, 
 It then builds the original code and the adapter code together, resulting in a combined binary.
 
 The Makefile also has hard-coded locations of its dependencies: SPOOLES, ARPACK, and yaml-cpp. These need to be replaced with the equivalent pkg-config calls.
-Additionally, there is no install target provided by the makefile, thus the resulting binary needs to be installed manually by copying it to \texttt{\$out}.
+Additionally, there is no install target provided by the makefile, thus the resulting binary needs to be installed manually by copying it to the \texttt{\$out} placeholder, which maps to the resulting store path.
 
 \subsubsection{Code\_Aster}
 
@@ -276,18 +275,19 @@ As an example for the Nix language, we provide the Nix code for the deal.II-preC
   dealii, enable3d ? false }:
 stdenv.mkDerivation rec {
   pname = "precice-dealii-adapter";
-  version = "unstable-2022-09-23";
+  version = "unstable-2022-09-23"; # could also be a git tag
 
-  src = fetchFromGitHub {
+  src = fetchFromGitHub { # Defining where to get the source from
     owner = "precice"; repo = "dealii-adapter";
     rev = "dbb25...8367c"; sha256 = "sha256-pPQ2...2jlflgUE=";
   };
 
-  nativeBuildInputs = [ cmake ];
-  buildInputs = [ precice dealii ];
+  nativeBuildInputs = [ cmake ]; # build-time dependencies
+  buildInputs = [ precice dealii ]; # run-time dependencies
 
   cmakeFlags = lib.optionals enable3d [ "-DDIM=3" ];
 
+  # nix' default phases can be overwritten such as:
   installPhase = ''
     mkdir -p $out/bin && cp elasticity $out/bin/elasticity
   '';
@@ -303,7 +303,7 @@ DUNE~\cite{bastian2020dune} uses a combination of CMake files and custom build s
 There is an ongoing migration from autotools to CMake for DUNE, which might improve the situation in the future.
 Another minor issue is that the DUNE project is rather a collection of repositories than a monorepo. This means, users have to correctly clone all repositories such that the build system finds all relevant information.
 We clone all of the required DUNE repositories into a directory and additionally clone the DUNE-preCICE adapter into the same directory.
-For the build and install process, we need to manually set the \texttt{\$DUNE\_CONTROL\_PATH} and the \texttt{\$DUNE\_PY\_DIR} environment variables. Both variables also need to be set at runtime.
+For the build and install process, we need to manually set the \texttt{\$DUNE\_CONTROL\_PATH} and the \texttt{\$DUNE\_PY\_DIR} environment variables.
 Additionally, we need to patch the python install process because the current CMake file tries to access the internet with \texttt{pip install}, which is not allowed in Nix's sandboxed builds.
 The two environment variables must also be set at runtime.
 This can be achieved by sourcing the \texttt{set-dune-vars} script, which we provide.
@@ -311,7 +311,7 @@ This can be achieved by sourcing the \texttt{set-dune-vars} script, which we pro
 \subsubsection{FEniCS}
 
 FEniCS~\cite{fenics} is already packaged upstream, however, not with all features the FEniCs-preCICE adapter~\cite{Rodenberg2021} relies on, in particular PETSc support and mshr, the FEniCS mesh generator.
-This is why, we need to package PETSc4py, the python bindings package of PETSc, which is not available upstream.
+This is why we need to package PETSc4py, the python bindings package of PETSc, which is not available upstream.
 The build process uses the internal \texttt{buildPythonApplication} build tool and runs successfully once we add the option \texttt{build\_src --force} to rebuild cython code and pin the cython version to \texttt{0.29.34}~\footnote{\url{https://gitlab.com/petsc/petsc/-/issues/1359}}.
 We could not enable tests for PETSc4py, however, because they depend on OpenMPI and the network, which is not available within Nix's build sandbox.
 Afterwards, we specify PETSc4py as dependency for FEniCS and enable the PETSc support.
@@ -323,7 +323,7 @@ All but two of the adapter's tests run successfully, which means, however, that 
 
 \subsubsection{Nutils}
 
-The Nutils~\cite{nutils} solver can be build using \texttt{buildPythonPackage}. One test needs to be disabled, but the rest of the testsuite passes without issues. There is no dedicated Nutils-preCICE adapter, but preCICE is typically directly called from Nutils application scripts.
+The Nutils~\cite{nutils} solver can be built using \texttt{buildPythonPackage}. One test needs to be disabled, but the rest of the testsuite passes without issues. There is no dedicated Nutils-preCICE adapter, but preCICE is typically directly called from Nutils application scripts.
 
 \subsubsection{OpenFOAM}
 
@@ -332,7 +332,7 @@ The preCICE-OpenFOAM adapter~\cite{OpenFOAMpreCICE} supports multiple flavors of
 OpenFOAM uses its own custom build system called \texttt{wmake}, which is typically called with a \texttt{Allwmake} wrapper script.
 The build system sets 36 environment variables, one step at a time by checking several parameters, e.g.~the CPU architecture or the location of the source code. Also during runtime, these variables need to be set, either by a wrapper script or by manually sourcing a file inside the installation directory of OpenFOAM.
 For Nix, these properties are unfortunate. To compile OpenFOAM with Nix, we need to patch the shebangs\footnote{\url{https://foldoc.org/shebang}} of wmake to make it run during the build.
-We also use a shell script, which exports the environment variables to the current shell session.
+We also use a shell script which exports the environment variables to the current shell session.
 For simplicity, we hard-code all parameters, such as the processor architecture. These could be parametrized, however, based on the Nix inputs to allow for optimized builds. We use the script during the build phase to source all variables such that, for example, \texttt{OPENFOAM\_SRC\_PATH} points to the default location \texttt{/build/openfoam}.
 Afterwards, \texttt{./Allwmake -j -q} is sufficient to start the build.
 The install phase then copies the necessary files and directories to \texttt{\$out}, replaces the mock \texttt{OPENFOAM\_SRC\_PATH} by the value of \texttt{\$out}, and creates a wrapper for the \texttt{openfoam} shell script.
@@ -348,15 +348,17 @@ To this end, the adapter provides a script to run before the build phase.
 We do this in Nix' patch phase. Afterwards, \texttt{stdenv} automatically recognizes that SU2 uses autotools for building and runs the configure phase.
 Finally, to find the preCICE installation, we need to set the configuration flags \texttt{--with-include} and \texttt{--with-lib}.
 
+Since preCICE distribution v202404, this adapter is replaced by a python-based solution
+
 \subsection{preCICE VM}
 
 The current preCICE VM\footnote{\url{https://precice.org/installation-vm.html}} is built on top of Vagrant\footnote{\url{https://www.vagrantup.com/}} using Ubuntu as a base image.
-When run for the first time, it further installs software, compiles programs, and clones the preCICE tutorials\footnote{\url{https://github.com/precice/tutorials/}}.
-This inherently breaks reproducibility as the VM fetches files from the internet that are at this very point in time the \textit{latest} version, e.g. the \texttt{main} branch of the preCICE repository.
+When provisioned for the first time, it further installs software, compiles programs, and clones the preCICE tutorials\footnote{\url{https://github.com/precice/tutorials/}}.
+This inherently breaks reproducibility as the VM fetches files from the internet that are at this very point in time the \textit{latest} version, i.e. the \texttt{main} branch of the preCICE repository.
 
 Nix comes with the built-in functionality of producing qemu\footnote{\url{https://www.qemu.org/}} VM images.
 We use Nix to define a VM image with NixOS as a base, which can be built reproducibly.
-The image contains all components of the case study and some additional custom tools that can only be seen in the official VM, such as the \texttt{preciceToPNG} command.
+The image contains all components of the case study and some additional custom tools that can only be seen in the official VM\footnote{\url{https://github.com/precice/vm}}, such as the \texttt{preciceToPNG} command.
 Also, we generate an iso and a Vagrant VirtualBox file of the VM as additional outputs.
 
 \subsection{preCICE tutorials}
@@ -366,8 +368,8 @@ To this end, we execute all 23 tutorials of the distribution such that each part
 We test inside the NixOS VM and also in an ad-hoc shell environment provided by the \texttt{nix develop} command. All tests pass except the \textit{Turek-Hron FSI3}, parts of the \textit{partitioned heat conduction}, parts of the \textit{perpendicular flap}, and the \textit{flow over heated plate steady state} cases.
 We could not build swak4foam, an add-on to OpenFOAM, which is needed in the Turek-Hron FSI3 tutorial and the OpenFOAM participants of the partitioned heat conduction tutorial.
 The official preCICE VM uses a prebuilt version of swak4foam, but also patching the prebuilt binary did not work.
-The dependency is, however, no longer required in the v202404.0 release of the distribution.
-We could, moreover, not package the third-party solids4foam solver, which is one of many options in the perpendicular flap tutorial. 
+The dependency is, however, no longer required in the v202404.0 release\footnote{\url{https://precice.org/installation-distribution.html#v24040}} of the preCICE distribution.
+We could, moreover, not package the third-party solids4foam solver, which is one of many options in the perpendicular flap tutorial.
 The flow over heated plate steady state tutorial requires Code\_Aster. Even though we manage to package the solver, we observe a segmentation fault at runtime when the python code tries to call a Fortran subroutine -- a problem we did not manage to debug.
 
 % \begin{sloppypar}
@@ -396,15 +398,13 @@ Configurable solutions, such as \texttt{pkg-config}, should always be preferred 
 
 We investigated on whether Nix und NixOS are a potential solution to enable full reproducibility of research software environments. As a case study, we tried to package and test all components of the preCICE ecosystem -- a very heterogeneous set of legacy software packages, which is, however, representative for the state of research software today in our experience.
 
-We were able to package nearly all components and run nearly all test cases showing the potential of Nix in the domain of scientific software. Many packages required workarounds, however, which might be difficult to achieve for none-experienced Nix users.
+We were able to package nearly all components and run nearly all test cases showing the potential of Nix in the domain of scientific software. Many packages required workarounds, however, which might be difficult to achieve for non-experienced Nix users.
 Nix also comes with a few peculiarities, which complicate workarounds.
 In fact, every piece of software has to lie within \texttt{/nix/store} and each path therein is its own-isolated tree inspired by the Filesystem Hierarchy Standard (FHS).
 
 Most problems, however, can be traced back to a lack of standardization in research software, especially regarding build systems.
 Software packages that follow best practices for their programming language are also straightforward to package.
 The xSDK initiative defined such standardization policies for math software. Components of the preCICE ecosystem that already adhere to this standard, were among the easiest ones to package -- even though xSDK  ultimately targets Spack and not Nix.
-
-This paper is the result of a student research project and a streamlined version of its report~\cite{studentreport}. Beyond the content of this paper, the report also includes a detailed comparison of Nix to Spack and EasyBuild, and a discussion on how to use Nix on HPC systems.
 
 \acknowledge{
 We thankfully acknowledge the funding by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Germany's Excellence Strategy EXC 2075 -- 390740016 and the support by the Stuttgart Center for Simulation Science (SimTech).
