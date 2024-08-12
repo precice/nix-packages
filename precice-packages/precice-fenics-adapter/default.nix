@@ -1,6 +1,6 @@
 {
   lib,
-  fetchPypi,
+  fetchFromGitHub,
   python3,
   precice,
   fenics,
@@ -14,10 +14,11 @@ python3.pkgs.buildPythonPackage rec {
   pname = "precice-fenics-adapter";
   version = "1.4.0";
 
-  src = fetchPypi {
-    pname = "fenicsprecice";
-    inherit version;
-    hash = "sha256-ux5qi4SGGHETbldfEiT8H/7Pvmn2uvQwDFB1wi/pAKI=";
+  src = fetchFromGitHub {
+    owner = "precice";
+    repo = "fenics-adapter";
+    rev = "v${version}";
+    hash = "sha256-tddOcFZ/ls6fV+prtHQSIJmJ04eU9voj7ZyXEzEU6fA=";
   };
 
   nativeBuildInputs = [
@@ -33,10 +34,8 @@ python3.pkgs.buildPythonPackage rec {
     fenics-mshr
     python3.pkgs.scipy
   ];
-  checkInputs = with python3.pkgs; [ pytest ];
-
-  # TODO(conni2461): Remove once (two tests still fail
-  doCheck = false;
+  pythonImportsCheck = [ "fenicsprecice" ];
+  nativeCheckInputs = with python3.pkgs; [ pytest ];
 
   DIJITSO_CACHE_DIR = "/tmp";
 

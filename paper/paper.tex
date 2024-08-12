@@ -243,22 +243,22 @@ On Nix, almost none of these dependencies complete the build stage. We, thus, ne
 In this file, we are able to disable the installation of the pinned dependencies and provide paths to the dependencies instead.
 
 More precisely, we disable HDF5, as it is already packaged in the upstream nixpkgs repository, even at the required version 5.1.10.
-HDF5 is packaged with multiple outputs.
-One package, \texttt{out}, contains the libraries and binaries and another, \texttt{dev} contains the header files, since most of the time, users installing HDF5 only need the libraries and binaries, and it helps to reduce installation size of this rather large package.
 Additionally, Code\_Aster requires Medfile and Scotch, which are both available upstream and can be used as dependencies.
 Another dependency is METIS, which partially builds. Thus, we decide to not replace it, but to fix the remainder of the build.
-The issue is precisely that the \texttt{CMakeLists.txt} for the METIS programs hard-codes \texttt{link\_directories} to \path{/home/karypis/local/lib}. We unpack the METIS tarball, remove this line with sed, and repack the directory.
+The issue is precisely that the \texttt{CMakeLists.txt} for the METIS programs hard-codes \texttt{link\_directories} to \path{/home/karypis/local/lib}.
+We unpack the METIS tarball, remove this line with sed, and repack the directory.
 
 The remaining two dependencies, Mumps and Tfel are not available upstream and need to be packaged.
-Mumps uses a Makefile and can be configured using Makefile.inc. By default, it provides a few configurations for systems such as Ubuntu. We use one of these provided configuration files to write our own custom config file.
-It defines the locations for dependencies, such as Scotch, METIS, ParMETIS, or Blacs.
+Mumps uses a Makefile and can be configured using Makefile.inc.
+We write our own custom Makefile.inc by providing the locations for dependencies, such as Scotch, METIS, ParMETIS, or Blacs.
 Almost all dependencies are available upstream, but we need to recompile Scotch with additional build flags.
 Moreover, for packaging Blacs, which also uses a Makefile, we configure the build using a custom \texttt{Bmake.inc} file, which is used to set compiler flags, the path to MPI, and the bash installation.
 Tfel, on the other hand, uses CMake as build system making it easy to package it with Nix.
 
 After successfully packaging all dependencies, the build phase of Code\_Aster completes, but the installation part has another issue, which also affects new versions of Ubuntu and other distributions using a python version greater than 3.9.
 There is a forum post\footnote{\url{https://forum.code-aster.org/public/d/26475-problem-installing-code-aster-version-14-6/11}} without resolution, so we need to manually patch the bug.
-The issue is precisely, that the custom build system does not correctly calculate the python site-packages directory. It unconditionally slices the first 3 chars from \texttt{sys.version}, which works for version 3.9.x, but not for version 3.10.x.
+The issue is precisely, that the custom build system does not correctly calculate the python site-packages directory.
+It unconditionally slices the first 3 chars from \texttt{sys.version}, which works for python version 3.9.x, but not for version 3.10.x.
 After patching, Code\_Aster successfully installed into \texttt{\$out/14.6/}, so we move around some files until we have a valid directory structure with \texttt{\$out/bin}, \texttt{\$out/lib}, providing symlinks for \texttt{\$out/14.6/} and \texttt{\$out/stable/}.
 
 \subsubsection{deal.II}
@@ -319,7 +319,7 @@ Additionally, we need to recompile PETSc with additional features enabled that a
 Lastly, we also package mshr, so all required features for the adapter package are now are available.
 
 Building the FEniCS-preCICE adapter is now directly possible with \texttt{buildPythonPackage}.
-All but two of the adapter's tests run successfully, which means, however, that we need to disable the tests.
+We then validate the correctness by including an import check as well as successfully running the full test suite.
 
 \subsubsection{Nutils}
 
@@ -354,7 +354,8 @@ Since preCICE distribution v202404, this adapter is replaced by a python-based s
 
 The current preCICE VM\footnote{\url{https://precice.org/installation-vm.html}} is built on top of Vagrant\footnote{\url{https://www.vagrantup.com/}} using Ubuntu as a base image.
 When provisioned for the first time, it further installs software, compiles programs, and clones the preCICE tutorials\footnote{\url{https://github.com/precice/tutorials/}}.
-This inherently breaks reproducibility as the VM fetches files from the internet that are at this very point in time the \textit{latest} version, i.e. the \texttt{main} branch of the preCICE repository.
+This means that we only have reproducibility when fetching the VM from vagrant cloud~\footnote{\url{https://app.vagrantup.com/precice/boxes/precice-vm}}, as we can not rebuild the VM from scratch, because the provision step currently fetches files from the internet that are at this very point in time the \textit{latest} version, i.e. the \texttt{main} branch of the preCICE repository rather than a pinned tag or commit.
+Making us dependent on vagrant cloud to continue to serve the box.
 
 Nix comes with the built-in functionality of producing qemu\footnote{\url{https://www.qemu.org/}} VM images.
 We use Nix to define a VM image with NixOS as a base, which can be built reproducibly.
@@ -368,7 +369,7 @@ To this end, we execute all 23 tutorials of the distribution such that each part
 We test inside the NixOS VM and also in an ad-hoc shell environment provided by the \texttt{nix develop} command. All tests pass except the \textit{Turek-Hron FSI3}, parts of the \textit{partitioned heat conduction}, parts of the \textit{perpendicular flap}, and the \textit{flow over heated plate steady state} cases.
 We could not build swak4foam, an add-on to OpenFOAM, which is needed in the Turek-Hron FSI3 tutorial and the OpenFOAM participants of the partitioned heat conduction tutorial.
 The official preCICE VM uses a prebuilt version of swak4foam, but also patching the prebuilt binary did not work.
-The dependency is, however, no longer required in the v202404.0 release\footnote{\url{https://precice.org/installation-distribution.html#v24040}} of the preCICE distribution.
+The dependency is, however, no longer required in the v202404.0 release\footnote{\url{https://precice.org/installation-distribution.html\#v24040}} of the preCICE distribution.
 We could, moreover, not package the third-party solids4foam solver, which is one of many options in the perpendicular flap tutorial.
 The flow over heated plate steady state tutorial requires Code\_Aster. Even though we manage to package the solver, we observe a segmentation fault at runtime when the python code tries to call a Fortran subroutine -- a problem we did not manage to debug.
 
