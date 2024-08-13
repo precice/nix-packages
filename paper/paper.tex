@@ -407,7 +407,9 @@ Configurable solutions, such as \texttt{pkg-config}, should always be preferred 
 
 We investigated on whether Nix und NixOS are a potential solution to enable full reproducibility of research software environments. As a case study, we tried to package and test all components of the preCICE ecosystem -- a very heterogeneous set of legacy software packages, which is, however, representative for the state of research software today in our experience.
 
-We were able to package nearly all components and run nearly all test cases showing the potential of Nix in the domain of scientific software. Many packages required workarounds, however, which might be difficult to achieve for non-experienced Nix users.
+Out of the 20 components of the preCICE distribution, we were able to package 14 components ourselfs, four were already packaged upstream and two were not packageable as described earlier.
+Additionally we were able to run 52 participant examples out of the 61 total examples found in the preCICE tutorials, showing the potential of Nix in the domain of scientific software.
+Many packages required workarounds, however, which might be difficult to achieve for non-experienced Nix users.
 Nix also comes with a few peculiarities, which complicate workarounds.
 In fact, every piece of software has to lie within \texttt{/nix/store} and each path therein is its own-isolated tree inspired by the Filesystem Hierarchy Standard (FHS).
 
