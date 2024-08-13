@@ -1,4 +1,5 @@
-{ declInput, projectName, ... }: let
+{ declInput, projectName, ... }:
+let
   jobsets = {
     flakeJobset = {
       enabled = 1;
@@ -11,10 +12,11 @@
       enableemail = false;
       emailoverride = "";
       keepnr = 3;
-      inputs = {};
+      inputs = { };
     };
   };
-in {
+in
+{
   jobsets = derivation {
     name = "forschungsprojekt-spec.json";
     system = builtins.currentSystem;
