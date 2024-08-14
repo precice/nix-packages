@@ -4,7 +4,6 @@
 \usepackage{subfig}
 
 \usepackage{xcolor}
-%\newcommand\todo[1]{\textcolor{red}{TODO #1}}
 
 \input{frontmatter}
 
@@ -104,10 +103,10 @@ Fig.~\ref{fig:nix-graph} shows the dependency graph of the coreutils package as 
 
 As Nix is purely functional, it relies on functions that, without side-effects, realize the package derivations.
 Inputs of these functions are parameters such as the package version, the location of the source code and its dependencies.
-Nix then offers built-in functions for common buildsystems and languages such as cmake, rust, go and python by implementing different phases.
-There are a wide range of phases that always get executed in the same order and package maintainers can then decide weather the default phase is sufficient or needs to be overriden in order to produce a working build.
-The most common phases to override are the \texttt{configurePhase}, which is mostly used for cmake or autotools configuration, the \texttt{buildPhase}, \texttt{installPhase} and the \texttt{checkPhase} which can for example be used to run unit tests.
-It is also worth mentioning that most phases have a pre and post step, which users can use to do slight adjustments when they need to override excisting packages.
+Nix then offers built-in functions for common buildsystems and languages such as CMake, Rust, Go and python by implementing different phases.
+There are a wide range of phases that always get executed in the same order and package maintainers can then decide weather the default phase is sufficient or needs to be overridden in order to produce a working build.
+The most common phases to override are the \texttt{configurePhase}, which is mostly used for CMake or Autotools configuration, the \texttt{buildPhase}, \texttt{installPhase} and the \texttt{checkPhase} which can for example be used to run unit tests.
+It is also worth mentioning that most phases have a \texttt{pre} and \texttt{post} phases, which users can use to make slight adjustments when they need to override existing packages.
 Evaluating these functions with the same inputs yields the same outputs.
 This is a critical factor for Nix's reproducibility.
 Outputs, i.e. the build artifacts, never change after being built once.
@@ -154,26 +153,26 @@ The diverse languages and diverse solver packages using various build system mak
   \begin{tabular}{|l|l|l|l|}
     \hline
     \bfseries Package & \bfseries Type & \bfseries Build system & \bfseries Version \\ \hline
-    preCICE & library & cmake & 2.5.0 \\ \hline
-    ASTE & tooling & cmake & 3.0.0 \\ \hline
+    preCICE & library & CMake & 2.5.0 \\ \hline
+    ASTE & tooling & CMake & 3.0.0 \\ \hline
     Config visualizer & tooling & setup.py & 60f2165 \\ \hline
     MATLAB bindings & bindings & matlab build script & 2.5.0.0 \\ \hline
     Fortran module & bindings & make & 9e3f405 \\ \hline
     Python bindings & bindings & setup.py & 2.5.0.1 \\ \hline
     Julia bindings & bindings & julia & 2.5.0 \\ \hline
-    preCICE-CalculiX adapter & solver + adapter & makefile & 2.20 \\ \hline
+    preCICE-CalculiX adapter & solver + adapter & Makefile & 2.20 \\ \hline
     Code\_Aster & solver & custom system in python & 14.6.0 \\ \hline
     Code\_Aster-preCICE adapter & adapter & custom system in python & ce995e0 \\ \hline
-    deal.II & solver & cmake & 9.4.1 \\ \hline
-    preCICE-deal.II adapter & adapter & cmake & dbb25bea \\ \hline
+    deal.II & solver & CMake & 9.4.1 \\ \hline
+    preCICE-deal.II adapter & adapter & CMake & dbb25bea \\ \hline
     DUNE-FEM & solver library & setup.py & 2.8.0 \\ \hline
-    preCICE-DUNE adapter& adapter & scripts + cmake & 5f2364d \\ \hline
-    FEniCS & solver library& cmake + setup.py & 2019.1.0 \\ \hline
+    preCICE-DUNE adapter& adapter & scripts + CMake & 5f2364d \\ \hline
+    FEniCS & solver library& CMake + setup.py & 2019.1.0 \\ \hline
     preCICE-FEniCS adapter & adapter & setup.py & 1.4.0 \\ \hline
     Nutils & solver library & setup.py & 7.0.0 \\ \hline
     OpenFOAM & solver & wmake/Allwmake & 2206 \\ \hline
     preCICE-OpenFOAM adapter & adapter & wmake/Allwmake & 1.2.1 \\ \hline
-    preCICE-SU2 adapter & solver + adapter & patch script + autoconf & 6.0.0 \\ \hline
+    preCICE-SU2 adapter & solver + adapter & patch script + Autoconf & 6.0.0 \\ \hline
   \end{tabular}
 \end{table}
 
@@ -216,7 +215,7 @@ Bindings are used to offer interfaces to other programming languages.
 
 There were several attempts to package MATLAB\footnote{\url{https://de.mathworks.com/products/matlab.html}} for NixOS in the past\footnote{\url{https://github.com/NixOS/nixpkgs/issues/56887}}, yet there was no success so far.
 This might be due to the fact, that MATLAB needs to be installed by running an installation wizard that downloads files during the installation process and verifies the license.
-As MATLAB has some licensing issues and is also not installed in the preCICE VM, we do not proceed in packaging the software.
+As MATLAB has some licensing issues and is also not installed in the preCICE VM, we do not proceed in packaging the preCICE bindings for the language.
 
 \subsubsection{Fortran module}
 
@@ -237,12 +236,12 @@ Julia~\cite{bezanson2017julia} support in NixOS is currently still in its early 
 
 \subsubsection{CalculiX}
 
-The preCICE adapter for the structural mechanics code CalculiX~\cite{Uekermann2017_Adapters} requires the original CalculiX source code and provides a new makefile in the adapter repository.
-By default, this makefile expects the source code to reside in \texttt{\$HOME}, but it is possible to override this location with a make variable.
+The preCICE adapter for the structural mechanics code CalculiX~\cite{Uekermann2017_Adapters} requires the original CalculiX source code and provides a new Makefile in the adapter repository.
+By default, this Makefile expects the source code to reside in \texttt{\$HOME}, but it is possible to override this location with a make variable.
 It then builds the original code and the adapter code together, resulting in a combined binary.
 
 The Makefile also has hard-coded locations of its dependencies: SPOOLES, ARPACK, and yaml-cpp. These need to be replaced with the equivalent pkg-config calls.
-Additionally, there is no install target provided by the makefile, thus the resulting binary needs to be installed manually by copying it to the \texttt{\$out} placeholder, which maps to the resulting store path.
+Additionally, there is no install target provided by the Makefile, thus the resulting binary needs to be installed manually by copying it to the \texttt{\$out} placeholder, which maps to the resulting store path.
 
 \subsubsection{Code\_Aster}
 
@@ -262,7 +261,7 @@ We unpack the METIS tarball, remove this line with sed, and repack the directory
 
 The remaining two dependencies, Mumps and Tfel are not available upstream and need to be packaged.
 Mumps uses a Makefile and can be configured using \texttt{Makefile.inc}.
-We write our own custom Makefile.inc by providing the locations for dependencies, such as Scotch, METIS, ParMETIS, or Blacs.
+We write our own custom \texttt{Makefile.inc} by providing the locations for dependencies, such as Scotch, METIS, ParMETIS, or Blacs.
 Almost all dependencies are available upstream, but we need to recompile Scotch with additional build flags.
 Moreover, for packaging Blacs, which also uses a Makefile, we configure the build using a custom \texttt{Bmake.inc} file, which is used to set compiler flags, the path to MPI, and the bash installation.
 Tfel, on the other hand, uses CMake as build system making it easy to package it with Nix.
@@ -320,12 +319,12 @@ stdenv.mkDerivation rec {
 \subsubsection{DUNE}
 
 DUNE~\cite{bastian2020dune} uses a combination of CMake files and custom build scripts making the build process in Nix tedious.
-There is an ongoing migration from autotools to CMake for DUNE, which might improve the situation in the future.
+There is an ongoing migration from Autotools to CMake for DUNE, which might improve the situation in the future.
 Another minor issue is that the DUNE project is rather a collection of repositories than a monorepo. This means, users have to correctly clone all repositories such that the build system finds all relevant information.
 We clone all of the required DUNE repositories into a directory and additionally clone the DUNE-preCICE adapter into the same directory.
 For the build and install process, we need to manually set the \texttt{\$DUNE\_CONTROL\_PATH} and the \texttt{\$DUNE\_PY\_DIR} environment variables.
 Additionally, we need to patch the python install process because the current CMake file tries to access the internet with \texttt{pip install}, which is not allowed in Nix's sandboxed builds.
-The two environment variables must also be set at runtime.
+The two environment variables must also be set at run-time.
 This can be achieved by sourcing the \texttt{set-dune-vars} script, which we provide.
 
 \subsubsection{FEniCS}
@@ -350,7 +349,7 @@ The Nutils~\cite{nutils} solver can be built using \texttt{buildPythonPackage}. 
 The preCICE-OpenFOAM adapter~\cite{OpenFOAMpreCICE} supports multiple flavors of OpenFOAM. We restrict our analysis to the OpenFOAM fork of OpenCFD Ltd\footnote{\url{https://www.openfoam.com/}}.
 
 OpenFOAM uses its own custom build system called wmake, which is typically called with a Allwmake wrapper script.
-The build system sets 36 environment variables, one step at a time by checking several parameters, e.g.~the CPU architecture or the location of the source code. Also during runtime, these variables need to be set, either by a wrapper script or by manually sourcing a file inside the installation directory of OpenFOAM.
+The build system sets 36 environment variables, one step at a time by checking several parameters, e.g.~the CPU architecture or the location of the source code. Also during run-time, these variables need to be set, either by a wrapper script or by manually sourcing a file inside the installation directory of OpenFOAM.
 For Nix, these properties are unfortunate. To compile OpenFOAM with Nix, we need to patch the shebangs\footnote{\url{https://foldoc.org/shebang}} of wmake to make it run during the build.
 We also use a shell script which exports the environment variables to the current shell session.
 For simplicity, we hard-code all parameters, such as the processor architecture. These could be parametrized, however, based on the Nix inputs to allow for optimized builds. We use the script during the build phase to source all variables such that, for example, \texttt{OPENFOAM\_SRC\_PATH} points to the default location \texttt{/build/openfoam}.
@@ -365,7 +364,7 @@ Afterwards, we set the target directory for the adapter to \texttt{\$out/lib/} a
 
 The SU2-preCICE adapter~\cite{Uekermann2017_Adapters} patches and extends the original CFD code SU2~\cite{su2}.
 To this end, the adapter provides a script to run before the build phase.
-We do this in Nix' patch phase. Afterwards, \texttt{stdenv} automatically recognizes that SU2 uses autotools for building and runs the configure phase.
+We do this in Nix' patch phase. Afterwards, \texttt{stdenv} automatically recognizes that SU2 uses Autotools for building and runs the configure phase.
 Finally, to find the preCICE installation, we need to set the configuration flags \texttt{--with-include} and \texttt{--with-lib}.
 
 Since preCICE distribution v202404, this adapter is replaced by a python-based solution
@@ -391,7 +390,7 @@ We could not build swak4foam, an add-on to OpenFOAM, which is needed in the Ture
 The official preCICE VM uses a prebuilt version of swak4foam, but also patching the prebuilt binary did not work.
 The dependency is, however, no longer required in the v202404.0 release\footnote{\url{https://precice.org/installation-distribution.html\#v24040}} of the preCICE distribution.
 We could, moreover, not package the third-party solids4foam solver, which is one of many options in the perpendicular flap tutorial.
-The flow over heated plate steady state tutorial requires Code\_Aster. Even though we manage to package the solver, we observe a segmentation fault at runtime when the python code tries to call a Fortran subroutine -- a problem we did not manage to debug.
+The flow over heated plate steady state tutorial requires Code\_Aster. Even though we manage to package the solver, we observe a segmentation fault at run-time when the python code tries to call a Fortran subroutine -- a problem we did not manage to debug.
 
 % \begin{sloppypar}
 % \end{sloppypar}
@@ -402,11 +401,11 @@ The flow over heated plate steady state tutorial requires Code\_Aster. Even thou
 After detailing the challenges of building and packaging all components of the preCICE ecosystem and running the tutorials as testcases, we want to discuss common points between these scientific software packages.
 The required effort to package the individual components varies drastically. Major problems can be traced back to the build system.
 Custom build systems require an disproportional amount of additional work to make them runnable on any system.
-OpenFOAM and Allwmake are prime examples of this issue. Package managers have to understand a whole new build system for a single package -- a fact that is often ignored when considering the trade-off between maintaining a custom build system versus pivoting to an industry standard, such as CMake or autotools.
+OpenFOAM and Allwmake are prime examples of this issue. Package managers have to understand a whole new build system for a single package -- a fact that is often ignored when considering the trade-off between maintaining a custom build system versus pivoting to an industry standard, such as CMake or Autotools.
 Such standard build tools generally provide interfaces for dependency management and optional features. This is often better than only documenting these, since documentation needs to be kept in sync with the underlying code.
 
 The authors of xSDK\footnote{\url{https://xsdk.info/}} come to a similar conclusion.
-They provide a list of package policies~\cite{xSDK2023}, which, for example, specify that packages must have an appropriate build system, which includes CMake and autoconf as examples.
+They provide a list of package policies~\cite{xSDK2023}, which, for example, specify that packages must have an appropriate build system, which includes CMake and Autotools as examples.
 If a package supports all policies, they can be added to the growing list of packages in xSDK.
 It is no surprise that xSDK packages (e.g., PETSc, deal.II, or preCICE) are also easy to package with Nix.
 
@@ -423,7 +422,7 @@ Configurable solutions, such as pkg-config, should always be preferred and work 
 
 We investigated on whether Nix und NixOS are a potential solution to enable full reproducibility of research software environments. As a case study, we tried to package and test all components of the preCICE ecosystem -- a very heterogeneous set of legacy software packages, which is, however, representative for the state of research software today in our experience.
 
-Out of the 20 components of the preCICE distribution, we were able to package 14 components ourselfs, four were already packaged upstream and two were not packageable as described earlier.
+Out of the 20 components of the preCICE distribution, we were able to package 14 components ourselves, four were already packaged upstream and two were not packageable as described earlier.
 Additionally we were able to run 52 participant examples out of the 61 total examples found in the preCICE tutorials, showing the potential of Nix in the domain of scientific software.
 Many packages required workarounds, however, which might be difficult to achieve for non-experienced Nix users.
 Nix also comes with a few peculiarities, which complicate workarounds.
@@ -431,7 +430,7 @@ In fact, every piece of software has to lie within \path{/nix/store} and each pa
 
 Most problems, however, can be traced back to a lack of standardization in research software, especially regarding build systems.
 Software packages that follow best practices for their programming language are also straightforward to package.
-The xSDK initiative defined such standardization policies for math software. Components of the preCICE ecosystem that already adhere to this standard, were among the easiest ones to package -- even though xSDK  ultimately targets Spack and not Nix.
+The xSDK initiative defined such standardization policies for math software. Components of the preCICE ecosystem that already adhere to this standard, were among the easiest ones to package -- even though xSDK ultimately targets Spack and not Nix.
 
 \acknowledge{
 We thankfully acknowledge the funding by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Germany's Excellence Strategy EXC 2075 -- 390740016 and the support by the Stuttgart Center for Simulation Science (SimTech).
