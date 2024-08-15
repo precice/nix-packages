@@ -103,14 +103,17 @@ Fig.~\ref{fig:nix-graph} shows the dependency graph of the coreutils package as 
 
 As Nix is purely functional, it relies on functions that, without side-effects, realize the package derivations.
 Inputs of these functions are parameters such as the package version, the location of the source code and its dependencies.
-Nix then offers built-in functions for common buildsystems and languages such as CMake, Rust, Go and python by implementing different phases.
-Phases are bash scripts and are already predefined for each buildsystem and always execute in the same order.
-Package maintainers can then decide weather the default phase is sufficient or needs to be overridden in order to produce a working package.
-The most important phases are the \texttt{configurePhase}, which is mostly used for buildsystem configuration.
+Nix then offers built-in functions for common build system and languages such as CMake, Rust, Go and python by implementing different phases.
+Phases are bash scripts and are already predefined for each build system and always execute in the same order.
+Package maintainers can then decide whether the default phase is sufficient or needs to be overridden in order to produce a working package.
+
+For building packages, the four key phases are the \texttt{configurePhase}, the \texttt{buildPhase}, the \texttt{installPhase} and the \texttt{checkPhase}.
+During the \texttt{configurePhase}, the build system is configured.
 The \texttt{buildPhase} defines the build steps e.g., calling \texttt{make} or \texttt{cargo build}.
 Afterwards the \texttt{installPhase} is executed which copies the results into the output directory.
 Additionally a \texttt{checkPhase} can be enabled which can be used to run unit tests to insure that the package works as expected.
 It is also worth mentioning that most phases have a \texttt{pre} and \texttt{post} phases, which users can use to make slight adjustments when they need to override existing packages.
+
 Evaluating these functions with the same inputs yields the same outputs.
 This is a critical factor for Nix's reproducibility.
 Outputs, i.e. the build artifacts, never change after being built once.
@@ -288,7 +291,7 @@ As an example for the Nix language, we provide the Nix code for the deal.II-preC
     \begin{minted}{nix}
 {
   # Inputs including nix functions/packages or additional flags
-  lib, stdenv, fetchFromGitHub, cmake,  dealii,
+  lib, stdenv, fetchFromGitHub, cmake, dealii,
   # Optional features that users can enable when overriding
   enable3d ? false }:
 stdenv.mkDerivation rec {
