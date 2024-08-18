@@ -77,8 +77,8 @@ To this end, we study the preCICE ecosystem~\cite{preCICEv2} as an example.
 preCICE is a coupling library for partitioned multiphysics simulations.
 The ecosystem includes diverse legacy solvers, adapters, language bindings, and tutorials besides the coupling library itself making it a challenging and representative testcase.
 We try to build the complete ecosystem using Nix and run all tutorials.
-In section~\ref{sec:background} the background to Nix and preCICE is introduced, section~\ref{sec:results} presents the case study on packaging the preCICE ecosystem including its challenges and workarounds.
-After this we discuss the results in section~\ref{sec:discussion}, followed by the conclusion of this paper in section~\ref{sec:conclusion}.
+Section~\ref{sec:background} briefly introduces the background of Nix and preCICE. Section~\ref{sec:results} then presents the case study including challenges, workarounds, and open problems.
+Afterwards, we discuss the results in section~\ref{sec:discussion}, followed by the conclusions in section~\ref{sec:conclusion}.
 This paper is the result of a student research project and a streamlined version of its report~\cite{studentreport}.
 Beyond the content of this paper, the report also includes a detailed comparison of Nix to Spack and EasyBuild, and a discussion on how to use Nix on HPC systems.
 
@@ -102,19 +102,18 @@ Fig.~\ref{fig:nix-graph} shows the dependency graph of the coreutils package as 
 \end{figure}
 
 As Nix is purely functional, it relies on functions that, without side-effects, realize the package derivations.
-Inputs of these functions are parameters such as the package version, the location of the source code and its dependencies.
-Nix then offers built-in functions for common build system and languages such as CMake, Rust, Go and python by implementing different phases.
-Phases are bash scripts and are already predefined for each build system and always execute in the same order.
-Package maintainers can then decide whether the default phase is sufficient or needs to be overridden in order to produce a working package.
+Inputs of these functions are parameters such as the package version or the location of the source code and its dependencies.
+Nix offers built-in functions for common build systems and languages, such as CMake, Rust, Go, and Python by implementing different phases.
+Phases are bash scripts and are always executed in the same order. They are predefined for each build system, but can be overwritten if necessary.
 
-For building packages, the four key phases are the \texttt{configurePhase}, the \texttt{buildPhase}, the \texttt{installPhase} and the \texttt{checkPhase}.
-During the \texttt{configurePhase}, the build system is configured.
-The \texttt{buildPhase} defines the build steps e.g., calling \texttt{make} or \texttt{cargo build}.
-Afterwards the \texttt{installPhase} is executed which copies the results into the output directory.
-Additionally a \texttt{checkPhase} can be enabled which can be used to run unit tests to insure that the package works as expected.
-It is also worth mentioning that most phases have a \texttt{pre} and \texttt{post} phases, which users can use to make slight adjustments when they need to override existing packages.
+The four key phases are the configure phase, the build phase, the install phase, and the check phase.
+During the configure phase, the build system is configured.
+The build phase defines the build steps, such as calling \texttt{make} or \texttt{cargo build}.
+Afterwards, the install phase copies the results into the output directory.
+The check phase can be enabled to run any tests.
+Most phases have a pre and post step, which can be uses to make adjustments.
 
-Evaluating these functions with the same inputs yields the same outputs.
+Evaluating these Nix functions with the same inputs yields the same outputs.
 This is a critical factor for Nix's reproducibility.
 Outputs, i.e. the build artifacts, never change after being built once.
 Nix builds are, moreover, sandboxed, meaning that there is no internet access possible during a build.
@@ -141,7 +140,7 @@ For example, in fluid-structure interaction problems, where fluid flow interacts
 \begin{figure}
     \centering
     \includegraphics[width=0.5\textwidth]{figures/precice.png}
-    \caption{Software setup of preCICE from the preCICE website \url{https://precice.org}. It shows how a custom solver can be coupled using an adapter with existing adapters for OpenFOAM and CalculiX.}
+    \caption{Software setup of preCICE from the preCICE website \url{https://precice.org}. The setup shows a custom solver coupled to OpenFOAM and CalculiX for conjugate-heat transfer (CHT) and fluid-structure interaction (FSI) simulations as an example.}
     \label{fig:precice}
 \end{figure}
 
@@ -184,14 +183,13 @@ The diverse languages and diverse solver packages using various build system mak
 \end{table}
 
 
-\section{Results}
+\section{Case study}
 \label{sec:results}
 
-In this section we will look and discuss all components within the preCICE ecosystem.
-We then present challenges, solutions and workarounds that occur when packaging these components.
-This section is structured as follows, we first look into preCICE itself, followed by additional tooling and bindings of the preCICE library in other languages.
-Afterwards we present solutions for all solvers and their respected adapters.
-Lastly we show that Nix additionally be utilized to generate iso files as well as qemu and Vagrant VM images.
+We now study the packaging of all components of the preCICE ecosystem one by one, including challenges, solutions, and workarounds.
+We first look at preCICE itself, followed by additional tooling and bindings.
+Afterwards, we study all solvers and their respected adapters.
+Next, we show that Nix can also be used to generate iso files as well as qemu and Vagrant VM images. Finally, we try running all preCICE tutorials.
 The Nix code for all components is available online\footnote{\url{https://github.com/precice/nix-packages/releases/tag/deRSE24-paper-submission}} and can be used to download and run any of the presented packages.
 
 \subsection{preCICE}
@@ -418,8 +416,8 @@ It is no surprise that xSDK packages (e.g., PETSc, deal.II, or preCICE) are also
 
 The xSDK policies also requires portable installations. Several components in the preCICE ecosystem require installation into \texttt{\$HOME} or any required files to be located at specific locations.
 Both, the CalculiX-preCICE adapter and the SU2-preCICE adapter require the original source code to be present as they add new features on top or patch the source code.
-The current solution that these build systems require cloning the code to a specific directory works, but it might be better to look into Git submodules, as this would result in a more portable solution.
-This would moreover allow pinning the version of the original code compared to only documenting it.
+The current solution of requiring to clone the code into a specific directory works, but it might be better to look into Git submodules, as this would result in a more portable solution.
+This would, moreover, allow pinning the version of the original code compared to only documenting it.
 
 Finally, hard-coding libraries to \path{/usr/lib} and \path{/usr/include} might work on one system, but might make it hard or even impossible to install a package on a different system.
 Configurable solutions, such as pkg-config, should always be preferred and work out of the box with common paths such as \path{/usr/lib}.
@@ -429,8 +427,8 @@ Configurable solutions, such as pkg-config, should always be preferred and work 
 
 We investigated on whether Nix und NixOS are a potential solution to enable full reproducibility of research software environments. As a case study, we tried to package and test all components of the preCICE ecosystem -- a very heterogeneous set of legacy software packages, which is, however, representative for the state of research software today in our experience.
 
-Out of the 20 components of the preCICE distribution, we were able to package 14 components ourselves, four were already packaged upstream and two were not packageable as described earlier.
-Additionally we were able to run 52 participant examples out of the 61 total examples found in the preCICE tutorials, showing the potential of Nix in the domain of scientific software.
+Out of the 20 components of the preCICE distribution, we were able to package 14 components ourselves, four were already packaged upstream, and two were not packageable in their current state.
+We were able to run 52 participant examples out of the 61 total examples found in the preCICE tutorials.
 Many packages required workarounds, however, which might be difficult to achieve for non-experienced Nix users.
 Nix also comes with a few peculiarities, which complicate workarounds.
 In fact, every piece of software has to lie within \path{/nix/store} and each path therein is its own-isolated tree inspired by the Filesystem Hierarchy Standard (FHS).
@@ -439,12 +437,11 @@ Most problems, however, can be traced back to a lack of standardization in resea
 Software packages that follow best practices for their programming language are also straightforward to package.
 The xSDK initiative defined such standardization policies for math software. Components of the preCICE ecosystem that already adhere to this standard, were among the easiest ones to package -- even though xSDK ultimately targets Spack and not Nix.
 
-Despite encountering challenges in packaging the numerous software tools, we were able to observe the adaptability of the Nix package manager and the pleasant user experience that results upon completion of the packaging process.
-The results we have obtained indicate that Nix is a suitable solution for replicating identical software environments while simplifying the use and reuse of package definitions for users.
-We would love to see more software being packaged for Nix, so that even difficult to install software will be accessible to researchers with ease.
+Despite encountering challenges in packaging the numerous software tools, we were able to observe the adaptability of the Nix package manager.
+Our results indicate that, in general, Nix is a suitable solution for reproducing software environments.
 
 \acknowledge{
-We thankfully acknowledge the funding by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Germany's Excellence Strategy EXC 2075 -- 390740016 and the support by the Stuttgart Center for Simulation Science (SimTech).
+We thankfully acknowledge the funding by the Deutsche Forschungsgemeinschaft (DFG, German Research Foundation) under Germany's Excellence Strategy EXC 2075 -- 390740016 and under project number 528693298,  and the support by the Stuttgart Center for Simulation Science (SimTech).
 }
 
 
