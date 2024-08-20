@@ -224,7 +224,7 @@ As MATLAB has some licensing issues and is also not installed in the preCICE VM,
 
 \subsubsection{Fortran module}
 
-We were able to package the Fortran module of preCICE by providing custom phases for the build phase and the install phase of Nix.
+We were able to package the Fortran module of preCICE by providing custom contents for the \texttt{buildPhase} and the \texttt{installPhase} of Nix.
 The resulting binary could run the example that comes with the module.
 
 \subsubsection{Python bindings}
@@ -271,7 +271,7 @@ Almost all dependencies are available upstream, but we need to recompile Scotch 
 Moreover, for packaging Blacs, which also uses a Makefile, we configure the build using a custom \texttt{Bmake.inc} file, which is used to set compiler flags, the path to MPI, and the bash installation.
 Tfel, on the other hand, uses CMake as build system making it easy to package it with Nix.
 
-After successfully packaging all dependencies, the build phase of Code\_Aster completes, but the installation part has another issue, which also affects new versions of Ubuntu and other distributions using a python version greater than 3.9.
+After successfully packaging all dependencies, the \texttt{buildPhase} of Code\_Aster completes, but the installation part has another issue, which also affects new versions of Ubuntu and other distributions using a python version greater than 3.9.
 There is a forum post\footnote{\url{https://forum.code-aster.org/public/d/26475-problem-installing-code-aster-version-14-6/11}} without resolution, so we need to manually patch the bug.
 The issue is precisely, that the custom build system does not correctly calculate the python site-packages directory.
 It unconditionally slices the first 3 chars from \texttt{sys.version}, which works for python version 3.9.x, but not for version 3.10.x.
@@ -357,9 +357,9 @@ OpenFOAM uses its own custom build system called wmake, which is typically calle
 The build system sets 36 environment variables, one step at a time by checking several parameters, e.g.~the CPU architecture or the location of the source code. Also during run-time, these variables need to be set, either by a wrapper script or by manually sourcing a file inside the installation directory of OpenFOAM.
 For Nix, these properties are unfortunate. To compile OpenFOAM with Nix, we need to patch the shebangs\footnote{\url{https://foldoc.org/shebang}} of wmake to make it run during the build.
 We also use a shell script which exports the environment variables to the current shell session.
-For simplicity, we hard-code all parameters, such as the processor architecture. These could be parametrized, however, based on the Nix inputs to allow for optimized builds. We use the script during the build phase to source all variables such that, for example, \texttt{OPENFOAM\_SRC\_PATH} points to the default location \texttt{/build/openfoam}.
+For simplicity, we hard-code all parameters, such as the processor architecture. These could be parametrized, however, based on the Nix inputs to allow for optimized builds. We use the script during the \texttt{buildPhase} to source all variables such that, for example, \texttt{OPENFOAM\_SRC\_PATH} points to the default location \path{/build/openfoam}.
 Afterwards, \texttt{./Allwmake -j -q} is sufficient to start the build.
-The install phase then copies the necessary files and directories to \texttt{\$out}, replaces the mock \texttt{OPENFOAM\_SRC\_PATH} by the value of \texttt{\$out}, and creates a wrapper for the \texttt{openfoam} shell script.
+The \texttt{installPhase} then copies the necessary files and directories to \texttt{\$out}, replaces the mock \texttt{OPENFOAM\_SRC\_PATH} by the value of \texttt{\$out}, and creates a wrapper for the \texttt{openfoam} shell script.
 
 The preCICE-OpenFOAM adapter is an OpenFOAM function object, requiring OpenFOAM and wmake as build inputs.
 The environment variables have to be set again through the shell script mentioned above.
@@ -368,8 +368,8 @@ Afterwards, we set the target directory for the adapter to \texttt{\$out/lib/} a
 \subsubsection{SU2}
 
 The SU2-preCICE adapter~\cite{Uekermann2017_Adapters} patches and extends the original CFD code SU2~\cite{su2}.
-To this end, the adapter provides a script to run before the build phase.
-We do this in Nix' patch phase. Afterwards, \texttt{stdenv} automatically recognizes that SU2 uses Autotools for building and runs the configure phase.
+To this end, the adapter provides a script to run before the \texttt{buildPhase}.
+We do this in Nix' \texttt{patchPhase}, which is responsible for patching the source before running the \texttt{buildPhase}. Afterwards, \texttt{stdenv} automatically recognizes that SU2 uses Autotools for building and runs the \texttt{configurePhase}.
 Finally, to find the preCICE installation, we need to set the configuration flags \texttt{--with-include} and \texttt{--with-lib}.
 
 Since preCICE distribution v202404, this adapter is replaced by a python-based solution
