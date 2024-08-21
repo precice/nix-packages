@@ -1,9 +1,62 @@
 \documentclass{eceasst}
 
-\usepackage{minted}
 \usepackage{subfig}
 
+\usepackage{listings}
 \usepackage{xcolor}
+
+
+\definecolor{identifiercolor}{rgb}{0,0,0}
+\definecolor{keywordcolor}{HTML}{1a177d}
+\definecolor{commentcolor}{HTML}{3d7a7a}
+\definecolor{stringcolor}{HTML}{ba2121}
+\definecolor{keywordcolor2}{HTML}{870000}
+\definecolor{keywordcolor3}{HTML}{008000}
+\definecolor{keywordcolor4}{HTML}{666666}
+\lstdefinelanguage{Nix}{
+  % Anything betweeen $ becomes LaTeX math mode
+  mathescape=false,
+  % Comments may or not include Latex commands
+  texcl=false,
+  keywords=[1]{pname,version,src,owner,rev,repo,sha256,nativeBuildInputs,buildInputs,installPhase},
+  % Comments delimiters, we do turn this off for the manual
+  comment=[l]{\#},
+  % Spaces are not displayed as a special character
+  showstringspaces=false,
+  % String delimiters
+  morestring=[b]",
+  morestring=[d]'',
+  % Size of tabulations
+  tabsize=2,
+  % Enables ASCII chars 128 to 255
+  extendedchars=false,
+  % Case sensitivity
+  sensitive=true,
+  % Automatic breaking of long lines
+  breaklines=false,
+  % Default style for listings
+  basicstyle=\ttfamily,
+  % Position of captions is bottom
+  captionpos=b,
+  % flexible columns
+  columns=[l]fixed,
+  % Style for (listings') identifiers
+  identifierstyle={\ttfamily\color{identifiercolor}},
+  % Style for declaration keywords
+  keywordstyle=[1]{\ttfamily\color{keywordcolor}},
+  % Style for strings
+  stringstyle={\ttfamily\color{stringcolor}},
+  % Style for comments
+  commentstyle={\ttfamily\color{commentcolor}},
+  alsoletter={=}
+  %moredelim=**[is][\ttfamily\color{red}]{/&}{&/},
+  morekeywords=[2]{false},
+  keywordstyle=[2]{\ttfamily\color{keywordcolor2}},
+  morekeywords=[3]{rec},
+  keywordstyle=[3]{\ttfamily\color{keywordcolor3}},
+  morekeywords=[4]{=},
+  keywordstyle=[4]{\ttfamily\color{keywordcolor4}},
+}[keywords,comments,strings]
 
 \input{frontmatter}
 
@@ -286,12 +339,13 @@ As an example for the Nix language, we provide the Nix code for the deal.II-preC
 
 \begin{figure*}
     \normalsize
-    \begin{minted}{nix}
+    \begin{lstlisting}[language=Nix]
 {
   # Inputs including nix functions/packages or additional flags
   lib, stdenv, fetchFromGitHub, cmake, dealii,
   # Optional features that users can enable when overriding
-  enable3d ? false }:
+  enable3d ? false
+}:
 stdenv.mkDerivation rec {
   pname = "precice-dealii-adapter";
   version = "unstable-2022-09-23"; # could also be a git tag
@@ -316,7 +370,7 @@ stdenv.mkDerivation rec {
     mkdir -p $out/bin && cp elasticity $out/bin/elasticity
   '';
 }
-    \end{minted}
+    \end{lstlisting}
     \caption{Nix code to package the deal.II-preCICE adapter}
     \label{lst:dealii-adapter-nix}
 \end{figure*}
