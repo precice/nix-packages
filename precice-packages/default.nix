@@ -67,7 +67,27 @@
     precice-fortran-module = super.callPackage ./fortran-module { };
     precice-fortran-solverdummy = super.callPackage ./precice-fortran-solverdummy { };
 
-    openfoam = super.callPackage ./openfoam { };
+    openfoam2206 = super.callPackage ./openfoam {
+      version = "2206";
+      hash = "sha256-snrFOsENf/siqFd1mzxAsYbw1ba67TXMgaNDpb26uX0=";
+    };
+    openfoam2212 = super.callPackage ./openfoam {
+      version = "2212";
+      hash = "sha256-yE1ey3f9WobR5bns+SrGXwMNtkWZNCXsNkjOo0NHqDo=";
+    };
+    openfoam2306 = super.callPackage ./openfoam {
+      version = "2306";
+      hash = "sha256-9+u52bqVXfirhTfFFX+CoqhRxJeOUQVcQHCRoxTfO5w=";
+    };
+    openfoam2312 = super.callPackage ./openfoam {
+      version = "2312";
+      hash = "sha256-xew1yydA5LFsmelE2d6OTefmTsBHDL0Fn5pT1GcrCmk=";
+    };
+    openfoam2406 = super.callPackage ./openfoam {
+      version = "2406";
+      hash = "sha256-vOXTZhZnTPqx7QDV7Me91MwEW40zquOifIF99l0yLZc=";
+    };
+    openfoam = self.openfoam2206;
     precice-openfoam-adapter = super.callPackage ./openfoam-adapter { };
 
     precice-aster = super.callPackage ./aster { };

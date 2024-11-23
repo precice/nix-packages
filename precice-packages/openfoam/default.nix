@@ -9,11 +9,11 @@
   flex,
   makeWrapper,
   writeScript,
+  version,
+  hash,
 }:
 
 let
-  version = "2206";
-
   # TODO: Can we make the last export to /run/current-system better somehow?
   set-vars-script = writeScript "set-openfoam-vars" ''
     export FOAM_API=${version}
@@ -74,7 +74,7 @@ stdenv.mkDerivation rec {
   src = fetchgit {
     url = "https://develop.openfoam.com/Development/openfoam.git";
     rev = "OpenFOAM-v${version}";
-    hash = "sha256-snrFOsENf/siqFd1mzxAsYbw1ba67TXMgaNDpb26uX0=";
+    inherit hash;
   };
 
   nativeBuildInputs = [
