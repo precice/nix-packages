@@ -11,6 +11,7 @@
   writeScript,
   version,
   hash,
+  scotch,
 }:
 
 let
@@ -65,6 +66,9 @@ let
     export LD_LIBRARY_PATH=$FOAM_LIBBIN:$LD_LIBRARY_PATH
     export LD_LIBRARY_PATH=$FOAM_LIBBIN/dummy:$LD_LIBRARY_PATH
     export LD_LIBRARY_PATH=/run/current-system/sw/lib/:$LD_LIBRARY_PATH
+
+    export SCOTCH_VERSION=scotch_${scotch.version}
+    export SCOTCH_ARCH_PATH=${scotch}
   '';
 in
 stdenv.mkDerivation rec {
@@ -86,6 +90,7 @@ stdenv.mkDerivation rec {
     openmpi
     zlib
     flex
+    scotch
   ];
 
   postPatch = ''
@@ -96,6 +101,11 @@ stdenv.mkDerivation rec {
   '';
 
   buildPhase = ''
+    cat <<EOF > etc/config.sh/scotch
+    export SCOTCH_VERSION=scotch_${scotch.version}
+    export SCOTCH_ARCH_PATH=${scotch}
+    EOF
+
     cp ${set-vars-script} bin/set-openfoam-vars
     source bin/set-openfoam-vars
 
